@@ -19113,7 +19113,10 @@ $RefreshReg$(_c, "App");
   globalThis.$RefreshReg$ = prevRefreshReg;
   globalThis.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-dev-runtime":"dVPUn","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"7h6Pi","./documents/PreliminaryProjectPlan.pdf":"getRJ"}],"jnFvT":[function(require,module,exports,__globalThis) {
+},{"react/jsx-dev-runtime":"dVPUn","./documents/PreliminaryProjectPlan.pdf":"getRJ","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"7h6Pi"}],"getRJ":[function(require,module,exports,__globalThis) {
+module.exports = module.bundle.resolve("PreliminaryProjectPlan.50c716af.pdf") + "?" + Date.now();
+
+},{}],"jnFvT":[function(require,module,exports,__globalThis) {
 exports.interopDefault = function(a) {
     return a && a.__esModule ? a : {
         default: a
@@ -21421,9 +21424,6 @@ function $da9882e673ac146b$var$ErrorOverlay() {
     return null;
 }
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}],"getRJ":[function(require,module,exports,__globalThis) {
-module.exports = module.bundle.resolve("PreliminaryProjectPlan.50c716af.pdf") + "?" + Date.now();
-
-},{}]},["hiyDA","gYcKb"], "gYcKb", "parcelRequire10c2", {}, "./", "/", "http://localhost:1234")
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}]},["hiyDA","gYcKb"], "gYcKb", "parcelRequire10c2", {}, "./", "/", "http://localhost:1234")
 
 //# sourceMappingURL=frontend.ad93b51f.js.map
