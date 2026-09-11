@@ -4,21 +4,29 @@
   "description": "",
   "scripts": {
     "start": "parcel index.html",
-    "build": "parcel build index.html"
+    "build": "parcel build index.html",
+    "predeploy": "parcel build index.html --public-url /SE6362-SWArch-Project/",
+    "deploy": "gh-pages -d dist"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
+  "homepage": "https://kalani-kawaguchi.github.io/SE6362-SWArch-Project/",
   "dependencies": {
     "react": "^19.3.0",
     "react-dom": "^19.3.0"
   },
   "devDependencies": {
+    "gh-pages": "^6.3.0",
     "parcel": "^2.16.4"
   },
   "allowScripts": {
     "node-gyp-build-optional-packages@5.2.2": true,
-    "node-gyp-build-optional-packages@5.1.1": true
+    "node-gyp-build-optional-packages@5.1.1": true,
+    "@parcel/watcher@2.6.0": true,
+    "@swc/core@1.16.2": true,
+    "lmdb@2.8.5": true,
+    "msgpackr-extract@3.0.4": true
   }
 }
