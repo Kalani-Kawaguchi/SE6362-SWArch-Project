@@ -4,7 +4,7 @@
   "description": "",
   "scripts": {
     "start": "parcel index.html",
-    "build": "parcel build index.html",
+    "build": "parcel build index.html --public-url ./",
     "predeploy": "parcel build index.html --public-url /SE6362-SWArch-Project/",
     "deploy": "gh-pages -d dist"
   },

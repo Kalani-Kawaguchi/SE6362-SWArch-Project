@@ -177,7 +177,7 @@
 
   // Only insert newRequire.load when it is actually used.
   // The code in this file is linted against ES5, so dynamic import is not allowed.
-  // INSERT_LOAD_HERE
+  function $parcel$resolve(url) {  url = importMap[url] || url;  return import.meta.resolve(distDir + url);}newRequire.resolve = $parcel$resolve;
 
   Object.defineProperty(newRequire, 'root', {
     get: function () {
@@ -19070,6 +19070,8 @@ var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "default", ()=>App);
 var _jsxDevRuntime = require("react/jsx-dev-runtime");
+var _preliminaryProjectPlanPdf = require("./documents/PreliminaryProjectPlan.pdf");
+var _preliminaryProjectPlanPdfDefault = parcelHelpers.interopDefault(_preliminaryProjectPlanPdf);
 function App() {
     return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("main", {
         children: [
@@ -19077,28 +19079,28 @@ function App() {
                 children: "Software Architecture Project"
             }, void 0, false, {
                 fileName: "src/App.jsx",
-                lineNumber: 4,
+                lineNumber: 6,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("h2", {
                 children: "Group: Kalani Kawaguchi, Zhi Li, Jonathan Loper, Mitchell Vu"
             }, void 0, false, {
                 fileName: "src/App.jsx",
-                lineNumber: 5,
+                lineNumber: 7,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("a", {
-                href: "PreliminaryProjectPlan.pdf",
+                href: (0, _preliminaryProjectPlanPdfDefault.default),
                 children: "Preliminary Project Plan"
             }, void 0, false, {
                 fileName: "src/App.jsx",
-                lineNumber: 6,
+                lineNumber: 8,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "src/App.jsx",
-        lineNumber: 3,
+        lineNumber: 5,
         columnNumber: 5
     }, this);
 }
@@ -19111,7 +19113,7 @@ $RefreshReg$(_c, "App");
   globalThis.$RefreshReg$ = prevRefreshReg;
   globalThis.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-dev-runtime":"dVPUn","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"7h6Pi"}],"jnFvT":[function(require,module,exports,__globalThis) {
+},{"react/jsx-dev-runtime":"dVPUn","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"7h6Pi","./documents/PreliminaryProjectPlan.pdf":"getRJ"}],"jnFvT":[function(require,module,exports,__globalThis) {
 exports.interopDefault = function(a) {
     return a && a.__esModule ? a : {
         default: a
@@ -21419,6 +21421,9 @@ function $da9882e673ac146b$var$ErrorOverlay() {
     return null;
 }
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}]},["hiyDA","gYcKb"], "gYcKb", "parcelRequire10c2", {}, null, null, "http://localhost:1234")
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}],"getRJ":[function(require,module,exports,__globalThis) {
+module.exports = module.bundle.resolve("PreliminaryProjectPlan.50c716af.pdf") + "?" + Date.now();
+
+},{}]},["hiyDA","gYcKb"], "gYcKb", "parcelRequire10c2", {}, "./", "/", "http://localhost:1234")
 
 //# sourceMappingURL=frontend.ad93b51f.js.map

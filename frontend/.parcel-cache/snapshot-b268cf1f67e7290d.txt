@@ -1,4 +1,4 @@
-4261
+4341
 57C:\SE6362-SWArch-Project\frontend\node_modules\base-x\src134335846998224883 1
 46C:\SE6362-SWArch-Project\frontend\package.json134335842001382689 0
 53C:\SE6362-SWArch-Project\frontend\node_modules\dotenv134335847083988298 1
@@ -46,6 +46,10 @@
 55C:\SE6362-SWArch-Project\frontend\node_modules\escalade134335847087507760 1
 101C:\SE6362-SWArch-Project\frontend\node_modules\@parcel\runtime-browser-hmr\lib\loaders\hmr-runtime.js134335794924252840 0
 76C:\SE6362-SWArch-Project\frontend\node_modules\@parcel\transformer-image\src134335846923847691 1
+79C:\SE6362-SWArch-Project\frontend\node_modules\@swc\helpers\esm\_ts_metadata.js134335794938240024 0
+88C:\SE6362-SWArch-Project\frontend\node_modules\caniuse-lite\data\features\css3-colors.js134335794941989715 0
+60C:\SE6362-SWArch-Project\frontend\PreliminaryProjectPlan.pdf134327771859435623 0
+71C:\SE6362-SWArch-Project\frontend\node_modules\@swc\core\postinstall.js134335794934387504 0
 68C:\SE6362-SWArch-Project\frontend\node_modules\msgpackr\unpack.d.cts134335794952823928 0
 78C:\SE6362-SWArch-Project\frontend\node_modules\caniuse-lite\data\regions\AF.js134335794945334442 0
 82C:\SE6362-SWArch-Project\frontend\node_modules\react-dom\profiling.react-server.js134335794954550949 0
@@ -83,7 +87,7 @@
 47C:\SE6362-SWArch-Project\frontend\src\index.jsx134335794957003296 0
 65C:\SE6362-SWArch-Project\frontend\node_modules\msgpackr\struct.js134335794952735553 0
 104C:\SE6362-SWArch-Project\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js134335794954229323 0
-53C:\SE6362-SWArch-Project\frontend\node_modules\.cache134335871655445264 1
+53C:\SE6362-SWArch-Project\frontend\node_modules\.cache134335871842000537 1
 68C:\SE6362-SWArch-Project\frontend\node_modules\make-dir\package.json134335840206866388 0
 64C:\SE6362-SWArch-Project\frontend\node_modules\fs-extra\lib\copy134335847093268851 1
 87C:\SE6362-SWArch-Project\frontend\node_modules\email-addresses\lib\email-addresses.d.ts134335840207868631 0
@@ -212,14 +216,6 @@
 73C:\SE6362-SWArch-Project\frontend\node_modules\trim-repeated\package.json134335840206357133 0
 53C:\SE6362-SWArch-Project\frontend\node_modules\globby134335847097108055 1
 82C:\SE6362-SWArch-Project\frontend\node_modules\msgpackr\dist\index-no-eval.cjs.map134335794952504400 0
-78C:\SE6362-SWArch-Project\frontend\node_modules\caniuse-lite\data\regions\EC.js134335794945836117 0
-73C:\SE6362-SWArch-Project\frontend\node_modules\ordered-binary\.nyc_output134335847122416647 1
-77C:\SE6362-SWArch-Project\frontend\node_modules\@swc\helpers\cjs\_inherits.cjs134335794936840155 0
-80C:\SE6362-SWArch-Project\frontend\node_modules\postcss-value-parser\lib\index.js134335794953912788 0
-76C:\SE6362-SWArch-Project\frontend\node_modules\@parcel\namer-default\LICENSE134335794921751801 0
-86C:\SE6362-SWArch-Project\frontend\node_modules\ordered-binary\.idea\ordered-binary.iml134335794953377811 0
-59C:\SE6362-SWArch-Project\frontend\node_modules\lightningcss134335847102144615 1
-105C:\SE6362-SWArch-Project\frontend\node_modules\@swc\helpers\_\_iterable_to_array_limit_loose\package.json134335794935672470 0
 55C:\SE6362-SWArch-Project\frontend\node_modules\has-flag134335847097658261 1
 78C:\SE6362-SWArch-Project\frontend\node_modules\caniuse-lite\data\regions\RU.js134335794947005735 0
 92C:\SE6362-SWArch-Project\frontend\node_modules\caniuse-lite\data\features\offscreencanvas.js134335794943641115 0
@@ -238,14 +234,24 @@
 52C:\SE6362-SWArch-Project\frontend\node_modules\json5134335847100113606 1
 66C:\SE6362-SWArch-Project\frontend\node_modules\locate-path\license134335840207076610 0
 55C:\SE6362-SWArch-Project\frontend\node_modules\jsonfile134335847101055098 1
+78C:\SE6362-SWArch-Project\frontend\node_modules\caniuse-lite\data\regions\EC.js134335794945836117 0
+73C:\SE6362-SWArch-Project\frontend\node_modules\ordered-binary\.nyc_output134335847122416647 1
+77C:\SE6362-SWArch-Project\frontend\node_modules\@swc\helpers\cjs\_inherits.cjs134335794936840155 0
+80C:\SE6362-SWArch-Project\frontend\node_modules\postcss-value-parser\lib\index.js134335794953912788 0
+76C:\SE6362-SWArch-Project\frontend\node_modules\@parcel\namer-default\LICENSE134335794921751801 0
+86C:\SE6362-SWArch-Project\frontend\node_modules\ordered-binary\.idea\ordered-binary.iml134335794953377811 0
+59C:\SE6362-SWArch-Project\frontend\node_modules\lightningcss134335847102144615 1
+105C:\SE6362-SWArch-Project\frontend\node_modules\@swc\helpers\_\_iterable_to_array_limit_loose\package.json134335794935672470 0
 74C:\SE6362-SWArch-Project\frontend\node_modules\lightningcss-win32-x64-msvc134335847103186806 1
 88C:\SE6362-SWArch-Project\frontend\node_modules\caniuse-lite\data\features\flexbox-gap.js134335794942495632 0
 76C:\SE6362-SWArch-Project\frontend\node_modules\@swc\helpers\cjs\_extends.cjs134335794936736458 0
 58C:\SE6362-SWArch-Project\frontend\node_modules\locate-path134335847111404532 1
 66C:\SE6362-SWArch-Project\frontend\node_modules\browserslist\cli.js134335794939997910 0
 82C:\SE6362-SWArch-Project\frontend\node_modules\type-fest\source\promise-value.d.ts134335794956362403 0
+148C:\SE6362-SWArch-Project\frontend\node_modules\.cache\gh-pages\https!github.com!Kalani-Kawaguchi!SE6362-SWArch-Project.git\.git\logs\refs\heads\main134335871950800997 0
 67C:\SE6362-SWArch-Project\frontend\node_modules\async\concatLimit.js134335840208396022 0
 83C:\SE6362-SWArch-Project\frontend\node_modules\@parcel\source-map\dist\wasm.js.flow134335794928205424 0
+140C:\SE6362-SWArch-Project\frontend\node_modules\.cache\gh-pages\https!github.com!Kalani-Kawaguchi!SE6362-SWArch-Project.git\.git\refs\remotes134335871950703161 1
 55C:\SE6362-SWArch-Project\frontend\node_modules\make-dir134335847111637880 1
 65C:\SE6362-SWArch-Project\frontend\node_modules\tslib\package.json134335794956043716 0
 100C:\SE6362-SWArch-Project\frontend\node_modules\@parcel\transformer-postcss\lib\PostCSSTransformer.js134335794929373096 0
@@ -382,6 +388,7 @@
 78C:\SE6362-SWArch-Project\frontend\node_modules\caniuse-lite\data\regions\LY.js134335794946503781 0
 71C:\SE6362-SWArch-Project\frontend\node_modules\react-dom\static.edge.js134335794954670493 0
 100C:\SE6362-SWArch-Project\frontend\node_modules\caniuse-lite\data\features\intersectionobserver-v2.js134335794943028801 0
+157C:\SE6362-SWArch-Project\frontend\node_modules\.cache\gh-pages\https!github.com!Kalani-Kawaguchi!SE6362-SWArch-Project.git\.git\logs\refs\remotes\origin\HEAD134335871950703161 0
 84C:\SE6362-SWArch-Project\frontend\node_modules\caniuse-lite\data\features\outline.js134335794943671950 0
 72C:\SE6362-SWArch-Project\frontend\node_modules\semver\functions\parse.js134335794955510613 0
 78C:\SE6362-SWArch-Project\frontend\node_modules\caniuse-lite\data\regions\AM.js134335794945378136 0
@@ -471,6 +478,7 @@
 63C:\SE6362-SWArch-Project\frontend\node_modules\semver\functions134335847149588962 1
 70C:\SE6362-SWArch-Project\frontend\node_modules\utility-types\README.md134335794956683925 0
 72C:\SE6362-SWArch-Project\frontend\node_modules\utility-types\SECURITY.md134335794956683925 0
+173C:\SE6362-SWArch-Project\frontend\node_modules\.cache\gh-pages\https!github.com!Kalani-Kawaguchi!SE6362-SWArch-Project.git\frontend\.parcel-cache\d0038ff34e3a5640-AssetGraph134335871950943788 0
 103C:\SE6362-SWArch-Project\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.production.js134335794954316883 0
 62C:\SE6362-SWArch-Project\frontend\node_modules\lmdb\index.d.ts134335794951501663 0
 81C:\SE6362-SWArch-Project\frontend\node_modules\fast-glob\out\providers\async.d.ts134335840208784158 0
@@ -483,6 +491,7 @@
 93C:\SE6362-SWArch-Project\frontend\node_modules\@parcel\package-manager\test\fixtures\packages134335846896109979 1
 102C:\SE6362-SWArch-Project\frontend\node_modules\caniuse-lite\data\features\document-scrollingelement.js134335794942174061 0
 80C:\SE6362-SWArch-Project\frontend\node_modules\@swc\helpers\esm\_wrap_reg_exp.js134335794938340731 0
+147C:\SE6362-SWArch-Project\frontend\node_modules\.cache\gh-pages\https!github.com!Kalani-Kawaguchi!SE6362-SWArch-Project.git\.git\refs\remotes\origin134335872018330913 1
 68C:\SE6362-SWArch-Project\frontend\node_modules\@parcel\error-overlay134335846876577341 1
 87C:\SE6362-SWArch-Project\frontend\node_modules\utility-types\dist\aliases-and-guards.js134335794956683925 0
 98C:\SE6362-SWArch-Project\frontend\node_modules\scheduler\cjs\scheduler-unstable_mock.production.js134335794955191695 0
@@ -704,6 +713,7 @@
 100C:\SE6362-SWArch-Project\frontend\node_modules\@swc\helpers\src\_class_static_private_method_get.mjs134335794938761942 0
 60C:\SE6362-SWArch-Project\frontend\node_modules\.bin\gh-pages134335840211982544 0
 78C:\SE6362-SWArch-Project\frontend\node_modules\type-fest\source\utilities.d.ts134335794956501815 0
+152C:\SE6362-SWArch-Project\frontend\node_modules\.cache\gh-pages\https!github.com!Kalani-Kawaguchi!SE6362-SWArch-Project.git\.git\refs\remotes\origin\HEAD134335871950703161 0
 76C:\SE6362-SWArch-Project\frontend\node_modules\@swc\helpers\scripts\utils.js134335794938441383 0
 68C:\SE6362-SWArch-Project\frontend\node_modules\jsonfile\package.json134335840207076610 0
 83C:\SE6362-SWArch-Project\frontend\node_modules\caniuse-lite\data\features\tls1-2.js134335794944674259 0
@@ -741,6 +751,7 @@
 94C:\SE6362-SWArch-Project\frontend\node_modules\@swc\helpers\esm\_object_destructuring_empty.js134335794938020981 0
 92C:\SE6362-SWArch-Project\frontend\node_modules\caniuse-lite\data\features\arrow-functions.js134335794940171134 0
 69C:\SE6362-SWArch-Project\frontend\node_modules\tslib\modules\index.js134335794956043716 0
+143C:\SE6362-SWArch-Project\frontend\node_modules\.cache\gh-pages\https!github.com!Kalani-Kawaguchi!SE6362-SWArch-Project.git\frontend.ddde9784.js134335871963923831 0
 78C:\SE6362-SWArch-Project\frontend\node_modules\caniuse-lite\data\regions\CO.js134335794945695792 0
 78C:\SE6362-SWArch-Project\frontend\node_modules\@swc\helpers\src\_using_ctx.mjs134335794939511147 0
 65C:\SE6362-SWArch-Project\frontend\node_modules\gh-pages\readme.md134335840207716025 0
@@ -854,6 +865,7 @@
 99C:\SE6362-SWArch-Project\frontend\node_modules\caniuse-lite\data\features\form-submit-attributes.js134335794942601454 0
 72C:\SE6362-SWArch-Project\frontend\node_modules\semver\ranges\simplify.js134335794955828075 0
 68C:\SE6362-SWArch-Project\frontend\node_modules\node-releases\LICENSE134335794953162187 0
+177C:\SE6362-SWArch-Project\frontend\node_modules\.cache\gh-pages\https!github.com!Kalani-Kawaguchi!SE6362-SWArch-Project.git\.git\objects\5d\a87fb7b23450023c5157f650302d8b57b82449134335871967339441 0
 88C:\SE6362-SWArch-Project\frontend\node_modules\reusify\benchmarks\reuseNoCodeFunction.js134335840207380576 0
 60C:\SE6362-SWArch-Project\frontend\node_modules\semver\ranges134335847150338158 1
 75C:\SE6362-SWArch-Project\frontend\node_modules\fs-extra\lib\mkdirs\index.js134335840208128547 0
@@ -1196,6 +1208,7 @@
 86C:\SE6362-SWArch-Project\frontend\node_modules\gh-pages\node_modules\commander\typings134335847096280916 1
 102C:\SE6362-SWArch-Project\frontend\node_modules\caniuse-lite\data\features\es6-module-dynamic-import.js134335794942324216 0
 78C:\SE6362-SWArch-Project\frontend\node_modules\caniuse-lite\data\regions\VA.js134335794947336976 0
+159C:\SE6362-SWArch-Project\frontend\node_modules\.cache\gh-pages\https!github.com!Kalani-Kawaguchi!SE6362-SWArch-Project.git\.git\hooks\fsmonitor-watchman.sample134335871860563533 0
 91C:\SE6362-SWArch-Project\frontend\node_modules\react\cjs\react-jsx-dev-runtime.profiling.js134335794954911531 0
 96C:\SE6362-SWArch-Project\frontend\node_modules\lmdb\dependencies\lmdb\libraries\liblmdb\mtest6.c134335794951031559 0
 96C:\SE6362-SWArch-Project\frontend\node_modules\@swc\helpers\_\_class_static_private_field_update134335846976791551 1
@@ -1204,6 +1217,7 @@
 66C:\SE6362-SWArch-Project\frontend\node_modules\p-locate\index.d.ts134335840206663222 0
 105C:\SE6362-SWArch-Project\frontend\node_modules\react\cjs\react-jsx-dev-runtime.react-server.production.js134335794954911531 0
 72C:\SE6362-SWArch-Project\frontend\node_modules\lightningcss\node_modules134335847102164790 1
+131C:\SE6362-SWArch-Project\frontend\node_modules\.cache\gh-pages\https!github.com!Kalani-Kawaguchi!SE6362-SWArch-Project.git\frontend134335871961843340 1
 88C:\SE6362-SWArch-Project\frontend\node_modules\react\cjs\react-jsx-runtime.production.js134335794954932029 0
 101C:\SE6362-SWArch-Project\frontend\node_modules\react\cjs\react-jsx-runtime.react-server.production.js134335794954952136 0
 87C:\SE6362-SWArch-Project\frontend\node_modules\react\cjs\react-jsx-runtime.profiling.js134335794954952136 0
@@ -1236,6 +1250,7 @@
 79C:\SE6362-SWArch-Project\frontend\node_modules\@parcel\utils\src\getExisting.js134335794930549529 0
 93C:\SE6362-SWArch-Project\frontend\node_modules\@swc\helpers\src\_class_private_field_init.mjs134335794938672132 0
 65C:\SE6362-SWArch-Project\frontend\node_modules\pkg-dir\index.d.ts134335840206659156 0
+161C:\SE6362-SWArch-Project\frontend\node_modules\.cache\gh-pages\https!github.com!Kalani-Kawaguchi!SE6362-SWArch-Project.git\.git\logs\refs\remotes\origin\gh-pages134335872018330913 0
 62C:\SE6362-SWArch-Project\frontend\node_modules\pkg-dir\license134335840207018617 0
 78C:\SE6362-SWArch-Project\frontend\node_modules\lmdb\util\set-optional-deps.cjs134335794951909478 0
 79C:\SE6362-SWArch-Project\frontend\node_modules\@swc\helpers\esm\_await_value.js134335794937492515 0
@@ -1266,6 +1281,7 @@
 63C:\SE6362-SWArch-Project\frontend\node_modules\dir-glob\license134335840206866388 0
 68C:\SE6362-SWArch-Project\frontend\node_modules\picomatch\lib\scan.js134335794953823676 0
 65C:\SE6362-SWArch-Project\frontend\node_modules\picocolors\LICENSE134335794953658422 0
+145C:\SE6362-SWArch-Project\frontend\node_modules\.cache\gh-pages\https!github.com!Kalani-Kawaguchi!SE6362-SWArch-Project.git\frontend\.parcel-cache134335871951143655 1
 79C:\SE6362-SWArch-Project\frontend\node_modules\picocolors\picocolors.browser.js134335794953697704 0
 65C:\SE6362-SWArch-Project\frontend\node_modules\msgpackr\unpack.js134335794952840887 0
 104C:\SE6362-SWArch-Project\frontend\node_modules\@msgpackr-extract\msgpackr-extract-win32-x64\package.json134335794917217158 0
@@ -1317,6 +1333,7 @@
 68C:\SE6362-SWArch-Project\frontend\node_modules\ordered-binary\assets134335847122603316 1
 66C:\SE6362-SWArch-Project\frontend\node_modules\ordered-binary\dist134335847122617687 1
 68C:\SE6362-SWArch-Project\frontend\node_modules\async\rejectSeries.js134335840210381729 0
+62C:\SE6362-SWArch-Project\frontend\node_modules\.cache\gh-pages134335871860508257 1
 78C:\SE6362-SWArch-Project\frontend\node_modules\lmdb\dependencies\lz4\lib\lz4.c134335794951280576 0
 85C:\SE6362-SWArch-Project\frontend\node_modules\caniuse-lite\data\features\css-zoom.js134335794941989715 0
 83C:\SE6362-SWArch-Project\frontend\node_modules\fs-extra\lib\ensure\symlink-paths.js134335840208572065 0
@@ -1492,8 +1509,6 @@
 105C:\SE6362-SWArch-Project\frontend\node_modules\@swc\helpers\_\_class_apply_descriptor_update\package.json134335794934920549 0
 81C:\SE6362-SWArch-Project\frontend\node_modules\@parcel\events\lib\ValueEmitter.js134335794920657480 0
 98C:\SE6362-SWArch-Project\frontend\node_modules\msgpackr-extract\node_modules\detect-libc\README.md134335794952204880 0
-78C:\SE6362-SWArch-Project\frontend\node_modules\fs-extra\lib\mkdirs\make-dir.js134335840208396022 0
-90C:\SE6362-SWArch-Project\frontend\node_modules\@parcel\transformer-js\lib\JSTransformer.js134335794929207234 0
 76C:\SE6362-SWArch-Project\frontend\node_modules\@swc\helpers\esm\_to_array.js134335794938177749 0
 112C:\SE6362-SWArch-Project\frontend\node_modules\@swc\helpers\cjs\_class_check_private_static_field_descriptor.cjs134335794936522155 0
 107C:\SE6362-SWArch-Project\frontend\node_modules\msgpackr-extract\node_modules\detect-libc\lib\detect-libc.js134335794952204880 0
@@ -1573,6 +1588,7 @@
 87C:\SE6362-SWArch-Project\frontend\node_modules\fast-glob\out\providers\filters\entry.js134335840207716025 0
 80C:\SE6362-SWArch-Project\frontend\node_modules\micromatch\node_modules\picomatch134335847112838550 1
 75C:\SE6362-SWArch-Project\frontend\node_modules\@parcel\resolver-default\src134335846907558717 1
+151C:\SE6362-SWArch-Project\frontend\node_modules\.cache\gh-pages\https!github.com!Kalani-Kawaguchi!SE6362-SWArch-Project.git\.git\hooks\pre-rebase.sample134335871860563533 0
 104C:\SE6362-SWArch-Project\frontend\node_modules\lmdb\dependencies\lmdb-data-v1\libraries\liblmdb\mtest2.c134335794950657404 0
 62C:\SE6362-SWArch-Project\frontend\node_modules\clone\README.md134335794947834441 0
 89C:\SE6362-SWArch-Project\frontend\node_modules\micromatch\node_modules\picomatch\index.js134335840206995170 0
@@ -1708,6 +1724,7 @@
 105C:\SE6362-SWArch-Project\frontend\node_modules\@parcel\runtime-service-worker\lib\ServiceWorkerRuntime.js134335794925007825 0
 85C:\SE6362-SWArch-Project\frontend\node_modules\@swc\helpers\esm\_wrap_native_super.js134335794938340731 0
 66C:\SE6362-SWArch-Project\frontend\node_modules\is-number\README.md134335840207076610 0
+177C:\SE6362-SWArch-Project\frontend\node_modules\.cache\gh-pages\https!github.com!Kalani-Kawaguchi!SE6362-SWArch-Project.git\.git\objects\91\f5a376d8bdd14a1de48fc2227ce35d8c4c0643134335871967285465 0
 82C:\SE6362-SWArch-Project\frontend\node_modules\lmdb\dependencies\lz4\lib\lz4file.c134335794951337099 0
 79C:\SE6362-SWArch-Project\frontend\node_modules\@parcel\transformer-posthtml\lib134335846927126190 1
 82C:\SE6362-SWArch-Project\frontend\node_modules\lmdb\dependencies\lz4\lib\lz4file.h134335794951347961 0
@@ -1774,8 +1791,8 @@
 106C:\SE6362-SWArch-Project\frontend\node_modules\lmdb\dependencies\lmdb-data-v1\libraries\liblmdb\mdb_copy.1134335794950509065 0
 86C:\SE6362-SWArch-Project\frontend\node_modules\@parcel\core\test\TargetRequest.test.js134335794919243912 0
 93C:\SE6362-SWArch-Project\frontend\node_modules\@swc\helpers\cjs\_async_generator_delegate.cjs134335794936416310 0
-83C:\SE6362-SWArch-Project\frontend\node_modules\caniuse-lite\data\features\tls1-1.js134335794944655655 0
 106C:\SE6362-SWArch-Project\frontend\node_modules\lmdb\dependencies\lmdb-data-v1\libraries\liblmdb\mdb_copy.c134335794950509065 0
+83C:\SE6362-SWArch-Project\frontend\node_modules\caniuse-lite\data\features\tls1-1.js134335794944655655 0
 86C:\SE6362-SWArch-Project\frontend\node_modules\caniuse-lite\data\features\dragndrop.js134335794942281992 0
 68C:\SE6362-SWArch-Project\frontend\node_modules\async\eachOfSeries.js134335840208829805 0
 74C:\SE6362-SWArch-Project\frontend\node_modules\async\internal\wrapAsync.js134335840211131843 0
@@ -1797,6 +1814,7 @@
 91C:\SE6362-SWArch-Project\frontend\node_modules\caniuse-lite\data\features\array-includes.js134335794940171134 0
 88C:\SE6362-SWArch-Project\frontend\node_modules\@parcel\core\src\requests\EntryRequest.js134335794918921760 0
 104C:\SE6362-SWArch-Project\frontend\node_modules\lmdb\dependencies\lmdb-data-v1\libraries\liblmdb\mtest5.c134335794950677516 0
+147C:\SE6362-SWArch-Project\frontend\node_modules\.cache\gh-pages\https!github.com!Kalani-Kawaguchi!SE6362-SWArch-Project.git\.git\refs\heads\gh-pages134335871967339441 0
 78C:\SE6362-SWArch-Project\frontend\node_modules\caniuse-lite\data\regions\IL.js134335794946229343 0
 72C:\SE6362-SWArch-Project\frontend\node_modules\@parcel\watcher\src\macos134335846942525376 1
 91C:\SE6362-SWArch-Project\frontend\node_modules\@parcel\transformer-postcss\src\constants.js134335794929506859 0
@@ -1992,6 +2010,8 @@
 86C:\SE6362-SWArch-Project\frontend\node_modules\@parcel\runtime-browser-hmr\src\loaders134335846908197021 1
 77C:\SE6362-SWArch-Project\frontend\node_modules\fs-extra\lib\move\move-sync.js134335840208396022 0
 72C:\SE6362-SWArch-Project\frontend\node_modules\fs-extra\lib\move\move.js134335840208465840 0
+78C:\SE6362-SWArch-Project\frontend\node_modules\fs-extra\lib\mkdirs\make-dir.js134335840208396022 0
+90C:\SE6362-SWArch-Project\frontend\node_modules\@parcel\transformer-js\lib\JSTransformer.js134335794929207234 0
 78C:\SE6362-SWArch-Project\frontend\node_modules\caniuse-lite\data\regions\TL.js134335794947189485 0
 75C:\SE6362-SWArch-Project\frontend\node_modules\fs-extra\lib\mkdirs\utils.js134335840208642187 0
 76C:\SE6362-SWArch-Project\frontend\node_modules\fs-extra\lib\json\jsonfile.js134335840208337842 0
@@ -2002,6 +2022,7 @@
 85C:\SE6362-SWArch-Project\frontend\node_modules\@parcel\core\test\ParcelConfig.test.js134335794919172867 0
 77C:\SE6362-SWArch-Project\frontend\node_modules\fs-extra\lib\copy\copy-sync.js134335840207160303 0
 66C:\SE6362-SWArch-Project\frontend\node_modules\email-addresses\lib134335847086334600 1
+177C:\SE6362-SWArch-Project\frontend\node_modules\.cache\gh-pages\https!github.com!Kalani-Kawaguchi!SE6362-SWArch-Project.git\.git\objects\d8\108d2687c904cfa5391932639894b30693b7ca134335871965415887 0
 78C:\SE6362-SWArch-Project\frontend\node_modules\caniuse-lite\data\regions\ML.js134335794946568994 0
 64C:\SE6362-SWArch-Project\frontend\node_modules\@parcel\utils\src134335846937208790 1
 72C:\SE6362-SWArch-Project\frontend\node_modules\fs-extra\lib\copy\copy.js134335840207405789 0
@@ -2260,6 +2281,7 @@
 62C:\SE6362-SWArch-Project\frontend\node_modules\clone\clone.iml134335794947834441 0
 81C:\SE6362-SWArch-Project\frontend\node_modules\baseline-browser-mapping\README.md134335794939862723 0
 64C:\SE6362-SWArch-Project\frontend\node_modules\@parcel\core\test134335846875020664 1
+132C:\SE6362-SWArch-Project\frontend\node_modules\.cache\gh-pages\https!github.com!Kalani-Kawaguchi!SE6362-SWArch-Project.git\.git\logs134335871950800997 1
 60C:\SE6362-SWArch-Project\frontend\node_modules\clone\LICENSE134335794947834441 0
 88C:\SE6362-SWArch-Project\frontend\node_modules\@parcel\reporter-dev-server\src\templates134335846906297132 1
 70C:\SE6362-SWArch-Project\frontend\node_modules\chrome-trace-event\dist134335847079967170 1
@@ -2455,7 +2477,6 @@
 78C:\SE6362-SWArch-Project\frontend\node_modules\caniuse-lite\data\regions\NO.js134335794946760683 0
 78C:\SE6362-SWArch-Project\frontend\node_modules\caniuse-lite\data\regions\NU.js134335794946760683 0
 78C:\SE6362-SWArch-Project\frontend\node_modules\caniuse-lite\data\regions\NZ.js134335794946815173 0
-63C:\SE6362-SWArch-Project\frontend\node_modules\@nodelib\fs.walk134335846847858745 1
 78C:\SE6362-SWArch-Project\frontend\node_modules\caniuse-lite\data\regions\OM.js134335794946840032 0
 78C:\SE6362-SWArch-Project\frontend\node_modules\caniuse-lite\data\regions\PF.js134335794946869290 0
 78C:\SE6362-SWArch-Project\frontend\node_modules\caniuse-lite\data\regions\PK.js134335794946905662 0
@@ -2464,6 +2485,7 @@
 78C:\SE6362-SWArch-Project\frontend\node_modules\caniuse-lite\data\regions\PN.js134335794946905662 0
 78C:\SE6362-SWArch-Project\frontend\node_modules\caniuse-lite\data\regions\PS.js134335794946905662 0
 93C:\SE6362-SWArch-Project\frontend\node_modules\caniuse-lite\data\features\css-text-spacing.js134335794941857576 0
+159C:\SE6362-SWArch-Project\frontend\node_modules\.cache\gh-pages\https!github.com!Kalani-Kawaguchi!SE6362-SWArch-Project.git\.git\hooks\prepare-commit-msg.sample134335871860563533 0
 78C:\SE6362-SWArch-Project\frontend\node_modules\caniuse-lite\data\regions\PW.js134335794946905662 0
 70C:\SE6362-SWArch-Project\frontend\node_modules\@parcel\packager-js\lib134335846897847610 1
 90C:\SE6362-SWArch-Project\frontend\node_modules\caniuse-lite\data\features\input-pattern.js134335794942993182 0
@@ -2480,6 +2502,7 @@
 90C:\SE6362-SWArch-Project\frontend\node_modules\@parcel\runtime-service-worker\package.json134335794925110944 0
 78C:\SE6362-SWArch-Project\frontend\node_modules\caniuse-lite\data\regions\SD.js134335794947005735 0
 95C:\SE6362-SWArch-Project\frontend\node_modules\@parcel\watcher\node_modules\detect-libc\LICENSE134335794931214610 0
+152C:\SE6362-SWArch-Project\frontend\node_modules\.cache\gh-pages\https!github.com!Kalani-Kawaguchi!SE6362-SWArch-Project.git\.git\logs\refs\heads\gh-pages134335871967444956 0
 78C:\SE6362-SWArch-Project\frontend\node_modules\caniuse-lite\data\regions\SK.js134335794947083052 0
 90C:\SE6362-SWArch-Project\frontend\node_modules\@parcel\transformer-js\src\JSTransformer.js134335794929267432 0
 85C:\SE6362-SWArch-Project\frontend\node_modules\caniuse-lite\data\features\progress.js134335794943905470 0
@@ -2689,8 +2712,6 @@
 93C:\SE6362-SWArch-Project\frontend\node_modules\caniuse-lite\data\features\css-writing-mode.js134335794941989715 0
 92C:\SE6362-SWArch-Project\frontend\node_modules\caniuse-lite\data\features\form-validation.js134335794942601454 0
 91C:\SE6362-SWArch-Project\frontend\node_modules\caniuse-lite\data\features\css3-boxsizing.js134335794941989715 0
-79C:\SE6362-SWArch-Project\frontend\node_modules\@swc\helpers\esm\_ts_metadata.js134335794938240024 0
-88C:\SE6362-SWArch-Project\frontend\node_modules\caniuse-lite\data\features\css3-colors.js134335794941989715 0
 75C:\SE6362-SWArch-Project\frontend\node_modules\@parcel\utils\src\urlJoin.js134335794930761968 0
 94C:\SE6362-SWArch-Project\frontend\node_modules\caniuse-lite\data\features\css3-cursors-grab.js134335794941989715 0
 91C:\SE6362-SWArch-Project\frontend\node_modules\@swc\helpers\_\_new_arrow_check\package.json134335794935672470 0
@@ -2777,6 +2798,7 @@
 97C:\SE6362-SWArch-Project\frontend\node_modules\caniuse-lite\data\features\intersectionobserver.js134335794943028801 0
 84C:\SE6362-SWArch-Project\frontend\node_modules\@swc\helpers\esm\_set_prototype_of.js134335794938020981 0
 68C:\SE6362-SWArch-Project\frontend\node_modules\@swc\counter\index.js134335794934546735 0
+151C:\SE6362-SWArch-Project\frontend\node_modules\.cache\gh-pages\https!github.com!Kalani-Kawaguchi!SE6362-SWArch-Project.git\.git\hooks\pre-commit.sample134335871860563533 0
 65C:\SE6362-SWArch-Project\frontend\node_modules\async\mapSeries.js134335840210038145 0
 86C:\SE6362-SWArch-Project\frontend\node_modules\@parcel\node-resolver-core\package.json134335794921950541 0
 93C:\SE6362-SWArch-Project\frontend\node_modules\caniuse-lite\data\features\intl-pluralrules.js134335794943028801 0
@@ -2924,6 +2946,7 @@
 78C:\SE6362-SWArch-Project\frontend\node_modules\@parcel\profiler\lib\types.d.ts134335794923507937 0
 93C:\SE6362-SWArch-Project\frontend\node_modules\caniuse-lite\data\features\view-transitions.js134335794944841322 0
 99C:\SE6362-SWArch-Project\frontend\node_modules\caniuse-lite\data\features\viewport-unit-variants.js134335794944841322 0
+140C:\SE6362-SWArch-Project\frontend\node_modules\.cache\gh-pages\https!github.com!Kalani-Kawaguchi!SE6362-SWArch-Project.git\.git\objects\info134335871860677132 1
 91C:\SE6362-SWArch-Project\frontend\node_modules\caniuse-lite\data\features\viewport-units.js134335794944841322 0
 72C:\SE6362-SWArch-Project\frontend\node_modules\@parcel\optimizer-css\src134335846889976080 1
 93C:\SE6362-SWArch-Project\frontend\node_modules\caniuse-lite\data\features\wasm-bulk-memory.js134335794944906213 0
@@ -2989,6 +3012,7 @@
 70C:\SE6362-SWArch-Project\frontend\node_modules\browserslist\error.d.ts134335794939997910 0
 83C:\SE6362-SWArch-Project\frontend\node_modules\@swc\helpers\esm\_new_arrow_check.js134335794937993577 0
 89C:\SE6362-SWArch-Project\frontend\node_modules\@swc\helpers\esm\_await_async_generator.js134335794937374777 0
+151C:\SE6362-SWArch-Project\frontend\node_modules\.cache\gh-pages\https!github.com!Kalani-Kawaguchi!SE6362-SWArch-Project.git\.git\hooks\commit-msg.sample134335871860563533 0
 68C:\SE6362-SWArch-Project\frontend\node_modules\browserslist\error.js134335794939997910 0
 68C:\SE6362-SWArch-Project\frontend\node_modules\browserslist\index.js134335794939997910 0
 67C:\SE6362-SWArch-Project\frontend\node_modules\browserslist\LICENSE134335794939935418 0
@@ -3071,6 +3095,7 @@
 63C:\SE6362-SWArch-Project\frontend\node_modules\async\forever.js134335840209327987 0
 63C:\SE6362-SWArch-Project\frontend\node_modules\async\groupBy.js134335840209422926 0
 68C:\SE6362-SWArch-Project\frontend\node_modules\async\groupByLimit.js134335840209422926 0
+147C:\SE6362-SWArch-Project\frontend\node_modules\.cache\gh-pages\https!github.com!Kalani-Kawaguchi!SE6362-SWArch-Project.git\.git\hooks\update.sample134335871860563533 0
 69C:\SE6362-SWArch-Project\frontend\node_modules\async\groupBySeries.js134335840209422926 0
 84C:\SE6362-SWArch-Project\frontend\node_modules\@swc\helpers\cjs\_define_property.cjs134335794936736458 0
 62C:\SE6362-SWArch-Project\frontend\node_modules\async\inject.js134335840209741517 0
@@ -3558,7 +3583,6 @@
 67C:\SE6362-SWArch-Project\frontend\node_modules\@swc\core\index.d.ts134335794934387504 0
 65C:\SE6362-SWArch-Project\frontend\node_modules\@swc\core\index.js134335794934387504 0
 91C:\SE6362-SWArch-Project\frontend\node_modules\@parcel\utils\test\input\sourcemap\inline.js134335794930894876 0
-71C:\SE6362-SWArch-Project\frontend\node_modules\@swc\core\postinstall.js134335794934387504 0
 67C:\SE6362-SWArch-Project\frontend\node_modules\@swc\core\spack.d.ts134335794934387504 0
 66C:\SE6362-SWArch-Project\frontend\node_modules\@swc\core\util.d.ts134335794934484491 0
 67C:\SE6362-SWArch-Project\frontend\node_modules\@swc\core\Visitor.js134335794934281382 0
@@ -3581,6 +3605,7 @@
 64C:\SE6362-SWArch-Project\frontend\node_modules\@parcel\types\lib134335846929454769 1
 66C:\SE6362-SWArch-Project\frontend\node_modules\@parcel\packager-js134335846897906780 1
 68C:\SE6362-SWArch-Project\frontend\node_modules\@parcel\packager-wasm134335846901046573 1
+138C:\SE6362-SWArch-Project\frontend\node_modules\.cache\gh-pages\https!github.com!Kalani-Kawaguchi!SE6362-SWArch-Project.git\.git\refs\heads134335871967444956 1
 61C:\SE6362-SWArch-Project\frontend\node_modules\@parcel\plugin134335846901619500 1
 74C:\SE6362-SWArch-Project\frontend\node_modules\@parcel\reporter-dev-server134335846905316288 1
 70C:\SE6362-SWArch-Project\frontend\node_modules\@parcel\reporter-tracer134335846907053290 1
@@ -3633,6 +3658,7 @@
 81C:\SE6362-SWArch-Project\frontend\node_modules\@parcel\workers\src\core-worker.js134335794932041840 0
 75C:\SE6362-SWArch-Project\frontend\node_modules\@parcel\workers\src\types.js134335794932219033 0
 70C:\SE6362-SWArch-Project\frontend\node_modules\@parcel\workers\src\web134335846947599319 1
+190C:\SE6362-SWArch-Project\frontend\node_modules\.cache\gh-pages\https!github.com!Kalani-Kawaguchi!SE6362-SWArch-Project.git\.git\objects\pack\pack-dc5191f3cc039594df4bcb63b5678b3cccf9bcf2.idx134335871950054418 0
 80C:\SE6362-SWArch-Project\frontend\node_modules\@parcel\workers\src\WorkerFarm.js134335794932041840 0
 82C:\SE6362-SWArch-Project\frontend\node_modules\@parcel\workers\src\web\WebChild.js134335794932219033 0
 83C:\SE6362-SWArch-Project\frontend\node_modules\@parcel\core\test\serializer.test.js134335794920095245 0
@@ -3830,6 +3856,7 @@
 97C:\SE6362-SWArch-Project\frontend\node_modules\@parcel\source-map\parcel_sourcemap_node\artifacts134335846918903341 1
 96C:\SE6362-SWArch-Project\frontend\node_modules\@parcel\source-map\parcel_sourcemap_node\build.js134335794928626218 0
 98C:\SE6362-SWArch-Project\frontend\node_modules\@parcel\source-map\parcel_sourcemap_node\Cargo.toml134335794928205424 0
+133C:\SE6362-SWArch-Project\frontend\node_modules\.cache\gh-pages\https!github.com!Kalani-Kawaguchi!SE6362-SWArch-Project.git\.git\index134335871967339441 0
 91C:\SE6362-SWArch-Project\frontend\node_modules\@parcel\source-map\parcel_sourcemap_node\src134335846918969984 1
 98C:\SE6362-SWArch-Project\frontend\node_modules\@parcel\source-map\parcel_sourcemap_node\src\lib.rs134335794928663533 0
 121C:\SE6362-SWArch-Project\frontend\node_modules\@parcel\source-map\parcel_sourcemap_node\artifacts\index.darwin-arm64.node134335794928324585 0
@@ -3997,6 +4024,7 @@
 77C:\SE6362-SWArch-Project\frontend\node_modules\@parcel\graph\test\integration134335846887287560 1
 74C:\SE6362-SWArch-Project\frontend\node_modules\@parcel\graph\src\BitSet.js134335794921178729 0
 80C:\SE6362-SWArch-Project\frontend\node_modules\@parcel\graph\src\ContentGraph.js134335794921220930 0
+156C:\SE6362-SWArch-Project\frontend\node_modules\.cache\gh-pages\https!github.com!Kalani-Kawaguchi!SE6362-SWArch-Project.git\.git\refs\remotes\origin\gh-pages134335872018330913 0
 73C:\SE6362-SWArch-Project\frontend\node_modules\@parcel\graph\src\Graph.js134335794921220930 0
 81C:\SE6362-SWArch-Project\frontend\node_modules\@parcel\graph\src\shared-buffer.js134335794921288106 0
 81C:\SE6362-SWArch-Project\frontend\node_modules\@parcel\graph\lib\AdjacencyList.js134335794921053765 0
@@ -4161,6 +4189,7 @@
 92C:\SE6362-SWArch-Project\frontend\node_modules\@parcel\bundler-default\lib\DefaultBundler.js134335794917217158 0
 66C:\SE6362-SWArch-Project\frontend\node_modules\@nodelib\fs.scandir134335846845791777 1
 63C:\SE6362-SWArch-Project\frontend\node_modules\@nodelib\fs.stat134335846847009838 1
+63C:\SE6362-SWArch-Project\frontend\node_modules\@nodelib\fs.walk134335846847858745 1
 71C:\SE6362-SWArch-Project\frontend\node_modules\@nodelib\fs.walk\LICENSE134335840206357133 0
 78C:\SE6362-SWArch-Project\frontend\node_modules\@nodelib\fs.walk\out\index.d.ts134335840208337842 0
 76C:\SE6362-SWArch-Project\frontend\node_modules\@nodelib\fs.walk\out\index.js134335840207495837 0
@@ -4232,6 +4261,57 @@
 77C:\SE6362-SWArch-Project\frontend\node_modules\@lezer\common\dist\index.d.cts134335794916827572 0
 76C:\SE6362-SWArch-Project\frontend\node_modules\@lezer\common\dist\index.d.ts134335794916872658 0
 74C:\SE6362-SWArch-Project\frontend\node_modules\@lezer\common\dist\index.js134335794916872658 0
+122C:\SE6362-SWArch-Project\frontend\node_modules\.cache\gh-pages\https!github.com!Kalani-Kawaguchi!SE6362-SWArch-Project.git134335871962005656 1
+127C:\SE6362-SWArch-Project\frontend\node_modules\.cache\gh-pages\https!github.com!Kalani-Kawaguchi!SE6362-SWArch-Project.git\.git134335871967468778 1
+143C:\SE6362-SWArch-Project\frontend\node_modules\.cache\gh-pages\https!github.com!Kalani-Kawaguchi!SE6362-SWArch-Project.git\frontend.ad93b51f.js134335871964522690 0
+147C:\SE6362-SWArch-Project\frontend\node_modules\.cache\gh-pages\https!github.com!Kalani-Kawaguchi!SE6362-SWArch-Project.git\frontend.ad93b51f.js.map134335871962130061 0
+147C:\SE6362-SWArch-Project\frontend\node_modules\.cache\gh-pages\https!github.com!Kalani-Kawaguchi!SE6362-SWArch-Project.git\frontend.ddde9784.js.map134335871962130061 0
+133C:\SE6362-SWArch-Project\frontend\node_modules\.cache\gh-pages\https!github.com!Kalani-Kawaguchi!SE6362-SWArch-Project.git\index.html134335871962074345 0
+142C:\SE6362-SWArch-Project\frontend\node_modules\.cache\gh-pages\https!github.com!Kalani-Kawaguchi!SE6362-SWArch-Project.git\frontend\.gitignore134335871950895995 0
+174C:\SE6362-SWArch-Project\frontend\node_modules\.cache\gh-pages\https!github.com!Kalani-Kawaguchi!SE6362-SWArch-Project.git\frontend\.parcel-cache\70dba4b52c152bd4-BundleGraph134335871950911106 0
+175C:\SE6362-SWArch-Project\frontend\node_modules\.cache\gh-pages\https!github.com!Kalani-Kawaguchi!SE6362-SWArch-Project.git\frontend\.parcel-cache\cfd948ad50eeb106-RequestGraph134335871950911106 0
+154C:\SE6362-SWArch-Project\frontend\node_modules\.cache\gh-pages\https!github.com!Kalani-Kawaguchi!SE6362-SWArch-Project.git\frontend\.parcel-cache\data.mdb134335871951122880 0
+173C:\SE6362-SWArch-Project\frontend\node_modules\.cache\gh-pages\https!github.com!Kalani-Kawaguchi!SE6362-SWArch-Project.git\frontend\.parcel-cache\e1c7b57f833f142e-AssetGraph134335871951143655 0
+154C:\SE6362-SWArch-Project\frontend\node_modules\.cache\gh-pages\https!github.com!Kalani-Kawaguchi!SE6362-SWArch-Project.git\frontend\.parcel-cache\lock.mdb134335871951143655 0
+175C:\SE6362-SWArch-Project\frontend\node_modules\.cache\gh-pages\https!github.com!Kalani-Kawaguchi!SE6362-SWArch-Project.git\frontend\.parcel-cache\snapshot-cfd948ad50eeb106.txt134335871951143655 0
+142C:\SE6362-SWArch-Project\frontend\node_modules\.cache\gh-pages\https!github.com!Kalani-Kawaguchi!SE6362-SWArch-Project.git\.git\COMMIT_EDITMSG134335871967339441 0
+134C:\SE6362-SWArch-Project\frontend\node_modules\.cache\gh-pages\https!github.com!Kalani-Kawaguchi!SE6362-SWArch-Project.git\.git\config134335871966279455 0
+139C:\SE6362-SWArch-Project\frontend\node_modules\.cache\gh-pages\https!github.com!Kalani-Kawaguchi!SE6362-SWArch-Project.git\.git\description134335871860517989 0
+138C:\SE6362-SWArch-Project\frontend\node_modules\.cache\gh-pages\https!github.com!Kalani-Kawaguchi!SE6362-SWArch-Project.git\.git\FETCH_HEAD134335871959017665 0
+132C:\SE6362-SWArch-Project\frontend\node_modules\.cache\gh-pages\https!github.com!Kalani-Kawaguchi!SE6362-SWArch-Project.git\.git\HEAD134335871961323333 0
+133C:\SE6362-SWArch-Project\frontend\node_modules\.cache\gh-pages\https!github.com!Kalani-Kawaguchi!SE6362-SWArch-Project.git\.git\hooks134335871860563533 1
+132C:\SE6362-SWArch-Project\frontend\node_modules\.cache\gh-pages\https!github.com!Kalani-Kawaguchi!SE6362-SWArch-Project.git\.git\info134335871860563533 1
+135C:\SE6362-SWArch-Project\frontend\node_modules\.cache\gh-pages\https!github.com!Kalani-Kawaguchi!SE6362-SWArch-Project.git\.git\objects134335871967676277 1
+139C:\SE6362-SWArch-Project\frontend\node_modules\.cache\gh-pages\https!github.com!Kalani-Kawaguchi!SE6362-SWArch-Project.git\.git\packed-refs134335871950663407 0
+132C:\SE6362-SWArch-Project\frontend\node_modules\.cache\gh-pages\https!github.com!Kalani-Kawaguchi!SE6362-SWArch-Project.git\.git\refs134335871950703161 1
+137C:\SE6362-SWArch-Project\frontend\node_modules\.cache\gh-pages\https!github.com!Kalani-Kawaguchi!SE6362-SWArch-Project.git\.git\refs\tags134335871875022605 1
+143C:\SE6362-SWArch-Project\frontend\node_modules\.cache\gh-pages\https!github.com!Kalani-Kawaguchi!SE6362-SWArch-Project.git\.git\refs\heads\main134335871950752999 0
+138C:\SE6362-SWArch-Project\frontend\node_modules\.cache\gh-pages\https!github.com!Kalani-Kawaguchi!SE6362-SWArch-Project.git\.git\objects\43134335871967339441 1
+138C:\SE6362-SWArch-Project\frontend\node_modules\.cache\gh-pages\https!github.com!Kalani-Kawaguchi!SE6362-SWArch-Project.git\.git\objects\5d134335871967339441 1
+138C:\SE6362-SWArch-Project\frontend\node_modules\.cache\gh-pages\https!github.com!Kalani-Kawaguchi!SE6362-SWArch-Project.git\.git\objects\74134335871965098865 1
+138C:\SE6362-SWArch-Project\frontend\node_modules\.cache\gh-pages\https!github.com!Kalani-Kawaguchi!SE6362-SWArch-Project.git\.git\objects\91134335871967303069 1
+138C:\SE6362-SWArch-Project\frontend\node_modules\.cache\gh-pages\https!github.com!Kalani-Kawaguchi!SE6362-SWArch-Project.git\.git\objects\9f134335871965323411 1
+138C:\SE6362-SWArch-Project\frontend\node_modules\.cache\gh-pages\https!github.com!Kalani-Kawaguchi!SE6362-SWArch-Project.git\.git\objects\d8134335871965439329 1
+140C:\SE6362-SWArch-Project\frontend\node_modules\.cache\gh-pages\https!github.com!Kalani-Kawaguchi!SE6362-SWArch-Project.git\.git\objects\pack134335871950849564 1
+191C:\SE6362-SWArch-Project\frontend\node_modules\.cache\gh-pages\https!github.com!Kalani-Kawaguchi!SE6362-SWArch-Project.git\.git\objects\pack\pack-dc5191f3cc039594df4bcb63b5678b3cccf9bcf2.pack134335871964970989 0
+190C:\SE6362-SWArch-Project\frontend\node_modules\.cache\gh-pages\https!github.com!Kalani-Kawaguchi!SE6362-SWArch-Project.git\.git\objects\pack\pack-dc5191f3cc039594df4bcb63b5678b3cccf9bcf2.rev134335871950144883 0
+177C:\SE6362-SWArch-Project\frontend\node_modules\.cache\gh-pages\https!github.com!Kalani-Kawaguchi!SE6362-SWArch-Project.git\.git\objects\9f\3dccb959d01d2de1384edbd9733ffda6e37a4d134335871965323411 0
+177C:\SE6362-SWArch-Project\frontend\node_modules\.cache\gh-pages\https!github.com!Kalani-Kawaguchi!SE6362-SWArch-Project.git\.git\objects\74\7834b55dbe53428cdf2a0e1ccbfd20f07f23e6134335871965002125 0
+177C:\SE6362-SWArch-Project\frontend\node_modules\.cache\gh-pages\https!github.com!Kalani-Kawaguchi!SE6362-SWArch-Project.git\.git\objects\43\35d49dd87ec3f79e341b1223f818238c58dbb9134335871967303069 0
+137C:\SE6362-SWArch-Project\frontend\node_modules\.cache\gh-pages\https!github.com!Kalani-Kawaguchi!SE6362-SWArch-Project.git\.git\logs\HEAD134335871967339441 0
+137C:\SE6362-SWArch-Project\frontend\node_modules\.cache\gh-pages\https!github.com!Kalani-Kawaguchi!SE6362-SWArch-Project.git\.git\logs\refs134335871950800997 1
+143C:\SE6362-SWArch-Project\frontend\node_modules\.cache\gh-pages\https!github.com!Kalani-Kawaguchi!SE6362-SWArch-Project.git\.git\logs\refs\heads134335871967339441 1
+145C:\SE6362-SWArch-Project\frontend\node_modules\.cache\gh-pages\https!github.com!Kalani-Kawaguchi!SE6362-SWArch-Project.git\.git\logs\refs\remotes134335871950703161 1
+152C:\SE6362-SWArch-Project\frontend\node_modules\.cache\gh-pages\https!github.com!Kalani-Kawaguchi!SE6362-SWArch-Project.git\.git\logs\refs\remotes\origin134335872018330913 1
+140C:\SE6362-SWArch-Project\frontend\node_modules\.cache\gh-pages\https!github.com!Kalani-Kawaguchi!SE6362-SWArch-Project.git\.git\info\exclude134335871860563533 0
+155C:\SE6362-SWArch-Project\frontend\node_modules\.cache\gh-pages\https!github.com!Kalani-Kawaguchi!SE6362-SWArch-Project.git\.git\hooks\applypatch-msg.sample134335871860517989 0
+152C:\SE6362-SWArch-Project\frontend\node_modules\.cache\gh-pages\https!github.com!Kalani-Kawaguchi!SE6362-SWArch-Project.git\.git\hooks\post-update.sample134335871860563533 0
+155C:\SE6362-SWArch-Project\frontend\node_modules\.cache\gh-pages\https!github.com!Kalani-Kawaguchi!SE6362-SWArch-Project.git\.git\hooks\pre-applypatch.sample134335871860563533 0
+157C:\SE6362-SWArch-Project\frontend\node_modules\.cache\gh-pages\https!github.com!Kalani-Kawaguchi!SE6362-SWArch-Project.git\.git\hooks\pre-merge-commit.sample134335871860563533 0
+149C:\SE6362-SWArch-Project\frontend\node_modules\.cache\gh-pages\https!github.com!Kalani-Kawaguchi!SE6362-SWArch-Project.git\.git\hooks\pre-push.sample134335871860563533 0
+152C:\SE6362-SWArch-Project\frontend\node_modules\.cache\gh-pages\https!github.com!Kalani-Kawaguchi!SE6362-SWArch-Project.git\.git\hooks\pre-receive.sample134335871860563533 0
+157C:\SE6362-SWArch-Project\frontend\node_modules\.cache\gh-pages\https!github.com!Kalani-Kawaguchi!SE6362-SWArch-Project.git\.git\hooks\push-to-checkout.sample134335871860563533 0
+159C:\SE6362-SWArch-Project\frontend\node_modules\.cache\gh-pages\https!github.com!Kalani-Kawaguchi!SE6362-SWArch-Project.git\.git\hooks\sendemail-validate.sample134335871860563533 0
 80C:\SE6362-SWArch-Project\frontend\node_modules\.bin\baseline-browser-mapping.cmd134335794916493744 0
 64C:\SE6362-SWArch-Project\frontend\node_modules\.bin\browserslist134335794916493744 0
 68C:\SE6362-SWArch-Project\frontend\node_modules\.bin\browserslist.cmd134335794916493744 0
