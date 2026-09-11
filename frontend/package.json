@@ -4,9 +4,10 @@
   "description": "",
   "scripts": {
     "start": "parcel index.html",
-    "build": "parcel build index.html --public-url ./",
-    "predeploy": "parcel build index.html --public-url /SE6362-SWArch-Project/",
-    "deploy": "gh-pages -d dist"
+    "build": "parcel build index.html --dist-dir dist --public-url ./",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist",
+    "postdeploy": "rmdir /s /q .parcel-cache && rmdir /s /q dist"
   },
   "keywords": [],
   "author": "",
