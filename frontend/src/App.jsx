@@ -1,11 +1,15 @@
-import ProjPlan from './documents/PreliminaryProjectPlan.pdf';
-import { useEffect, useState } from 'react';
+import ProjPlan from "./documents/PreliminaryProjectPlan.pdf";
+import { useEffect, useState } from "react";
+
+const API_BASE_URL = process.env.API_BASE_URL;
 
 export default function App() {
-  const [backendStatus, setBackendStatus] = useState('Checking backend status...');
+  const [backendStatus, setBackendStatus] = useState(
+    "Checking backend status...",
+  );
 
   useEffect(() => {
-    fetch("https://backend-production-ffdf.up.railway.app/api/health")
+    fetch(`${API_BASE_URL}/api/health`)
       .then((response) => {
         if (!response.ok) {
           throw new Error("Backend request failed from the frontend");
@@ -19,7 +23,7 @@ export default function App() {
       .catch((error) => {
         console.error(error);
         setBackendStatus("Unable to connect to backend");
-      })
+      });
   }, []);
 
   return (
