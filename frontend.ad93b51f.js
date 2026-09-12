@@ -19072,21 +19072,36 @@ parcelHelpers.export(exports, "default", ()=>App);
 var _jsxDevRuntime = require("react/jsx-dev-runtime");
 var _preliminaryProjectPlanPdf = require("./documents/PreliminaryProjectPlan.pdf");
 var _preliminaryProjectPlanPdfDefault = parcelHelpers.interopDefault(_preliminaryProjectPlanPdf);
+var _react = require("react");
+var _s = $RefreshSig$();
 function App() {
+    _s();
+    const [backendStatus, setBackendStatus] = (0, _react.useState)('Checking backend status...');
+    (0, _react.useEffect)(()=>{
+        fetch("https://backend-production-ffdf.up.railway.app/api/health").then((response)=>{
+            if (!response.ok) throw new Error("Backend request failed from the frontend");
+            return response.text();
+        }).then((data)=>{
+            setBackendStatus(data);
+        }).catch((error)=>{
+            console.error(error);
+            setBackendStatus("Unable to connect to backend");
+        });
+    }, []);
     return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("main", {
         children: [
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("h1", {
                 children: "Software Architecture Project"
             }, void 0, false, {
                 fileName: "src/App.jsx",
-                lineNumber: 6,
+                lineNumber: 27,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("h2", {
                 children: "Group: Kalani Kawaguchi, Zhi Li, Jonathan Loper, Mitchell Vu"
             }, void 0, false, {
                 fileName: "src/App.jsx",
-                lineNumber: 7,
+                lineNumber: 28,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("a", {
@@ -19094,16 +19109,31 @@ function App() {
                 children: "Preliminary Project Plan"
             }, void 0, false, {
                 fileName: "src/App.jsx",
-                lineNumber: 8,
+                lineNumber: 29,
+                columnNumber: 7
+            }, this),
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("h3", {
+                children: "Backend Status"
+            }, void 0, false, {
+                fileName: "src/App.jsx",
+                lineNumber: 31,
+                columnNumber: 7
+            }, this),
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
+                children: backendStatus
+            }, void 0, false, {
+                fileName: "src/App.jsx",
+                lineNumber: 32,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "src/App.jsx",
-        lineNumber: 5,
+        lineNumber: 26,
         columnNumber: 5
     }, this);
 }
+_s(App, "r6QxcMUaD1661SVFybODtRBRBbg=");
 _c = App;
 var _c;
 $RefreshReg$(_c, "App");
@@ -19113,7 +19143,7 @@ $RefreshReg$(_c, "App");
   globalThis.$RefreshReg$ = prevRefreshReg;
   globalThis.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-dev-runtime":"dVPUn","./documents/PreliminaryProjectPlan.pdf":"getRJ","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"7h6Pi"}],"getRJ":[function(require,module,exports,__globalThis) {
+},{"react/jsx-dev-runtime":"dVPUn","./documents/PreliminaryProjectPlan.pdf":"getRJ","react":"jMk1U","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"7h6Pi"}],"getRJ":[function(require,module,exports,__globalThis) {
 module.exports = module.bundle.resolve("PreliminaryProjectPlan.50c716af.pdf") + "?" + Date.now();
 
 },{}],"jnFvT":[function(require,module,exports,__globalThis) {
