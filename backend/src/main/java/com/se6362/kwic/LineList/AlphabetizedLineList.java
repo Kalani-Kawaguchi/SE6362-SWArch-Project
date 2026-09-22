@@ -1,4 +1,4 @@
-package com.se6362.LineList;
+package com.se6362.kwic.LineList;
 
 import java.util.ArrayList;
 

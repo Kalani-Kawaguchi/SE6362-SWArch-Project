@@ -1,8 +1,8 @@
-package com.se6362.LineList;
+package com.se6362.kwic.LineList;
 
 import java.util.ArrayList;
 
-public class LineList
+public abstract class LineList
 {
     protected final ArrayList<ArrayList<String>> lines = new ArrayList<>();
 
@@ -20,7 +20,7 @@ public class LineList
         }
     }
 
-    public void setWord(int lineNumber, int wordNumber, String word)
+    protected void setWord(int lineNumber, int wordNumber, String word)
     {
         try
         {
