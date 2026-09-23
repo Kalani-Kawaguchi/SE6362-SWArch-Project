@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public abstract class LineList
 {
-    protected final ArrayList<ArrayList<String>> lines = new ArrayList<>();
+    private final ArrayList<ArrayList<String>> lines = new ArrayList<>();
 
     public String getWord(int lineNumber, int wordNumber)
     {
@@ -79,6 +79,15 @@ public abstract class LineList
         return lines.size();
     }
 
+    protected void appendLine(LineList lineList, int lineNo)
+    {
+        int nextLine = this.getLineCount();
+        for (int wordNo = 0; wordNo < lineList.getWordCount(lineNo); wordNo++)
+        {
+            this.setWord(nextLine, wordNo, lineList.getWord(lineNo, wordNo));
+        }
+    }
+
     protected void deleteLine(int lineNumber)
     {
         try
@@ -103,5 +112,37 @@ public abstract class LineList
             output.append("\n");
         }
         System.out.println(output.toString());
+    }
+
+    protected static boolean isGreaterThan(LineList leftList, LineList rightList, int leftLineNo, int rightLineNo)
+    {
+        // a line that does not exist is always assumed to be greater than one that does
+        // exist
+        // this helps with implementation of merge-sort
+        if (leftLineNo >= leftList.getLineCount())
+        {
+            return true;
+        }
+        if (rightLineNo >= rightList.getLineCount())
+        {
+            return false;
+        }
+        int wordNo = 0;
+        while (wordNo < leftList.getWordCount(leftLineNo) && wordNo < rightList.getWordCount(rightLineNo))
+        {
+            String leftWord = leftList.getWord(leftLineNo, wordNo);
+            String rightWord = rightList.getWord(rightLineNo, wordNo);
+            int comp = leftWord.compareToIgnoreCase(rightWord);
+            if (comp > 0)
+            {
+                return true;
+            }
+            if (comp < 0)
+            {
+                return false;
+            }
+            wordNo++;
+        }
+        return wordNo < leftList.getWordCount(leftLineNo);
     }
 }

@@ -51,11 +51,9 @@ public class LineListTest
     void testCircShiftedLineList()
     {
         StorageLineList lineList = new StorageLineList();
-        CircShiftedLineList circularShifts = new CircShiftedLineList();
         lineList.addLine("a b c d e");
         lineList.addLine("aa bb cc dd ee ff");
-
-        circularShifts.processLines(lineList);
+        CircShiftedLineList circularShifts = new CircShiftedLineList(lineList);
 
         // Line 0: "a b c d e"
         assertEquals("a", circularShifts.getWord(0, 0));
@@ -145,7 +143,6 @@ public class LineListTest
     void testAlphabetizedLineList()
     {
         StorageLineList lineList = new StorageLineList();
-        AlphabetizedLineList alphabetizedLineList = new AlphabetizedLineList();
 
         lineList.addLine("aa aa aa");
         lineList.addLine("bb bb bb");
@@ -161,7 +158,7 @@ public class LineListTest
         lineList.addLine("cc aa bb");
         lineList.addLine("cc bb aa");
 
-        alphabetizedLineList.processLines(lineList);
+        AlphabetizedLineList alphabetizedLineList = new AlphabetizedLineList(lineList);
 
         // 0: "aa"
         assertEquals("aa", alphabetizedLineList.getWord(0, 0));

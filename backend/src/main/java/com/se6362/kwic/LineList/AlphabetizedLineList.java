@@ -4,38 +4,22 @@ import java.util.ArrayList;
 
 public class AlphabetizedLineList extends LineList
 {
-    public void processLines(LineList lineList)
+    public AlphabetizedLineList(LineList lineList)
     {
         for (int lineNo = 0; lineNo < lineList.getLineCount(); lineNo++)
         {
-            int nextLine = super.getLineCount();
-            for (int wordNo = 0; wordNo < lineList.getWordCount(lineNo); wordNo++)
-            {
-                super.setWord(nextLine, wordNo, lineList.getWord(lineNo, wordNo));
-            }
+            this.appendLine(lineList, lineNo);
         }
         quickSortLines(0, super.getLineCount() - 1);
     }
 
-    private boolean isGreaterThan(int leftLineNo, int rightLineNo)
+    public AlphabetizedLineList(AlphabetizedLineList oldList, AlphabetizedLineList newList)
     {
-        int wordNo = 0;
-        while (wordNo < super.getWordCount(leftLineNo) && wordNo < super.getWordCount(rightLineNo))
-        {
-            String leftWord = super.getWord(leftLineNo, wordNo);
-            String rightWord = super.getWord(rightLineNo, wordNo);
-            int comp = leftWord.compareToIgnoreCase(rightWord);
-            if (comp > 0)
-            {
-                return true;
-            }
-            if (comp < 0)
-            {
-                return false;
-            }
-            wordNo++;
-        }
-        return wordNo < super.getWordCount(leftLineNo);
+        this.mergeLines(oldList, newList);
+    }
+
+    public AlphabetizedLineList()
+    {
     }
 
     private void swapLines(int lineNo1, int lineNo2)
@@ -62,7 +46,7 @@ public class AlphabetizedLineList extends LineList
         int i = low;
         for (int j = low; j < high; j++)
         {
-            if (!this.isGreaterThan(j, high))
+            if (!LineList.isGreaterThan(this, this, j, high))
             {
                 swapLines(i, j);
                 i++;
@@ -79,6 +63,25 @@ public class AlphabetizedLineList extends LineList
             int pivot = partitionLines(low, high);
             quickSortLines(low, pivot - 1);
             quickSortLines(pivot + 1, high);
+        }
+    }
+
+    private void mergeLines(AlphabetizedLineList oldList, AlphabetizedLineList newList)
+    {
+        int oldListPointer = 0;
+        int newListPointer = 0;
+        while (oldListPointer + newListPointer < oldList.getLineCount() + newList.getLineCount())
+        {
+            if (LineList.isGreaterThan(oldList, newList, oldListPointer, newListPointer))
+            {
+                this.appendLine(newList, newListPointer);
+                newListPointer++;
+            }
+            else
+            {
+                this.appendLine(oldList, oldListPointer);
+                oldListPointer++;
+            }
         }
     }
 }
