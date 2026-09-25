@@ -41,6 +41,7 @@ const readOnlyInputStyle = {
 export default function KWIC() {
   const [fileName, setFileName] = useState("");
   const [fileSize, setFileSize] = useState("");
+  const [fileContents, setFileContents] = useState("");
 
   return (
     <div style={containerStyle}>
@@ -57,10 +58,16 @@ export default function KWIC() {
             if (!file) {
               setFileName("");
               setFileSize("");
+              setFileContents("");
               return;
             }
             setFileName(file.name);
             setFileSize(`${(file.size / 1024).toFixed(1)} KB`);
+            const reader = new FileReader();
+            reader.onload = () => {
+              setFileContents(reader.result);
+            };
+            reader.readAsText(file);
           }}
         />
       </div>
@@ -69,10 +76,11 @@ export default function KWIC() {
         <label htmlFor="file-name" style={labelStyle}>
           File Contents
         </label>
-        <textarea
+        <textarea 
           id="file-name"
+          rows = {5}
           type="text"
-          value={""}
+          value={fileContents}
           readOnly
           placeholder="No file selected"
           style={readOnlyInputStyle}
@@ -85,6 +93,7 @@ export default function KWIC() {
         </label>
         <textarea
           id="file-name"
+          rows = {5}
           type="text"
           value={""}
           readOnly
@@ -99,6 +108,7 @@ export default function KWIC() {
         </label>
         <textarea
           id="file-size"
+          rows = {5}
           type="text"
           value={""}
           readOnly
