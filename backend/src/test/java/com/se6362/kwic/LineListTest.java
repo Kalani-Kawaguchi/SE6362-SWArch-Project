@@ -6,9 +6,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.se6362.kwic.LineList.AlphabetizedLineList;
-import com.se6362.kwic.LineList.CircShiftedLineList;
-import com.se6362.kwic.LineList.StorageLineList;
+import com.se6362.kwic.core.Alphabetizer;
+import com.se6362.kwic.core.CircularShift;
+import com.se6362.kwic.core.LineStorage;
 
 // 1. Removed unnecessary com.se6362.kwic imports since you are already in this package.
 // 2. Cleaned up unused Mockito imports since this specific test uses pure Java logic.
@@ -23,7 +23,7 @@ public class LineListTest
     @Test
     void testStorageLineList()
     {
-        StorageLineList lineList = new StorageLineList();
+        LineStorage lineList = new LineStorage();
         lineList.addLine("I am testing this method.");
         lineList.addLine("Here is a second line to look at.");
 
@@ -50,10 +50,10 @@ public class LineListTest
     @Test
     void testCircShiftedLineList()
     {
-        StorageLineList lineList = new StorageLineList();
+        LineStorage lineList = new LineStorage();
         lineList.addLine("a b c d e");
         lineList.addLine("aa bb cc dd ee ff");
-        CircShiftedLineList circularShifts = new CircShiftedLineList(lineList);
+        CircularShift circularShifts = new CircularShift(lineList);
 
         // Line 0: "a b c d e"
         assertEquals("a", circularShifts.getWord(0, 0));
@@ -142,7 +142,7 @@ public class LineListTest
     @Test
     void testAlphabetizedLineList()
     {
-        StorageLineList lineList = new StorageLineList();
+        LineStorage lineList = new LineStorage();
 
         lineList.addLine("aa aa aa");
         lineList.addLine("bb bb bb");
@@ -158,7 +158,7 @@ public class LineListTest
         lineList.addLine("cc aa bb");
         lineList.addLine("cc bb aa");
 
-        AlphabetizedLineList alphabetizedLineList = new AlphabetizedLineList(lineList);
+        Alphabetizer alphabetizedLineList = new Alphabetizer(lineList);
 
         // 0: "aa"
         assertEquals("aa", alphabetizedLineList.getWord(0, 0));
