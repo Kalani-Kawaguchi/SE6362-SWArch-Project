@@ -1,5 +1,7 @@
 package com.se6362.kwic.controller;
 
+import java.util.Optional;
+import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -9,9 +11,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping ("/api")
 public class HealthController {
 
-    private final JdbcTemplate jdbcTemplate;
+    private final Optional<JdbcTemplate> jdbcTemplate;
 
-    public HealthController(JdbcTemplate jdbcTemplate) {
+    public HealthController(Optional<JdbcTemplate> jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
@@ -21,12 +23,15 @@ public class HealthController {
     }
 
     @GetMapping("/db-health")
-    public String dbHealth() {
-        Integer result = jdbcTemplate.queryForObject("SELECT 1", Integer.class);
+    public ResponseEntity<String> dbHealth() {
+        if (jdbcTemplate.isEmpty()) {
+            return ResponseEntity.status(503).body("Database is not configured in the local profile.");
+        }
+        Integer result = jdbcTemplate.get().queryForObject("SELECT 1", Integer.class);
         if (result != null && result == 1) {
-            return "Database connection is healthy!";
+            return ResponseEntity.ok("Database connection is healthy!");
         }
 
-        return "Database connection is not healthy!";
+        return ResponseEntity.status(503).body("Database connection is not healthy!");
     }
 }
