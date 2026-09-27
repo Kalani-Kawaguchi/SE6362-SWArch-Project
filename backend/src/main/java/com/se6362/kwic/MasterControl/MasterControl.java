@@ -6,9 +6,33 @@ import com.se6362.kwic.OutputManager.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MasterControl
 {
+    /** Runs the same KWIC pipeline for an in-memory request without shared output state. */
+    public static List<String> processLines(List<String> lines)
+    {
+        StorageLineList input = new StorageLineList();
+        for (String line : lines)
+        {
+            input.addLine(line);
+        }
+        AlphabetizedLineList sorted = processBatch(input);
+        List<String> result = new ArrayList<>();
+        for (int lineNo = 0; lineNo < sorted.getLineCount(); lineNo++)
+        {
+            List<String> words = new ArrayList<>();
+            for (int wordNo = 0; wordNo < sorted.getWordCount(lineNo); wordNo++)
+            {
+                words.add(sorted.getWord(lineNo, wordNo));
+            }
+            result.add(String.join(" ", words));
+        }
+        return List.copyOf(result);
+    }
+
     public static void runKwicSystem(String filePath, int batchSize)
     {
         int threadCount = Runtime.getRuntime().availableProcessors();
