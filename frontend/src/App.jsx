@@ -8,23 +8,23 @@ export default function App() {
     "Checking backend status...",
   );
 
-  useEffect(() => {
-    fetch(`${API_BASE_URL}/api/health`)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Backend request failed from the frontend");
-        }
+  // useEffect(() => {
+  //   fetch(`${API_BASE_URL}/api/health`)
+  //     .then((response) => {
+  //       if (!response.ok) {
+  //         throw new Error("Backend request failed from the frontend");
+  //       }
 
-        return response.text();
-      })
-      .then((data) => {
-        setBackendStatus(data);
-      })
-      .catch((error) => {
-        console.error(error);
-        setBackendStatus("Unable to connect to backend");
-      });
-  }, []);
+  //       return response.text();
+  //     })
+  //     .then((data) => {
+  //       setBackendStatus(data);
+  //     })
+  //     .catch((error) => {
+  //       console.error(error);
+  //       setBackendStatus("Unable to connect to backend");
+  //     });
+  // }, []);
 
   return (
     <main>
