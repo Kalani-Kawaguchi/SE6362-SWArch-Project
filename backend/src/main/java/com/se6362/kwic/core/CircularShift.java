@@ -1,36 +1,31 @@
 package com.se6362.kwic.core;
 
-import java.util.ArrayList;
-import java.util.Objects;
+public class CircularShift extends LineList
+{
 
-public class CircularShift extends LineList {
-    private final LineStorage lineStorage;
-
-    public CircularShift(LineStorage lineStorage) {
-        this.lineStorage = Objects.requireNonNull(lineStorage);
-    }
-
-    public void readLines() {
+    public void processLines(LineList lineList)
+    {
         clear();
 
-        for (int lineNumber = 0; lineNumber < lineStorage.getLineCount(); lineNumber++) {
-            ArrayList<String> inputLine = new ArrayList<>();
-            for (int wordNumber = 0; wordNumber < lineStorage.getWordCount(lineNumber); wordNumber++) {
-                inputLine.add(lineStorage.getWord(lineNumber, wordNumber));
-            }
-
-            genShifts(inputLine);
+        for (int lineNo = 0; lineNo < lineList.getLineCount(); lineNo++)
+        {
+            this.appendLine(lineList, lineNo);
+            this.genShifts(getLineCount() - 1);
         }
+
     }
 
-    private void genShifts(ArrayList<String> inputLine) {
-        int wordCount = inputLine.size();
-
-        for (int shiftOffset = 0; shiftOffset < wordCount; shiftOffset++) {
-            int shiftedLineNumber = getLineCount();
-            for (int wordNumber = 0; wordNumber < wordCount; wordNumber++) {
-                int sourceWordNumber = (shiftOffset + wordNumber) % wordCount;
-                setWord(shiftedLineNumber, wordNumber, inputLine.get(sourceWordNumber));
+    private void genShifts(int lineNo)
+    {
+        int wordCount = super.getWordCount(lineNo);
+        for (int i = 1; i < wordCount; i++)
+        {
+            for (int j = 0; j < wordCount; j++)
+            {
+                super.setWord(
+                        lineNo + i,
+                        j,
+                        super.getWord(lineNo, (i + j) % wordCount));
             }
         }
     }

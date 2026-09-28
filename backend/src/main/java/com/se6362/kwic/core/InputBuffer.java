@@ -1,71 +1,45 @@
 package com.se6362.kwic.core;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.Objects;
-import java.util.regex.Pattern;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
+import java.io.FileReader;
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.nio.file.Path;
 
-public class InputBuffer {
-    private static final ObjectMapper MAPPER = new ObjectMapper()
-            .enable(DeserializationFeature.FAIL_ON_TRAILING_TOKENS);
-    private static final Pattern WHITESPACE = Pattern.compile("\\s+", Pattern.UNICODE_CHARACTER_CLASS);
-    private final LineStorage lineStorage;
-    private int inputLineNumber = 0;
+public class InputBuffer implements AutoCloseable
+{
+    private static final ObjectMapper MAPPER = new ObjectMapper();
+    private final JsonParser parser;
 
-    public InputBuffer(LineStorage lineStorage) {
-        this.lineStorage = Objects.requireNonNull(lineStorage);
+    public InputBuffer(Path filePath) throws IOException
+    {
+        this.parser = MAPPER.createParser(new FileReader(filePath.toString()));
     }
 
-    public boolean getInputLine(BufferedReader reader) throws IOException {
-        String jsonLine;
+    /**
+     * Thread-safe method to read a JSON element.
+     * Returns an empty list when the file is fully processed.
+     */
+    public synchronized LineStorage getInputLine() throws IOException
+    {
+        LineStorage storage = new LineStorage();
 
-        while ((jsonLine = reader.readLine()) != null) {
-            inputLineNumber++;
-
-            if (jsonLine.isBlank()) {
-                continue; // Skip blank lines
-            }
-
-            String inputLine = WHITESPACE.matcher(parseJson(jsonLine)).replaceAll(" ").strip();
-            if (inputLine.isEmpty()) {
-                continue; // Skip lines that are empty
-            }
-
-            storeInput(inputLine);
-            return true;
+        JsonNode element = MAPPER.readTree(parser);
+        if (element != null)
+        {
+            storage.setLine(element.path("text").asText());
         }
 
-        lineStorage.clear(); // clear the storage when the end of file reached
-        return false; // End of file
+        return storage;
     }
 
-    private void storeInput(String inputLine) {
-        lineStorage.clear();
-        String[] words = inputLine.split(" ");
-
-        for (int wordNumber = 0; wordNumber < words.length; wordNumber++) {
-            lineStorage.setWord(0, wordNumber, words[wordNumber]);
+    @Override
+    public synchronized void close() throws IOException
+    {
+        if (parser != null)
+        {
+            parser.close();
         }
-    }
-
-    private String parseJson(String jsonLine) throws IOException {
-        JsonNode record;
-
-        try {
-            record = MAPPER.readTree(jsonLine);
-        } catch (JsonProcessingException e) {
-            throw new IOException("Failed to parse JSON line " + inputLineNumber + ": " + jsonLine + ".", e);
-        }
-
-        if (record == null || !record.isObject() || !record.path("text").isTextual()) {
-            throw new IOException("Input line " + inputLineNumber + " must be an object with a text string.");
-        }
-
-        return record.get("text").asText();
     }
 }

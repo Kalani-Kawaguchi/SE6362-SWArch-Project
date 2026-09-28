@@ -1,47 +1,78 @@
 package com.se6362.kwic.core;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.SQLException;
-import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class MasterControl
 {
-    private OutputBuffer completed;
+    private final OutputBuffer outputBuffer = new OutputBuffer();
 
-    public List<String> runIncremental(Path inputFile) throws IOException
+    public void runIncremental(Path inputFile) throws IOException
     {
-        completed = null;
+        int threadCount = Runtime.getRuntime().availableProcessors();
 
-        LineStorage lineStorage = new LineStorage();
-        InputBuffer inputBuffer = new InputBuffer(lineStorage);
-        CircularShift circularShift = new CircularShift(lineStorage);
-        Alphabetizer alphabetizer = new Alphabetizer(circularShift);
-        OutputBuffer outputBuffer = new OutputBuffer(alphabetizer);
+        ExecutorService executor = Executors.newFixedThreadPool(threadCount);
 
-        // Create a reader for the input file
-        try (BufferedReader reader = Files.newBufferedReader(inputFile, StandardCharsets.UTF_8))
+        // Instantiate the shared input component
+        try (InputBuffer inputBuffer = new InputBuffer(inputFile))
         {
-            // Process input line by line
-            while (inputBuffer.getInputLine(reader)) {
-                circularShift.readLines();
-                alphabetizer.readLines();
-                outputBuffer.readLines();
+
+            // Launch consumers
+            for (int i = 0; i < threadCount; i++)
+            {
+                final int workerId = i;
+                executor.submit(() ->
+                {
+                    try
+                    {
+                        while (true)
+                        {
+                            // Consumers pull work directly from the independent component
+                            LineStorage storage = inputBuffer.getInputLine();
+
+                            // Break out if the inputManager file component reports
+                            if (storage.getLineCount() == 0)
+                            {
+                                break;
+                            }
+
+                            this.processLines(storage);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        System.err.println("Worker " + workerId + " crashed: " + e.getMessage());
+                    }
+                });
             }
+
+            // Await execution completion
+            executor.shutdown();
+            executor.awaitTermination(1, TimeUnit.HOURS);
+
         }
         catch (Exception e)
         {
             e.printStackTrace();
         }
-
-        completed = outputBuffer;
-        return completed.getLines();
     }
 
-    public String saveOutput() throws SQLException {
+    public String saveOutput() throws SQLException
+    {
+        outputBuffer.saveToDB();
         return "";
+    }
+
+    private void processLines(LineList lineList)
+    {
+        CircularShift circularShift = new CircularShift();
+        circularShift.processLines(lineList);
+        Alphabetizer alphabetizer = new Alphabetizer();
+        alphabetizer.processLines(circularShift);
+        outputBuffer.processLines(alphabetizer);
     }
 }
