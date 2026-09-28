@@ -3,6 +3,8 @@ package com.se6362.kwic;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.se6362.kwic.LineList.AlphabetizedLineList;
 import com.se6362.kwic.LineList.CircShiftedLineList;
@@ -11,6 +13,7 @@ import com.se6362.kwic.LineList.StorageLineList;
 // 1. Removed unnecessary com.se6362.kwic imports since you are already in this package.
 // 2. Cleaned up unused Mockito imports since this specific test uses pure Java logic.
 
+@ExtendWith(MockitoExtension.class)
 public class LineListTest
 {
 

@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "test": "vitest run",
     "start": "parcel index.html",
     "build": "parcel build index.html --dist-dir dist --public-url ./",
     "predeploy": "npm run build",
@@ -20,13 +19,8 @@
     "react-dom": "^19.3.0"
   },
   "devDependencies": {
-    "@testing-library/jest-dom": "^7.0.1",
-    "@testing-library/react": "^16.3.3",
-    "@testing-library/user-event": "^14.6.7",
     "gh-pages": "^6.3.0",
-    "jsdom": "^29.1.1",
-    "parcel": "^2.16.4",
-    "vitest": "^5.0.2"
+    "parcel": "^2.16.4"
   },
   "allowScripts": {
     "node-gyp-build-optional-packages@5.2.2": true,
