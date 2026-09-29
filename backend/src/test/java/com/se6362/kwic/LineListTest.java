@@ -6,9 +6,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.se6362.kwic.LineList.AlphabetizedLineList;
-import com.se6362.kwic.LineList.CircShiftedLineList;
-import com.se6362.kwic.LineList.StorageLineList;
+import com.se6362.kwic.core.Alphabetizer;
+import com.se6362.kwic.core.CircularShift;
+import com.se6362.kwic.core.LineStorage;
 
 // 1. Removed unnecessary com.se6362.kwic imports since you are already in this package.
 // 2. Cleaned up unused Mockito imports since this specific test uses pure Java logic.
@@ -23,9 +23,9 @@ public class LineListTest
     @Test
     void testStorageLineList()
     {
-        StorageLineList lineList = new StorageLineList();
-        lineList.addLine("I am testing this method.");
-        lineList.addLine("Here is a second line to look at.");
+        LineStorage lineList = new LineStorage();
+        lineList.setLine("I am testing this method.");
+        lineList.setLine("Here is a second line to look at.");
 
         // Assert Junit style: (Expected, Actual)
         assertEquals(lineList.getLineCount(), 2);
@@ -35,7 +35,7 @@ public class LineListTest
         assertEquals(lineList.getWord(0, 1), "am");
         assertEquals(lineList.getWord(0, 2), "testing");
         assertEquals(lineList.getWord(0, 3), "this");
-        assertEquals(lineList.getWord(0, 4), "method.");
+        assertEquals(lineList.getWord(0, 4), "method");
         assertEquals(lineList.getWord(1, 0), "Here");
         assertEquals(lineList.getWord(1, 1), "is");
         assertEquals(lineList.getWord(1, 2), "a");
@@ -43,17 +43,18 @@ public class LineListTest
         assertEquals(lineList.getWord(1, 4), "line");
         assertEquals(lineList.getWord(1, 5), "to");
         assertEquals(lineList.getWord(1, 6), "look");
-        assertEquals(lineList.getWord(1, 7), "at.");
+        assertEquals(lineList.getWord(1, 7), "at");
 
     }
 
     @Test
     void testCircShiftedLineList()
     {
-        StorageLineList lineList = new StorageLineList();
-        lineList.addLine("a b c d e");
-        lineList.addLine("aa bb cc dd ee ff");
-        CircShiftedLineList circularShifts = new CircShiftedLineList(lineList);
+        LineStorage lineList = new LineStorage();
+        lineList.setLine("a b c d e");
+        lineList.setLine("aa bb cc dd ee ff");
+        CircularShift circularShifts = new CircularShift();
+        circularShifts.processLines(lineList);
 
         // Line 0: "a b c d e"
         assertEquals("a", circularShifts.getWord(0, 0));
@@ -142,23 +143,24 @@ public class LineListTest
     @Test
     void testAlphabetizedLineList()
     {
-        StorageLineList lineList = new StorageLineList();
+        LineStorage lineList = new LineStorage();
 
-        lineList.addLine("aa aa aa");
-        lineList.addLine("bb bb bb");
-        lineList.addLine("cc cc cc");
-        lineList.addLine("aa");
-        lineList.addLine("aa bb");
-        lineList.addLine("aa bb cc");
-        lineList.addLine("ab bb cc");
-        lineList.addLine("aa bc cd");
-        lineList.addLine("aa cc bb");
-        lineList.addLine("bb aa cc");
-        lineList.addLine("bb cc aa");
-        lineList.addLine("cc aa bb");
-        lineList.addLine("cc bb aa");
+        lineList.setLine("aa aa aa");
+        lineList.setLine("bb bb bb");
+        lineList.setLine("cc cc cc");
+        lineList.setLine("aa");
+        lineList.setLine("aa bb");
+        lineList.setLine("aa bb cc");
+        lineList.setLine("ab bb cc");
+        lineList.setLine("aa bc cd");
+        lineList.setLine("aa cc bb");
+        lineList.setLine("bb aa cc");
+        lineList.setLine("bb cc aa");
+        lineList.setLine("cc aa bb");
+        lineList.setLine("cc bb aa");
 
-        AlphabetizedLineList alphabetizedLineList = new AlphabetizedLineList(lineList);
+        Alphabetizer alphabetizedLineList = new Alphabetizer();
+        alphabetizedLineList.processLines(lineList);
 
         // 0: "aa"
         assertEquals("aa", alphabetizedLineList.getWord(0, 0));
