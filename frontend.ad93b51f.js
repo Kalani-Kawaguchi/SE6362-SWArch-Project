@@ -19171,7 +19171,7 @@ var _react = require("react");
 var _reactDefault = parcelHelpers.interopDefault(_react);
 var _s = $RefreshSig$();
 const containerStyle = {
-    maxWidth: 400,
+    maxWidth: 500,
     margin: "0 auto",
     padding: 24,
     background: "#ffffff",
@@ -19205,43 +19205,29 @@ const readOnlyInputStyle = {
 };
 function KWIC() {
     _s();
-    const [fileName, setFileName] = (0, _react.useState)("");
-    const [fileSize, setFileSize] = (0, _react.useState)("");
-    const [fileContents, setFileContents] = (0, _react.useState)("");
+    const [Contents, setContents] = (0, _react.useState)("");
+    const [draft, setDraft] = (0, _react.useState)("");
     return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
         style: containerStyle,
         children: [
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
                 children: [
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("label", {
-                        htmlFor: "file-upload",
+                        htmlFor: "input",
                         style: labelStyle,
-                        children: "Upload a .json file"
+                        children: "User Input"
                     }, void 0, false, {
                         fileName: "src/KWIC.jsx",
                         lineNumber: 49,
                         columnNumber: 9
                     }, this),
-                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("input", {
-                        id: "file-upload",
-                        type: "file",
-                        accept: ".json,application/json",
-                        onChange: (e)=>{
-                            const file = e.target.files?.[0];
-                            if (!file) {
-                                setFileName("");
-                                setFileSize("");
-                                setFileContents("");
-                                return;
-                            }
-                            setFileName(file.name);
-                            setFileSize(`${(file.size / 1024).toFixed(1)} KB`);
-                            const reader = new FileReader();
-                            reader.onload = ()=>{
-                                setFileContents(reader.result);
-                            };
-                            reader.readAsText(file);
-                        }
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("textarea", {
+                        id: "input",
+                        style: inputStyle,
+                        rows: 4,
+                        value: draft,
+                        onChange: (e)=>setDraft(e.target.value),
+                        placeholder: "Enter your text here"
                     }, void 0, false, {
                         fileName: "src/KWIC.jsx",
                         lineNumber: 52,
@@ -19254,33 +19240,52 @@ function KWIC() {
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
+                    type: "button",
+                    onClick: ()=>{
+                        setContents(draft);
+                    // call for KWIC functions here
+                    // variable "Contents" stores the user input
+                    },
+                    children: "Run KWIC"
+                }, void 0, false, {
+                    fileName: "src/KWIC.jsx",
+                    lineNumber: 63,
+                    columnNumber: 11
+                }, this)
+            }, void 0, false, {
+                fileName: "src/KWIC.jsx",
+                lineNumber: 62,
+                columnNumber: 7
+            }, this),
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
                 children: [
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("label", {
                         htmlFor: "file-name",
                         style: labelStyle,
-                        children: "File Contents"
+                        children: "Contents"
                     }, void 0, false, {
                         fileName: "src/KWIC.jsx",
-                        lineNumber: 76,
+                        lineNumber: 75,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("textarea", {
                         id: "file-name",
                         rows: 5,
                         type: "text",
-                        value: fileContents,
+                        value: Contents,
                         readOnly: true,
                         placeholder: "No file selected",
                         style: readOnlyInputStyle
                     }, void 0, false, {
                         fileName: "src/KWIC.jsx",
-                        lineNumber: 79,
+                        lineNumber: 78,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "src/KWIC.jsx",
-                lineNumber: 75,
+                lineNumber: 74,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -19291,7 +19296,7 @@ function KWIC() {
                         children: "Circular Shift"
                     }, void 0, false, {
                         fileName: "src/KWIC.jsx",
-                        lineNumber: 91,
+                        lineNumber: 90,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("textarea", {
@@ -19304,13 +19309,13 @@ function KWIC() {
                         style: readOnlyInputStyle
                     }, void 0, false, {
                         fileName: "src/KWIC.jsx",
-                        lineNumber: 94,
+                        lineNumber: 93,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "src/KWIC.jsx",
-                lineNumber: 90,
+                lineNumber: 89,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -19321,7 +19326,7 @@ function KWIC() {
                         children: "Sorted Shift"
                     }, void 0, false, {
                         fileName: "src/KWIC.jsx",
-                        lineNumber: 106,
+                        lineNumber: 105,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("textarea", {
@@ -19334,13 +19339,13 @@ function KWIC() {
                         style: readOnlyInputStyle
                     }, void 0, false, {
                         fileName: "src/KWIC.jsx",
-                        lineNumber: 109,
+                        lineNumber: 108,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "src/KWIC.jsx",
-                lineNumber: 105,
+                lineNumber: 104,
                 columnNumber: 7
             }, this)
         ]
@@ -19350,7 +19355,7 @@ function KWIC() {
         columnNumber: 5
     }, this);
 }
-_s(KWIC, "/b4ADwLDSpPRNXNvxfEOXhhwjf8=");
+_s(KWIC, "AkvNHkAn+S1CnewQ9re6J4cd2og=");
 _c = KWIC;
 var _c;
 $RefreshReg$(_c, "KWIC");
