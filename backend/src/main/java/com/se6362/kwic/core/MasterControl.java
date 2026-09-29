@@ -61,10 +61,9 @@ public class MasterControl
         }
     }
 
-    public String saveOutput() throws SQLException
+    public void saveOutput() throws SQLException
     {
         outputBuffer.saveToDB();
-        return "";
     }
 
     private void processLines(LineList lineList)
