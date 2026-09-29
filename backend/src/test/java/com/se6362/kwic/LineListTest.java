@@ -9,6 +9,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.se6362.kwic.core.Alphabetizer;
 import com.se6362.kwic.core.CircularShift;
 import com.se6362.kwic.core.LineStorage;
+import com.se6362.kwic.core.MergedLines;
 
 // 1. Removed unnecessary com.se6362.kwic imports since you are already in this package.
 // 2. Cleaned up unused Mockito imports since this specific test uses pure Java logic.
@@ -223,5 +224,95 @@ public class LineListTest
         assertEquals("cc", alphabetizedLineList.getWord(12, 0));
         assertEquals("cc", alphabetizedLineList.getWord(12, 1));
         assertEquals("cc", alphabetizedLineList.getWord(12, 2));
+    }
+
+    @Test
+    void testMergedLines()
+    {
+        LineStorage lineList1 = new LineStorage();
+        LineStorage lineList2 = new LineStorage();
+
+        lineList1.setLine("aa aa aa");
+        lineList2.setLine("bb bb bb");
+        lineList1.setLine("cc cc cc");
+        lineList2.setLine("aa");
+        lineList1.setLine("aa bb");
+        lineList2.setLine("aa bb cc");
+        lineList1.setLine("ab bb cc");
+        lineList2.setLine("aa bc cd");
+        lineList1.setLine("aa cc bb");
+        lineList2.setLine("bb aa cc");
+        lineList1.setLine("bb cc aa");
+        lineList2.setLine("cc aa bb");
+        lineList1.setLine("cc bb aa");
+
+        Alphabetizer alpha1 = new Alphabetizer();
+        alpha1.processLines(lineList1);
+        Alphabetizer alpha2 = new Alphabetizer();
+        alpha2.processLines(lineList2);
+        MergedLines merge = new MergedLines();
+        merge.merge(alpha1, alpha2);
+
+        // 0: "aa"
+        assertEquals("aa", merge.getWord(0, 0));
+
+        // 1: "aa aa aa"
+        assertEquals("aa", merge.getWord(1, 0));
+        assertEquals("aa", merge.getWord(1, 1));
+        assertEquals("aa", merge.getWord(1, 2));
+
+        // 2: "aa bb"
+        assertEquals("aa", merge.getWord(2, 0));
+        assertEquals("bb", merge.getWord(2, 1));
+
+        // 3: "aa bb cc"
+        assertEquals("aa", merge.getWord(3, 0));
+        assertEquals("bb", merge.getWord(3, 1));
+        assertEquals("cc", merge.getWord(3, 2));
+
+        // 4: "aa bc cd"
+        assertEquals("aa", merge.getWord(4, 0));
+        assertEquals("bc", merge.getWord(4, 1));
+        assertEquals("cd", merge.getWord(4, 2));
+
+        // 5: "aa cc bb"
+        assertEquals("aa", merge.getWord(5, 0));
+        assertEquals("cc", merge.getWord(5, 1));
+        assertEquals("bb", merge.getWord(5, 2));
+
+        // 6: "ab bb cc"
+        assertEquals("ab", merge.getWord(6, 0));
+        assertEquals("bb", merge.getWord(6, 1));
+        assertEquals("cc", merge.getWord(6, 2));
+
+        // 7: "bb aa cc"
+        assertEquals("bb", merge.getWord(7, 0));
+        assertEquals("aa", merge.getWord(7, 1));
+        assertEquals("cc", merge.getWord(7, 2));
+
+        // 8: "bb bb bb"
+        assertEquals("bb", merge.getWord(8, 0));
+        assertEquals("bb", merge.getWord(8, 1));
+        assertEquals("bb", merge.getWord(8, 2));
+
+        // 9: "bb cc aa"
+        assertEquals("bb", merge.getWord(9, 0));
+        assertEquals("cc", merge.getWord(9, 1));
+        assertEquals("aa", merge.getWord(9, 2));
+
+        // 10: "cc aa bb"
+        assertEquals("cc", merge.getWord(10, 0));
+        assertEquals("aa", merge.getWord(10, 1));
+        assertEquals("bb", merge.getWord(10, 2));
+
+        // 11: "cc bb aa"
+        assertEquals("cc", merge.getWord(11, 0));
+        assertEquals("bb", merge.getWord(11, 1));
+        assertEquals("aa", merge.getWord(11, 2));
+
+        // 12: "cc cc cc"
+        assertEquals("cc", merge.getWord(12, 0));
+        assertEquals("cc", merge.getWord(12, 1));
+        assertEquals("cc", merge.getWord(12, 2));
     }
 }

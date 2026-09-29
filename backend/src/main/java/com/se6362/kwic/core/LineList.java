@@ -87,7 +87,7 @@ public abstract class LineList
         return Integer.compare(leftLine.size(), rightLine.size());
     }
 
-    public void printLines()
+    public String toString()
     {
         StringBuilder output = new StringBuilder();
         for (ArrayList<String> line : lines)
@@ -98,6 +98,6 @@ public abstract class LineList
             }
             output.append("\n");
         }
-        System.out.println(output.toString());
+        return output.toString();
     }
 }

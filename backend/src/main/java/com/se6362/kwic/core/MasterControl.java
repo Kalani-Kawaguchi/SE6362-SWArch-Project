@@ -7,34 +7,44 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-public class MasterControl {
+public class MasterControl
+{
     private final OutputBuffer outputBuffer = new OutputBuffer();
 
-    public void runIncremental(Path inputFile) throws IOException {
+    public void runIncremental(Path inputFile) throws IOException
+    {
         int threadCount = Runtime.getRuntime().availableProcessors();
 
         ExecutorService executor = Executors.newFixedThreadPool(threadCount);
 
         // Instantiate the shared input component
-        try (InputBuffer inputBuffer = new InputBuffer(inputFile)) {
+        try (InputBuffer inputBuffer = new InputBuffer(inputFile))
+        {
 
             // Launch consumers
-            for (int i = 0; i < threadCount; i++) {
+            for (int i = 0; i < threadCount; i++)
+            {
                 final int workerId = i;
-                executor.submit(() -> {
-                    try {
-                        while (true) {
+                executor.submit(() ->
+                {
+                    try
+                    {
+                        while (true)
+                        {
                             // Consumers pull work directly from the independent component
                             LineStorage storage = inputBuffer.getInputLine();
 
                             // Break out if the inputManager file component reports
-                            if (storage.getLineCount() == 0) {
+                            if (storage.getLineCount() == 0)
+                            {
                                 break;
                             }
 
                             this.processLines(storage);
                         }
-                    } catch (Exception e) {
+                    }
+                    catch (Exception e)
+                    {
                         System.err.println("Worker " + workerId + " crashed: " + e.getMessage());
                     }
                 });
@@ -44,16 +54,26 @@ public class MasterControl {
             executor.shutdown();
             executor.awaitTermination(1, TimeUnit.HOURS);
 
-        } catch (Exception e) {
+        }
+        catch (Exception e)
+        {
             e.printStackTrace();
         }
     }
 
-    public void saveOutput() throws SQLException {
+    public void saveOutput() throws SQLException
+    {
         outputBuffer.saveToDB();
     }
 
-    private void processLines(LineList lineList) {
+    public String getOutput()
+
+    {
+        return outputBuffer.toString();
+    }
+
+    private void processLines(LineList lineList)
+    {
         CircularShift circularShift = new CircularShift();
         circularShift.processLines(lineList);
         Alphabetizer alphabetizer = new Alphabetizer();
