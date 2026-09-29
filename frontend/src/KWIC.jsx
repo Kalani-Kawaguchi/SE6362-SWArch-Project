@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 
 const containerStyle = {
-  maxWidth: 400,
+  maxWidth: 500,
   margin: "0 auto",
   padding: 24,
   background: "#ffffff",
@@ -39,48 +39,47 @@ const readOnlyInputStyle = {
 } 
 
 export default function KWIC() {
-  const [fileName, setFileName] = useState("");
-  const [fileSize, setFileSize] = useState("");
-  const [fileContents, setFileContents] = useState("");
+  const [Contents, setContents] = useState("");
+  const [draft, setDraft] = useState("");
+
 
   return (
     <div style={containerStyle}>
       <div>
-        <label htmlFor="file-upload" style={labelStyle}>
-          Upload a .json file
+        <label htmlFor="input" style={labelStyle}>
+          User Input 
         </label>
-        <input
-          id="file-upload"
-          type="file"
-          accept=".json,application/json" 
-          onChange={(e) => {
-            const file = e.target.files?.[0];
-            if (!file) {
-              setFileName("");
-              setFileSize("");
-              setFileContents("");
-              return;
-            }
-            setFileName(file.name);
-            setFileSize(`${(file.size / 1024).toFixed(1)} KB`);
-            const reader = new FileReader();
-            reader.onload = () => {
-              setFileContents(reader.result);
-            };
-            reader.readAsText(file);
-          }}
+        <textarea
+          id="input"
+          style = {inputStyle}
+          rows = {4}
+          value={draft}
+          onChange={(e) => setDraft(e.target.value)}
+          placeholder="Enter your text here"
         />
+      </div>
+
+      <div>
+          <button type="button" onClick={() => {
+            setContents(draft)
+            // call for KWIC functions here
+            // variable "Contents" stores the user input
+            }}
+          >
+            Run KWIC
+          </button>
+
       </div>
 
       <div>  
         <label htmlFor="file-name" style={labelStyle}>
-          File Contents
+          Contents
         </label>
         <textarea 
           id="file-name"
           rows = {5}
           type="text"
-          value={fileContents}
+          value={Contents}
           readOnly
           placeholder="No file selected"
           style={readOnlyInputStyle}
