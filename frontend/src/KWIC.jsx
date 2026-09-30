@@ -13,7 +13,7 @@ const containerStyle = {
   flexDirection: "column",
   gap: 16,
   fontFamily: "sans-serif",
-} 
+}
 
 const labelStyle = {
   display: "block",
@@ -32,17 +32,18 @@ const inputStyle = {
   border: "1px solid #d1d5db",
   borderRadius: 6,
   padding: "8px 12px",
-} 
+}
 
 const readOnlyInputStyle = {
   ...inputStyle,
   background: "#f9fafb",
-} 
+}
 
 export default function KWIC() {
-  const [Contents, setContents] = useState("");
   const [draft, setDraft] = useState("");
   const [sortedShifts, setSortedShifts] = useState("");
+  const [circularShifts, setCircularShifts] = useState("");
+  const [alphabetizer, setAlphabetizer] = useState("");
   const [isRunning, setIsRunning] = useState(false);
 
 
@@ -50,12 +51,12 @@ export default function KWIC() {
     <div style={containerStyle}>
       <div>
         <label htmlFor="input" style={labelStyle}>
-          User Input 
+          User Input
         </label>
         <textarea
           id="input"
-          style = {inputStyle}
-          rows = {4}
+          style={inputStyle}
+          rows={4}
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
           placeholder="Enter your text here"
@@ -63,56 +64,57 @@ export default function KWIC() {
       </div>
 
       <div>
-          <button type="button" onClick={async () => {
-            // call for KWIC functions here
-            // variable "Contents" stores the user input
-            const inputData = { text: draft }
-            const json = JSON.stringify(inputData, null, 2);
+        <button type="button" onClick={async () => {
+          // call for KWIC functions here
+          // variable "Contents" stores the user input
+          const inputData = { text: draft }
+          const json = JSON.stringify(inputData, null, 2);
 
-            console.log("KWIC input JSON:", json);
-            setContents(draft);
-            setSortedShifts("");
-            setIsRunning(true);
+          console.log("KWIC input JSON:", json);
+          setSortedShifts("");
+          setCircularShifts("");
+          setAlphabetizer("");
+          setIsRunning(true);
 
-            try {
-              const response = await fetch(`${API_BASE_URL}/api/kwic`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: json,
-              });
+          try {
+            const response = await fetch(`${API_BASE_URL}/api/kwic`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: json,
+            });
 
-              if (!response.ok) {
-                throw new Error(`Backend returned HTTP ${response.status}`);
-              }
-
-              const result = await response.json();
-              console.log("KWIC backend response:", result);
-              setSortedShifts(result.sortedShifts);
-            } catch (error) {
-              console.error("Unable to send KWIC input:", error);
-            } finally {
-              setIsRunning(false);
+            if (!response.ok) {
+              throw new Error(`Backend returned HTTP ${response.status}`);
             }
-            }}
-          >
-            {isRunning ? "Running..." : "Run KWIC"}
-          </button>
 
-      </div>
+            const result = await response.json();
+            console.log("KWIC backend response:", JSON.stringify(result));
 
-      <div>  
-        <label htmlFor="file-name" style={labelStyle}>
-          Contents
-        </label>
-        <textarea 
-          id="file-name"
-          rows = {5}
-          type="text"
-          value={Contents}
-          readOnly
-          placeholder="No file selected"
-          style={readOnlyInputStyle}
-        />
+            let shifts = "";
+            let alpha = "";
+            const output = result.output;
+
+            result.circularShift.forEach(lines => {
+              shifts += lines + '\n';
+            });
+            setCircularShifts(shifts);
+
+            result.alphabetizer.forEach(lines => {
+              alpha += lines + '\n';
+            });
+            setAlphabetizer(alpha);
+
+            setSortedShifts(output);
+          } catch (error) {
+            console.error("Unable to send KWIC input:", error);
+          } finally {
+            setIsRunning(false);
+          }
+        }}
+        >
+          {isRunning ? "Running..." : "Run KWIC"}
+        </button>
+
       </div>
 
       <div>
@@ -121,26 +123,41 @@ export default function KWIC() {
         </label>
         <textarea
           id="file-name"
-          rows = {5}
+          rows={5}
           type="text"
-          value={""}
+          value={circularShifts}
           readOnly
-          placeholder="No file selected"
+          placeholder="Circular shifted lines will display here."
+          style={readOnlyInputStyle}
+        />
+      </div>
+
+      <div>
+        <label htmlFor="file-name" style={labelStyle}>
+          Alphabetizer
+        </label>
+        <textarea
+          id="file-name"
+          rows={5}
+          type="text"
+          value={alphabetizer}
+          readOnly
+          placeholder="Alphabetized lines will display here."
           style={readOnlyInputStyle}
         />
       </div>
 
       <div>
         <label htmlFor="file-size" style={labelStyle}>
-          Sorted Shift
+          Final Output
         </label>
         <textarea
           id="file-size"
-          rows = {5}
+          rows={20}
           type="text"
           value={sortedShifts}
           readOnly
-          placeholder="No file selected"
+          placeholder="Final index will display here."
           style={readOnlyInputStyle}
         />
       </div>
