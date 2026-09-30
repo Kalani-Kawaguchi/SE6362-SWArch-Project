@@ -127,7 +127,7 @@ export default function KWIC() {
           type="text"
           value={circularShifts}
           readOnly
-          placeholder="No file selected"
+          placeholder="Circular shifted lines will display here."
           style={readOnlyInputStyle}
         />
       </div>
@@ -142,22 +142,22 @@ export default function KWIC() {
           type="text"
           value={alphabetizer}
           readOnly
-          placeholder="No file selected"
+          placeholder="Alphabetized lines will display here."
           style={readOnlyInputStyle}
         />
       </div>
 
       <div>
         <label htmlFor="file-size" style={labelStyle}>
-          Sorted Shift
+          Final Output
         </label>
         <textarea
           id="file-size"
-          rows={5}
+          rows={20}
           type="text"
           value={sortedShifts}
           readOnly
-          placeholder="No file selected"
+          placeholder="Final index will display here."
           style={readOnlyInputStyle}
         />
       </div>
