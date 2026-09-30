@@ -19076,21 +19076,26 @@ var _react = require("react");
 var _kwicJsx = require("./KWIC.jsx");
 var _kwicJsxDefault = parcelHelpers.interopDefault(_kwicJsx);
 var _s = $RefreshSig$();
-const API_BASE_URL = "https://backend-production-ffdf.up.railway.app";
+const API_BASE_URL = "http://localhost:8080";
 function App() {
     _s();
     const [backendStatus, setBackendStatus] = (0, _react.useState)("Checking backend status...");
-    (0, _react.useEffect)(()=>{
-        fetch(`${API_BASE_URL}/api/health`).then((response)=>{
-            if (!response.ok) throw new Error("Backend request failed from the frontend");
-            return response.text();
-        }).then((data)=>{
-            setBackendStatus(data);
-        }).catch((error)=>{
-            console.error(error);
-            setBackendStatus("Unable to connect to backend");
-        });
-    }, []);
+    // useEffect(() => {
+    //   fetch(`${API_BASE_URL}/api/health`)
+    //     .then((response) => {
+    //       if (!response.ok) {
+    //         throw new Error("Backend request failed from the frontend");
+    //       }
+    //       return response.text();
+    //     })
+    //     .then((data) => {
+    //       setBackendStatus(data);
+    //     })
+    //     .catch((error) => {
+    //       console.error(error);
+    //       setBackendStatus("Unable to connect to backend");
+    //     });
+    // }, []);
     return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("main", {
         children: [
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("h1", {
@@ -19141,7 +19146,7 @@ function App() {
         columnNumber: 5
     }, this);
 }
-_s(App, "NoTiYmRAttapWnNr8chC65YqYY4=");
+_s(App, "R9+UfmxRLvMOUAD3NJCl5XEHi90=");
 _c = App;
 var _c;
 $RefreshReg$(_c, "App");
@@ -19151,221 +19156,10 @@ $RefreshReg$(_c, "App");
   globalThis.$RefreshReg$ = prevRefreshReg;
   globalThis.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-dev-runtime":"dVPUn","./documents/PreliminaryProjectPlan.pdf":"getRJ","react":"jMk1U","./KWIC.jsx":"7g56c","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"7h6Pi"}],"getRJ":[function(require,module,exports,__globalThis) {
+},{"react/jsx-dev-runtime":"dVPUn","./documents/PreliminaryProjectPlan.pdf":"getRJ","react":"jMk1U","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"7h6Pi","./KWIC.jsx":"7g56c"}],"getRJ":[function(require,module,exports,__globalThis) {
 module.exports = module.bundle.resolve("PreliminaryProjectPlan.50c716af.pdf") + "?" + Date.now();
 
-},{}],"7g56c":[function(require,module,exports,__globalThis) {
-var $parcel$ReactRefreshHelpers$401f = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
-$parcel$ReactRefreshHelpers$401f.init();
-var prevRefreshReg = globalThis.$RefreshReg$;
-var prevRefreshSig = globalThis.$RefreshSig$;
-$parcel$ReactRefreshHelpers$401f.prelude(module);
-
-try {
-//import com.se6362.kwic.MasterControl;
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "default", ()=>KWIC);
-var _jsxDevRuntime = require("react/jsx-dev-runtime");
-var _react = require("react");
-var _reactDefault = parcelHelpers.interopDefault(_react);
-var _s = $RefreshSig$();
-const containerStyle = {
-    maxWidth: 500,
-    margin: "0 auto",
-    padding: 24,
-    background: "#ffffff",
-    borderRadius: 8,
-    border: "1px solid #e0e0e0",
-    display: "flex",
-    flexDirection: "column",
-    gap: 16,
-    fontFamily: "sans-serif"
-};
-const labelStyle = {
-    display: "block",
-    fontSize: 14,
-    fontWeight: 500,
-    color: "#374151",
-    marginBottom: 4
-};
-const inputStyle = {
-    display: "block",
-    width: "100%",
-    boxSizing: "border-box",
-    fontSize: 14,
-    color: "#374151",
-    border: "1px solid #d1d5db",
-    borderRadius: 6,
-    padding: "8px 12px"
-};
-const readOnlyInputStyle = {
-    ...inputStyle,
-    background: "#f9fafb"
-};
-function KWIC() {
-    _s();
-    const [Contents, setContents] = (0, _react.useState)("");
-    const [draft, setDraft] = (0, _react.useState)("");
-    return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-        style: containerStyle,
-        children: [
-            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                children: [
-                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("label", {
-                        htmlFor: "input",
-                        style: labelStyle,
-                        children: "User Input"
-                    }, void 0, false, {
-                        fileName: "src/KWIC.jsx",
-                        lineNumber: 49,
-                        columnNumber: 9
-                    }, this),
-                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("textarea", {
-                        id: "input",
-                        style: inputStyle,
-                        rows: 4,
-                        value: draft,
-                        onChange: (e)=>setDraft(e.target.value),
-                        placeholder: "Enter your text here"
-                    }, void 0, false, {
-                        fileName: "src/KWIC.jsx",
-                        lineNumber: 52,
-                        columnNumber: 9
-                    }, this)
-                ]
-            }, void 0, true, {
-                fileName: "src/KWIC.jsx",
-                lineNumber: 48,
-                columnNumber: 7
-            }, this),
-            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
-                    type: "button",
-                    onClick: ()=>{
-                        setContents(draft);
-                    // call for KWIC functions here
-                    // variable "Contents" stores the user input
-                    },
-                    children: "Run KWIC"
-                }, void 0, false, {
-                    fileName: "src/KWIC.jsx",
-                    lineNumber: 63,
-                    columnNumber: 11
-                }, this)
-            }, void 0, false, {
-                fileName: "src/KWIC.jsx",
-                lineNumber: 62,
-                columnNumber: 7
-            }, this),
-            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                children: [
-                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("label", {
-                        htmlFor: "file-name",
-                        style: labelStyle,
-                        children: "Contents"
-                    }, void 0, false, {
-                        fileName: "src/KWIC.jsx",
-                        lineNumber: 75,
-                        columnNumber: 9
-                    }, this),
-                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("textarea", {
-                        id: "file-name",
-                        rows: 5,
-                        type: "text",
-                        value: Contents,
-                        readOnly: true,
-                        placeholder: "No file selected",
-                        style: readOnlyInputStyle
-                    }, void 0, false, {
-                        fileName: "src/KWIC.jsx",
-                        lineNumber: 78,
-                        columnNumber: 9
-                    }, this)
-                ]
-            }, void 0, true, {
-                fileName: "src/KWIC.jsx",
-                lineNumber: 74,
-                columnNumber: 7
-            }, this),
-            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                children: [
-                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("label", {
-                        htmlFor: "file-name",
-                        style: labelStyle,
-                        children: "Circular Shift"
-                    }, void 0, false, {
-                        fileName: "src/KWIC.jsx",
-                        lineNumber: 90,
-                        columnNumber: 9
-                    }, this),
-                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("textarea", {
-                        id: "file-name",
-                        rows: 5,
-                        type: "text",
-                        value: "",
-                        readOnly: true,
-                        placeholder: "No file selected",
-                        style: readOnlyInputStyle
-                    }, void 0, false, {
-                        fileName: "src/KWIC.jsx",
-                        lineNumber: 93,
-                        columnNumber: 9
-                    }, this)
-                ]
-            }, void 0, true, {
-                fileName: "src/KWIC.jsx",
-                lineNumber: 89,
-                columnNumber: 7
-            }, this),
-            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                children: [
-                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("label", {
-                        htmlFor: "file-size",
-                        style: labelStyle,
-                        children: "Sorted Shift"
-                    }, void 0, false, {
-                        fileName: "src/KWIC.jsx",
-                        lineNumber: 105,
-                        columnNumber: 9
-                    }, this),
-                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("textarea", {
-                        id: "file-size",
-                        rows: 5,
-                        type: "text",
-                        value: "",
-                        readOnly: true,
-                        placeholder: "No file selected",
-                        style: readOnlyInputStyle
-                    }, void 0, false, {
-                        fileName: "src/KWIC.jsx",
-                        lineNumber: 108,
-                        columnNumber: 9
-                    }, this)
-                ]
-            }, void 0, true, {
-                fileName: "src/KWIC.jsx",
-                lineNumber: 104,
-                columnNumber: 7
-            }, this)
-        ]
-    }, void 0, true, {
-        fileName: "src/KWIC.jsx",
-        lineNumber: 47,
-        columnNumber: 5
-    }, this);
-}
-_s(KWIC, "AkvNHkAn+S1CnewQ9re6J4cd2og=");
-_c = KWIC;
-var _c;
-$RefreshReg$(_c, "KWIC");
-
-  $parcel$ReactRefreshHelpers$401f.postlude(module);
-} finally {
-  globalThis.$RefreshReg$ = prevRefreshReg;
-  globalThis.$RefreshSig$ = prevRefreshSig;
-}
-},{"react/jsx-dev-runtime":"dVPUn","react":"jMk1U","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"7h6Pi"}],"jnFvT":[function(require,module,exports,__globalThis) {
+},{}],"jnFvT":[function(require,module,exports,__globalThis) {
 exports.interopDefault = function(a) {
     return a && a.__esModule ? a : {
         default: a
@@ -21673,6 +21467,244 @@ function $da9882e673ac146b$var$ErrorOverlay() {
     return null;
 }
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}]},["hiyDA","gYcKb"], "gYcKb", "parcelRequire10c2", {}, "./", "/", "http://localhost:1234")
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}],"7g56c":[function(require,module,exports,__globalThis) {
+var $parcel$ReactRefreshHelpers$401f = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
+$parcel$ReactRefreshHelpers$401f.init();
+var prevRefreshReg = globalThis.$RefreshReg$;
+var prevRefreshSig = globalThis.$RefreshSig$;
+$parcel$ReactRefreshHelpers$401f.prelude(module);
+
+try {
+//import com.se6362.kwic.MasterControl;
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "default", ()=>KWIC);
+var _jsxDevRuntime = require("react/jsx-dev-runtime");
+var _react = require("react");
+var _reactDefault = parcelHelpers.interopDefault(_react);
+var _s = $RefreshSig$();
+const API_BASE_URL = "http://localhost:8080";
+const containerStyle = {
+    maxWidth: 500,
+    margin: "0 auto",
+    padding: 24,
+    background: "#ffffff",
+    borderRadius: 8,
+    border: "1px solid #e0e0e0",
+    display: "flex",
+    flexDirection: "column",
+    gap: 16,
+    fontFamily: "sans-serif"
+};
+const labelStyle = {
+    display: "block",
+    fontSize: 14,
+    fontWeight: 500,
+    color: "#374151",
+    marginBottom: 4
+};
+const inputStyle = {
+    display: "block",
+    width: "100%",
+    boxSizing: "border-box",
+    fontSize: 14,
+    color: "#374151",
+    border: "1px solid #d1d5db",
+    borderRadius: 6,
+    padding: "8px 12px"
+};
+const readOnlyInputStyle = {
+    ...inputStyle,
+    background: "#f9fafb"
+};
+function KWIC() {
+    _s();
+    const [Contents, setContents] = (0, _react.useState)("");
+    const [draft, setDraft] = (0, _react.useState)("");
+    const [sortedShifts, setSortedShifts] = (0, _react.useState)("");
+    const [isRunning, setIsRunning] = (0, _react.useState)(false);
+    return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+        style: containerStyle,
+        children: [
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                children: [
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("label", {
+                        htmlFor: "input",
+                        style: labelStyle,
+                        children: "User Input"
+                    }, void 0, false, {
+                        fileName: "src/KWIC.jsx",
+                        lineNumber: 52,
+                        columnNumber: 9
+                    }, this),
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("textarea", {
+                        id: "input",
+                        style: inputStyle,
+                        rows: 4,
+                        value: draft,
+                        onChange: (e)=>setDraft(e.target.value),
+                        placeholder: "Enter your text here"
+                    }, void 0, false, {
+                        fileName: "src/KWIC.jsx",
+                        lineNumber: 55,
+                        columnNumber: 9
+                    }, this)
+                ]
+            }, void 0, true, {
+                fileName: "src/KWIC.jsx",
+                lineNumber: 51,
+                columnNumber: 7
+            }, this),
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
+                    type: "button",
+                    onClick: async ()=>{
+                        // call for KWIC functions here
+                        // variable "Contents" stores the user input
+                        const inputData = {
+                            text: draft
+                        };
+                        const json = JSON.stringify(inputData, null, 2);
+                        console.log("KWIC input JSON:", json);
+                        setContents(draft);
+                        setSortedShifts("");
+                        setIsRunning(true);
+                        try {
+                            const response = await fetch(`${API_BASE_URL}/api/kwic`, {
+                                method: "POST",
+                                headers: {
+                                    "Content-Type": "application/json"
+                                },
+                                body: json
+                            });
+                            if (!response.ok) throw new Error(`Backend returned HTTP ${response.status}`);
+                            const result = await response.json();
+                            console.log("KWIC backend response:", result);
+                            setSortedShifts(result.sortedShifts);
+                        } catch (error) {
+                            console.error("Unable to send KWIC input:", error);
+                        } finally{
+                            setIsRunning(false);
+                        }
+                    },
+                    children: isRunning ? "Running..." : "Run KWIC"
+                }, void 0, false, {
+                    fileName: "src/KWIC.jsx",
+                    lineNumber: 66,
+                    columnNumber: 11
+                }, this)
+            }, void 0, false, {
+                fileName: "src/KWIC.jsx",
+                lineNumber: 65,
+                columnNumber: 7
+            }, this),
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                children: [
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("label", {
+                        htmlFor: "file-name",
+                        style: labelStyle,
+                        children: "Contents"
+                    }, void 0, false, {
+                        fileName: "src/KWIC.jsx",
+                        lineNumber: 104,
+                        columnNumber: 9
+                    }, this),
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("textarea", {
+                        id: "file-name",
+                        rows: 5,
+                        type: "text",
+                        value: Contents,
+                        readOnly: true,
+                        placeholder: "No file selected",
+                        style: readOnlyInputStyle
+                    }, void 0, false, {
+                        fileName: "src/KWIC.jsx",
+                        lineNumber: 107,
+                        columnNumber: 9
+                    }, this)
+                ]
+            }, void 0, true, {
+                fileName: "src/KWIC.jsx",
+                lineNumber: 103,
+                columnNumber: 7
+            }, this),
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                children: [
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("label", {
+                        htmlFor: "file-name",
+                        style: labelStyle,
+                        children: "Circular Shift"
+                    }, void 0, false, {
+                        fileName: "src/KWIC.jsx",
+                        lineNumber: 119,
+                        columnNumber: 9
+                    }, this),
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("textarea", {
+                        id: "file-name",
+                        rows: 5,
+                        type: "text",
+                        value: "",
+                        readOnly: true,
+                        placeholder: "No file selected",
+                        style: readOnlyInputStyle
+                    }, void 0, false, {
+                        fileName: "src/KWIC.jsx",
+                        lineNumber: 122,
+                        columnNumber: 9
+                    }, this)
+                ]
+            }, void 0, true, {
+                fileName: "src/KWIC.jsx",
+                lineNumber: 118,
+                columnNumber: 7
+            }, this),
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                children: [
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("label", {
+                        htmlFor: "file-size",
+                        style: labelStyle,
+                        children: "Sorted Shift"
+                    }, void 0, false, {
+                        fileName: "src/KWIC.jsx",
+                        lineNumber: 134,
+                        columnNumber: 9
+                    }, this),
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("textarea", {
+                        id: "file-size",
+                        rows: 5,
+                        type: "text",
+                        value: sortedShifts,
+                        readOnly: true,
+                        placeholder: "No file selected",
+                        style: readOnlyInputStyle
+                    }, void 0, false, {
+                        fileName: "src/KWIC.jsx",
+                        lineNumber: 137,
+                        columnNumber: 9
+                    }, this)
+                ]
+            }, void 0, true, {
+                fileName: "src/KWIC.jsx",
+                lineNumber: 133,
+                columnNumber: 7
+            }, this)
+        ]
+    }, void 0, true, {
+        fileName: "src/KWIC.jsx",
+        lineNumber: 50,
+        columnNumber: 5
+    }, this);
+}
+_s(KWIC, "3PPVHuk0qrlCTAS2sug5VXoo3To=");
+_c = KWIC;
+var _c;
+$RefreshReg$(_c, "KWIC");
+
+  $parcel$ReactRefreshHelpers$401f.postlude(module);
+} finally {
+  globalThis.$RefreshReg$ = prevRefreshReg;
+  globalThis.$RefreshSig$ = prevRefreshSig;
+}
+},{"react/jsx-dev-runtime":"dVPUn","react":"jMk1U","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"7h6Pi"}]},["hiyDA","gYcKb"], "gYcKb", "parcelRequire10c2", {}, "./", "/", "http://localhost:1234")
 
 //# sourceMappingURL=frontend.ad93b51f.js.map
