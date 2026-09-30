@@ -10,6 +10,8 @@ import java.util.concurrent.TimeUnit;
 public class MasterControl
 {
     private final OutputBuffer outputBuffer = new OutputBuffer();
+    private final StringBuffer circularShifts = new StringBuffer();
+    private final StringBuffer alphabetized = new StringBuffer();
 
     public void runIncremental(Path inputFile) throws IOException
     {
@@ -72,12 +74,24 @@ public class MasterControl
         return outputBuffer.toString();
     }
 
+    public String getCircularShifts()
+    {
+        return circularShifts.toString();
+    }
+
+    public String getAlphabetized()
+    {
+        return alphabetized.toString();
+    }
+
     private void processLines(LineList lineList)
     {
         CircularShift circularShift = new CircularShift();
         circularShift.processLines(lineList);
+        circularShifts.append(circularShift.toString());
         Alphabetizer alphabetizer = new Alphabetizer();
         alphabetizer.processLines(circularShift);
+        alphabetized.append(alphabetizer.toString());
         outputBuffer.processLines(alphabetizer);
     }
 }

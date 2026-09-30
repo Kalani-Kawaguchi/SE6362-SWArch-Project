@@ -40,9 +40,10 @@ const readOnlyInputStyle = {
 } 
 
 export default function KWIC() {
-  const [Contents, setContents] = useState("");
   const [draft, setDraft] = useState("");
   const [sortedShifts, setSortedShifts] = useState("");
+  const [circularShifts, setCircularShifts] = useState("");
+  const [alphabetized, setAlphabetized] = useState("");
   const [isRunning, setIsRunning] = useState(false);
 
 
@@ -70,7 +71,8 @@ export default function KWIC() {
             const json = JSON.stringify(inputData, null, 2);
 
             console.log("KWIC input JSON:", json);
-            setContents(draft);
+            setCircularShifts("");
+            setAlphabetized("");
             setSortedShifts("");
             setIsRunning(true);
 
@@ -87,6 +89,8 @@ export default function KWIC() {
 
               const result = await response.json();
               console.log("KWIC backend response:", result);
+              setCircularShifts(result.circularShifts);
+              setAlphabetized(result.alphabetized);
               setSortedShifts(result.sortedShifts);
             } catch (error) {
               console.error("Unable to send KWIC input:", error);
@@ -102,13 +106,13 @@ export default function KWIC() {
 
       <div>  
         <label htmlFor="file-name" style={labelStyle}>
-          Contents
+          Circular Shifts
         </label>
         <textarea 
           id="file-name"
           rows = {5}
           type="text"
-          value={Contents}
+          value={circularShifts}
           readOnly
           placeholder="No file selected"
           style={readOnlyInputStyle}
@@ -117,13 +121,13 @@ export default function KWIC() {
 
       <div>
         <label htmlFor="file-name" style={labelStyle}>
-          Circular Shift
+          Alphabetizer
         </label>
         <textarea
           id="file-name"
           rows = {5}
           type="text"
-          value={""}
+          value={alphabetized}
           readOnly
           placeholder="No file selected"
           style={readOnlyInputStyle}
