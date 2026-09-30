@@ -1,6 +1,6 @@
 //import com.se6362.kwic.MasterControl;
 import React, { useState } from "react";
-const API_BASE_URL = process.env.API_BASE_URL || "http://localhost:8080";
+const API_BASE_URL = process.env.API_BASE_URL || "https://backend-production-ffdf.up.railway.app";
 
 const containerStyle = {
   maxWidth: 500,
