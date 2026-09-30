@@ -50,7 +50,7 @@ public class KwicController {
             String sortedShifts = masterControl.getOutput();
 
             System.out.println("KWIC sorted output:\n" + sortedShifts);
-            return new KwicResponse(input.text(), sortedShifts, masterControl.getCircularShifts(), masterControl.getAlphabetized());
+            return new KwicResponse(input.text(), sortedShifts);
         } finally {
             Files.deleteIfExists(inputFile);
         }
@@ -58,5 +58,5 @@ public class KwicController {
 
     public record KwicRequest(String text) {}
 
-    public record KwicResponse(String text, String sortedShifts, String circularShifts, String alphabetized) {}
+    public record KwicResponse(String text, String sortedShifts) {}
 }
