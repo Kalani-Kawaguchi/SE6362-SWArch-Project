@@ -6,13 +6,29 @@ import java.sql.SQLException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 
 public class MasterControl
 {
+    private static final ObjectMapper JSON_MAPPER = new ObjectMapper();
     private final OutputBuffer outputBuffer = new OutputBuffer();
+    ObjectNode jsonOutput;
+    ArrayNode circularShiftArray;
+    ArrayNode alphabetizerArray;
+
+    public MasterControl()
+    {
+        jsonOutput = JSON_MAPPER.createObjectNode();
+        circularShiftArray = jsonOutput.putArray("circularShift");
+        alphabetizerArray = jsonOutput.putArray("alphabetizer");
+    }
 
     public void runIncremental(Path inputFile) throws IOException
     {
+        circularShiftArray.removeAll();
+        alphabetizerArray.removeAll();
         int threadCount = Runtime.getRuntime().availableProcessors();
 
         ExecutorService executor = Executors.newFixedThreadPool(threadCount);
@@ -67,17 +83,29 @@ public class MasterControl
     }
 
     public String getOutput()
-
     {
         return outputBuffer.toString();
+    }
+
+    public synchronized ObjectNode toJsonElement()
+    {
+        jsonOutput.put("output", getOutput());
+        return jsonOutput;
     }
 
     private void processLines(LineList lineList)
     {
         CircularShift circularShift = new CircularShift();
         circularShift.processLines(lineList);
+        appendJson(circularShiftArray, circularShift.toString());
         Alphabetizer alphabetizer = new Alphabetizer();
         alphabetizer.processLines(circularShift);
+        appendJson(alphabetizerArray, alphabetizer.toString());
         outputBuffer.processLines(alphabetizer);
+    }
+
+    private synchronized void appendJson(ArrayNode array, String lines)
+    {
+        array.add(lines);
     }
 }
