@@ -1,5 +1,6 @@
 //import com.se6362.kwic.MasterControl;
 import React, { useState } from "react";
+const API_BASE_URL = process.env.API_BASE_URL || "http://localhost:8080";
 
 const containerStyle = {
   maxWidth: 500,
@@ -41,6 +42,8 @@ const readOnlyInputStyle = {
 export default function KWIC() {
   const [Contents, setContents] = useState("");
   const [draft, setDraft] = useState("");
+  const [sortedShifts, setSortedShifts] = useState("");
+  const [isRunning, setIsRunning] = useState(false);
 
 
   return (
@@ -60,13 +63,39 @@ export default function KWIC() {
       </div>
 
       <div>
-          <button type="button" onClick={() => {
-            setContents(draft)
+          <button type="button" onClick={async () => {
             // call for KWIC functions here
             // variable "Contents" stores the user input
+            const inputData = { text: draft }
+            const json = JSON.stringify(inputData, null, 2);
+
+            console.log("KWIC input JSON:", json);
+            setContents(draft);
+            setSortedShifts("");
+            setIsRunning(true);
+
+            try {
+              const response = await fetch(`${API_BASE_URL}/api/kwic`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: json,
+              });
+
+              if (!response.ok) {
+                throw new Error(`Backend returned HTTP ${response.status}`);
+              }
+
+              const result = await response.json();
+              console.log("KWIC backend response:", result);
+              setSortedShifts(result.sortedShifts);
+            } catch (error) {
+              console.error("Unable to send KWIC input:", error);
+            } finally {
+              setIsRunning(false);
+            }
             }}
           >
-            Run KWIC
+            {isRunning ? "Running..." : "Run KWIC"}
           </button>
 
       </div>
@@ -109,7 +138,7 @@ export default function KWIC() {
           id="file-size"
           rows = {5}
           type="text"
-          value={""}
+          value={sortedShifts}
           readOnly
           placeholder="No file selected"
           style={readOnlyInputStyle}

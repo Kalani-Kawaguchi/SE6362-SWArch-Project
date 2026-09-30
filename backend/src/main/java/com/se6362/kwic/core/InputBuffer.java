@@ -22,9 +22,12 @@ public class InputBuffer implements AutoCloseable {
     public synchronized LineStorage getInputLine() throws IOException {
         LineStorage storage = new LineStorage();
 
-        JsonNode element = MAPPER.readTree(parser);
-        if (element != null) {
+        JsonNode element;
+        while ((element = MAPPER.readTree(parser)) != null) {
             storage.setLine(element.path("text").asText());
+            if (storage.getLineCount() > 0) {
+                return storage;
+            }
         }
 
         return storage;
