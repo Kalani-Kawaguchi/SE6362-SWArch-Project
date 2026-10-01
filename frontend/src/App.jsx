@@ -1,6 +1,7 @@
 import ProjPlan from "./documents/PreliminaryProjectPlan.pdf";
 import { useEffect, useState } from "react";
 import KWIC from "./KWIC.jsx"
+import KWIC2 from "./KWIC2.jsx"
 
 const API_BASE_URL = process.env.API_BASE_URL;
 
@@ -37,6 +38,7 @@ export default function App() {
       <p>{backendStatus}</p>
 
       <KWIC />
+      <KWIC2 />
 
     </main>
   );
