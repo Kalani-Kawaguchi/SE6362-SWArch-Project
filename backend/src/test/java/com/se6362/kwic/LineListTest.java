@@ -251,7 +251,7 @@ public class LineListTest
         Alphabetizer alpha2 = new Alphabetizer();
         alpha2.processLines(lineList2);
         MergedLines merge = new MergedLines();
-        merge.merge(alpha1, alpha2);
+        merge.processLines(alpha1, alpha2);
 
         // 0: "aa"
         assertEquals("aa", merge.getWord(0, 0));

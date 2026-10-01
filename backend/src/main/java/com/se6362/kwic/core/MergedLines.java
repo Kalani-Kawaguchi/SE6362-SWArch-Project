@@ -2,7 +2,12 @@ package com.se6362.kwic.core;
 
 public class MergedLines extends LineList
 {
-    public void merge(LineList oldList, LineList newList)
+    public void processLines(LineList oldList, LineList newList)
+    {
+        merge(oldList, newList);
+    }
+
+    private void merge(LineList oldList, LineList newList)
     {
         this.clear();
         int oldListPointer = 0;

@@ -7,7 +7,7 @@ public class OutputBuffer extends LineList
     public synchronized void processLines(Alphabetizer newList)
     {
         MergedLines temp = new MergedLines();
-        temp.merge(outputStorage, newList);
+        temp.processLines(outputStorage, newList);
         outputStorage = temp;
     }
 
