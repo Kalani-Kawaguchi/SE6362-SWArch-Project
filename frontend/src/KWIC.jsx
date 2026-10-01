@@ -60,6 +60,10 @@ export default function KWIC() {
         method: "DELETE",
       });
 
+      if (!response.ok) {
+        throw new Error(`Backend returned HTTP ${response.status}`);
+      }
+
       setDraft("");
       setSortedShifts("");
       setCircularShifts("");

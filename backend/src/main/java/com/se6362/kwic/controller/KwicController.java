@@ -75,7 +75,7 @@ public class KwicController
         }
     }
 
-    @DeleteMapping
+    @DeleteMapping("/kwic")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public synchronized void clear()
     {
