@@ -45,6 +45,32 @@ export default function KWIC() {
   const [circularShifts, setCircularShifts] = useState("");
   const [alphabetizer, setAlphabetizer] = useState("");
   const [isRunning, setIsRunning] = useState(false);
+  const [isClearing, setIsClearing] = useState(false);
+  const [error, setError] = useState("");
+  const isBusy = isRunning || isClearing;
+
+  async function clearData() {
+    if (isBusy) return;
+
+    setIsClearing(true);
+    setError("");
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/kwic`, {
+        method: "DELETE",
+      });
+
+      setDraft("");
+      setSortedShifts("");
+      setCircularShifts("");
+      setAlphabetizer("");
+    } catch (error) {
+      console.error("Unable to clear KWIC data:", error);
+      setError("Failed to clear data.");
+    } finally {
+      setIsClearing(false);
+    }
+  }
 
 
   return (
@@ -64,11 +90,14 @@ export default function KWIC() {
       </div>
 
       <div>
-        <button type="button" onClick={async () => {
+        <button type="button" disabled={isBusy} onClick={async () => {
           // call for KWIC functions here
           // variable "Contents" stores the user input
           const inputData = { text: draft }
           const json = JSON.stringify(inputData, null, 2);
+
+          if (isBusy) return;
+          setError("");
 
           console.log("KWIC input JSON:", json);
           setSortedShifts("");
@@ -114,7 +143,9 @@ export default function KWIC() {
         >
           {isRunning ? "Running..." : "Run KWIC"}
         </button>
-
+        <button type="button" onClick={clearData} disabled={isBusy}>
+          {isClearing ? "Clearing..." : "Clear Data"}
+        </button>
       </div>
 
       <div>

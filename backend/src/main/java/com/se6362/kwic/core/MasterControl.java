@@ -108,4 +108,12 @@ public class MasterControl
     {
         array.add(lines);
     }
+
+    public synchronized void clear()
+    {
+        outputBuffer.clear();
+        circularShiftArray.removeAll();
+        alphabetizerArray.removeAll();
+        jsonOutput.put("output", "");
+    }
 }

@@ -14,9 +14,12 @@ import java.nio.file.Path;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 @CrossOrigin(origins = "http://localhost:1234")
@@ -28,7 +31,7 @@ public class KwicController
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
     @PostMapping("/kwic")
-    public String receiveInput(@RequestBody KwicRequest input) throws IOException
+    public synchronized String receiveInput(@RequestBody KwicRequest input) throws IOException
     {
         if (input.text() == null)
         {
@@ -70,6 +73,13 @@ public class KwicController
         {
             Files.deleteIfExists(inputFile);
         }
+    }
+
+    @DeleteMapping
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public synchronized void clear()
+    {
+        masterControl.clear();
     }
 
     public record KwicRequest(String text)

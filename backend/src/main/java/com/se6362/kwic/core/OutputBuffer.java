@@ -11,6 +11,13 @@ public class OutputBuffer extends LineList
         outputStorage = temp;
     }
 
+    @Override
+    public synchronized void clear()
+    {
+        super.clear();
+        outputStorage.clear();
+    }
+
     public void saveToDB()
     {
         // TO DO: Save results to database
