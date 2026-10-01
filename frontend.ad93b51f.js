@@ -19075,6 +19075,8 @@ var _preliminaryProjectPlanPdfDefault = parcelHelpers.interopDefault(_preliminar
 var _react = require("react");
 var _kwicJsx = require("./KWIC.jsx");
 var _kwicJsxDefault = parcelHelpers.interopDefault(_kwicJsx);
+var _kwic2Jsx = require("./KWIC2.jsx");
+var _kwic2JsxDefault = parcelHelpers.interopDefault(_kwic2Jsx);
 var _s = $RefreshSig$();
 const API_BASE_URL = "http://localhost:8080";
 function App() {
@@ -19102,14 +19104,14 @@ function App() {
                 children: "Software Architecture Project"
             }, void 0, false, {
                 fileName: "src/App.jsx",
-                lineNumber: 32,
+                lineNumber: 33,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("h2", {
                 children: "Group: Kalani Kawaguchi, Zhi Li, Jonathan Loper, Mitchell Vu"
             }, void 0, false, {
                 fileName: "src/App.jsx",
-                lineNumber: 33,
+                lineNumber: 34,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("a", {
@@ -19117,32 +19119,32 @@ function App() {
                 children: "Preliminary Project Plan"
             }, void 0, false, {
                 fileName: "src/App.jsx",
-                lineNumber: 34,
+                lineNumber: 35,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("h3", {
                 children: "Backend Status"
             }, void 0, false, {
                 fileName: "src/App.jsx",
-                lineNumber: 36,
+                lineNumber: 37,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
                 children: backendStatus
             }, void 0, false, {
                 fileName: "src/App.jsx",
-                lineNumber: 37,
+                lineNumber: 38,
                 columnNumber: 7
             }, this),
-            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _kwicJsxDefault.default), {}, void 0, false, {
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _kwic2JsxDefault.default), {}, void 0, false, {
                 fileName: "src/App.jsx",
-                lineNumber: 39,
+                lineNumber: 41,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "src/App.jsx",
-        lineNumber: 31,
+        lineNumber: 32,
         columnNumber: 5
     }, this);
 }
@@ -19156,7 +19158,7 @@ $RefreshReg$(_c, "App");
   globalThis.$RefreshReg$ = prevRefreshReg;
   globalThis.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-dev-runtime":"dVPUn","./documents/PreliminaryProjectPlan.pdf":"getRJ","react":"jMk1U","./KWIC.jsx":"7g56c","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"7h6Pi"}],"getRJ":[function(require,module,exports,__globalThis) {
+},{"react/jsx-dev-runtime":"dVPUn","./documents/PreliminaryProjectPlan.pdf":"getRJ","react":"jMk1U","./KWIC.jsx":"7g56c","./KWIC2.jsx":"ciNBE","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"7h6Pi"}],"getRJ":[function(require,module,exports,__globalThis) {
 module.exports = module.bundle.resolve("PreliminaryProjectPlan.50c716af.pdf") + "?" + Date.now();
 
 },{}],"7g56c":[function(require,module,exports,__globalThis) {
@@ -19214,7 +19216,7 @@ function KWIC() {
     const [draft, setDraft] = (0, _react.useState)("");
     const [sortedShifts, setSortedShifts] = (0, _react.useState)("");
     const [circularShifts, setCircularShifts] = (0, _react.useState)("");
-    const [alphabetized, setAlphabetized] = (0, _react.useState)("");
+    const [alphabetizer, setAlphabetizer] = (0, _react.useState)("");
     const [isRunning, setIsRunning] = (0, _react.useState)(false);
     return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
         style: containerStyle,
@@ -19259,9 +19261,9 @@ function KWIC() {
                         };
                         const json = JSON.stringify(inputData, null, 2);
                         console.log("KWIC input JSON:", json);
-                        setCircularShifts("");
-                        setAlphabetized("");
                         setSortedShifts("");
+                        setCircularShifts("");
+                        setAlphabetizer("");
                         setIsRunning(true);
                         try {
                             const response = await fetch(`${API_BASE_URL}/api/kwic`, {
@@ -19273,10 +19275,19 @@ function KWIC() {
                             });
                             if (!response.ok) throw new Error(`Backend returned HTTP ${response.status}`);
                             const result = await response.json();
-                            console.log("KWIC backend response:", result);
-                            setCircularShifts(result.circularShifts);
-                            setAlphabetized(result.alphabetized);
-                            setSortedShifts(result.sortedShifts);
+                            console.log("KWIC backend response:", JSON.stringify(result));
+                            let shifts = "";
+                            let alpha = "";
+                            const output = result.output;
+                            result.circularShift.forEach((lines)=>{
+                                shifts += lines + '\n';
+                            });
+                            setCircularShifts(shifts);
+                            result.alphabetizer.forEach((lines)=>{
+                                alpha += lines + '\n';
+                            });
+                            setAlphabetizer(alpha);
+                            setSortedShifts(output);
                         } catch (error) {
                             console.error("Unable to send KWIC input:", error);
                         } finally{
@@ -19287,7 +19298,7 @@ function KWIC() {
                 }, void 0, false, {
                     fileName: "src/KWIC.jsx",
                     lineNumber: 67,
-                    columnNumber: 11
+                    columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "src/KWIC.jsx",
@@ -19299,10 +19310,10 @@ function KWIC() {
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("label", {
                         htmlFor: "file-name",
                         style: labelStyle,
-                        children: "Circular Shifts"
+                        children: "Circular Shift"
                     }, void 0, false, {
                         fileName: "src/KWIC.jsx",
-                        lineNumber: 108,
+                        lineNumber: 121,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("textarea", {
@@ -19311,17 +19322,17 @@ function KWIC() {
                         type: "text",
                         value: circularShifts,
                         readOnly: true,
-                        placeholder: "No file selected",
+                        placeholder: "Circular shifted lines will display here.",
                         style: readOnlyInputStyle
                     }, void 0, false, {
                         fileName: "src/KWIC.jsx",
-                        lineNumber: 111,
+                        lineNumber: 124,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "src/KWIC.jsx",
-                lineNumber: 107,
+                lineNumber: 120,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -19332,26 +19343,26 @@ function KWIC() {
                         children: "Alphabetizer"
                     }, void 0, false, {
                         fileName: "src/KWIC.jsx",
-                        lineNumber: 123,
+                        lineNumber: 136,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("textarea", {
                         id: "file-name",
                         rows: 5,
                         type: "text",
-                        value: alphabetized,
+                        value: alphabetizer,
                         readOnly: true,
-                        placeholder: "No file selected",
+                        placeholder: "Alphabetized lines will display here.",
                         style: readOnlyInputStyle
                     }, void 0, false, {
                         fileName: "src/KWIC.jsx",
-                        lineNumber: 126,
+                        lineNumber: 139,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "src/KWIC.jsx",
-                lineNumber: 122,
+                lineNumber: 135,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -19359,29 +19370,29 @@ function KWIC() {
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("label", {
                         htmlFor: "file-size",
                         style: labelStyle,
-                        children: "Sorted Shift"
+                        children: "Final Output"
                     }, void 0, false, {
                         fileName: "src/KWIC.jsx",
-                        lineNumber: 138,
+                        lineNumber: 151,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("textarea", {
                         id: "file-size",
-                        rows: 5,
+                        rows: 20,
                         type: "text",
                         value: sortedShifts,
                         readOnly: true,
-                        placeholder: "No file selected",
+                        placeholder: "Final index will display here.",
                         style: readOnlyInputStyle
                     }, void 0, false, {
                         fileName: "src/KWIC.jsx",
-                        lineNumber: 141,
+                        lineNumber: 154,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "src/KWIC.jsx",
-                lineNumber: 137,
+                lineNumber: 150,
                 columnNumber: 7
             }, this)
         ]
@@ -19391,7 +19402,7 @@ function KWIC() {
         columnNumber: 5
     }, this);
 }
-_s(KWIC, "WyNdDg/f6vUr7LYXxWRLAHGV5vs=");
+_s(KWIC, "Eh/mNoryxBcCXit5BZ8vu/r5TY0=");
 _c = KWIC;
 var _c;
 $RefreshReg$(_c, "KWIC");
@@ -21709,6 +21720,816 @@ function $da9882e673ac146b$var$ErrorOverlay() {
     return null;
 }
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}]},["hiyDA","gYcKb"], "gYcKb", "parcelRequire10c2", {}, "./", "/", "http://localhost:1234")
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}],"ciNBE":[function(require,module,exports,__globalThis) {
+var $parcel$ReactRefreshHelpers$c85b = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
+$parcel$ReactRefreshHelpers$c85b.init();
+var prevRefreshReg = globalThis.$RefreshReg$;
+var prevRefreshSig = globalThis.$RefreshSig$;
+$parcel$ReactRefreshHelpers$c85b.prelude(module);
+
+try {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "default", ()=>KWIC2);
+var _jsxDevRuntime = require("react/jsx-dev-runtime");
+var _preliminaryProjectPlanPdf = require("./documents/PreliminaryProjectPlan.pdf");
+var _preliminaryProjectPlanPdfDefault = parcelHelpers.interopDefault(_preliminaryProjectPlanPdf);
+var _react = require("react");
+var _stylesCss = require("./styles.css");
+var _s = $RefreshSig$();
+const API_BASE_URL = "http://localhost:8080".replace(/\/+$/, "");
+const EXAMPLE = "software architecture project\nkey word in context";
+const MAX_LINES = 100;
+const MAX_WORDS_PER_LINE = 50;
+const MAX_WORDS_TOTAL = 1000;
+// Returns an error message, or "" if the input is valid.
+function validateInput(text) {
+    const lines = text.split(/\r?\n/).map((l)=>l.trim()).filter(Boolean);
+    if (lines.length === 0) return "Enter at least one line of text.";
+    if (lines.length > MAX_LINES) return `Use at most ${MAX_LINES} lines (you have ${lines.length}).`;
+    let total = 0;
+    for(let i = 0; i < lines.length; i++){
+        const words = lines[i].split(/\s+/).length;
+        if (words > MAX_WORDS_PER_LINE) return `Line ${i + 1} has ${words} words. Use at most ${MAX_WORDS_PER_LINE} per line.`;
+        total += words;
+    }
+    if (total > MAX_WORDS_TOTAL) return `Use at most ${MAX_WORDS_TOTAL.toLocaleString()} words in total (you have ${total.toLocaleString()}).`;
+    return "";
+}
+function KWIC2() {
+    _s();
+    const [text, setText] = (0, _react.useState)("");
+    const [sortedShifts, setSortedShifts] = (0, _react.useState)(null);
+    const [circularShifts, setCircularShifts] = (0, _react.useState)(null);
+    const [alphabetizer, setAlphabetizer] = (0, _react.useState)(null);
+    const [result, setResult] = (0, _react.useState)(null);
+    const [error, setError] = (0, _react.useState)("");
+    const [isProcessing, setIsProcessing] = (0, _react.useState)(false);
+    const [backendStatus, setBackendStatus] = (0, _react.useState)("Checking backend\u2026");
+    // Check whether the backend is reachable. no-cors avoids CORS failures;
+    // any response (even an opaque one) means the server is up.
+    (0, _react.useEffect)(()=>{
+        let cancelled = false;
+        fetch(API_BASE_URL, {
+            mode: "no-cors"
+        }).then(()=>!cancelled && setBackendStatus("Backend connected")).catch(()=>!cancelled && setBackendStatus("Backend unavailable"));
+        return ()=>{
+            cancelled = true;
+        };
+    }, []);
+    function updateText(value) {
+        setText(value);
+        setError("");
+    }
+    async function generateIndex(event) {
+        event.preventDefault();
+        if (isProcessing) return;
+        const validationError = validateInput(text);
+        if (validationError) {
+            setError(validationError);
+            return;
+        }
+        setSortedShifts("");
+        setCircularShifts("");
+        setAlphabetizer("");
+        setError("");
+        setResult(null);
+        setIsProcessing(true);
+        try {
+            const response = await fetch(`${API_BASE_URL}/api/kwic`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    text
+                })
+            });
+            if (!response.ok) throw new Error(`Backend returned HTTP ${response.status}`);
+            const results = await response.json();
+            console.log(results);
+            // "output" is the final sorted index (string or array of lines);
+            // fall back to the alphabetizer stage if it is missing.
+            const rawLines = results.output ?? results.alphabetizer ?? [];
+            console.log(rawLines);
+            const lines = (Array.isArray(rawLines) ? rawLines : String(rawLines).split(/\r?\n/)).filter((line)=>line.trim() !== "");
+            let shifts = [];
+            let alpha = [];
+            const output = results.output;
+            results.circularShift.forEach((entry)=>{
+                String(entry).split(/\r?\n/).forEach((line)=>{
+                    if (line.trim() !== "") shifts.push(line.trimEnd());
+                });
+            });
+            setCircularShifts({
+                shifts,
+                shiftCount: shifts.length,
+                inputLineCount: text.split(/\r?\n/).filter((l)=>l.trim()).length
+            });
+            results.alphabetizer.forEach((entry)=>{
+                String(entry).split(/\r?\n/).forEach((line)=>{
+                    if (line.trim() !== "") alpha.push(line.trimEnd());
+                });
+            });
+            setAlphabetizer({
+                alpha,
+                shiftCount: alpha.length,
+                inputLineCount: text.split(/\r?\n/).filter((l)=>l.trim()).length
+            });
+            console.log(alpha);
+            setResult({
+                lines,
+                shiftCount: Array.isArray(results.output) ? results.circularShift.length : lines.length,
+                inputLineCount: text.split(/\r?\n/).filter((l)=>l.trim()).length
+            });
+            setBackendStatus("Backend connected");
+        } catch (err) {
+            console.error("Unable to generate KWIC index:", err);
+            setBackendStatus("Backend unavailable");
+            setError("Couldn't reach the KWIC backend. Check that it is running and try again.");
+        } finally{
+            setIsProcessing(false);
+        }
+    }
+    return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+        className: "app-shell",
+        children: [
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("header", {
+                className: "topbar",
+                children: [
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("a", {
+                        className: "brand",
+                        href: "#main",
+                        children: [
+                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                                className: "brand-icon",
+                                "aria-hidden": "true",
+                                children: "K"
+                            }, void 0, false, {
+                                fileName: "src/KWIC2.jsx",
+                                lineNumber: 135,
+                                columnNumber: 43
+                            }, this),
+                            "KWIC",
+                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                                className: "brand-detail",
+                                children: "/ Text lab"
+                            }, void 0, false, {
+                                fileName: "src/KWIC2.jsx",
+                                lineNumber: 135,
+                                columnNumber: 103
+                            }, this)
+                        ]
+                    }, void 0, true, {
+                        fileName: "src/KWIC2.jsx",
+                        lineNumber: 135,
+                        columnNumber: 9
+                    }, this),
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                        className: `connection ${backendStatus === "Backend connected" ? "connected" : ""}`,
+                        children: [
+                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                                className: "status-dot",
+                                "aria-hidden": "true"
+                            }, void 0, false, {
+                                fileName: "src/KWIC2.jsx",
+                                lineNumber: 137,
+                                columnNumber: 11
+                            }, this),
+                            backendStatus
+                        ]
+                    }, void 0, true, {
+                        fileName: "src/KWIC2.jsx",
+                        lineNumber: 136,
+                        columnNumber: 9
+                    }, this)
+                ]
+            }, void 0, true, {
+                fileName: "src/KWIC2.jsx",
+                lineNumber: 134,
+                columnNumber: 7
+            }, this),
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("main", {
+                id: "main",
+                children: [
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("section", {
+                        className: "intro",
+                        "aria-labelledby": "page-title",
+                        children: [
+                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
+                                className: "eyebrow",
+                                children: "KEY WORD IN CONTEXT"
+                            }, void 0, false, {
+                                fileName: "src/KWIC2.jsx",
+                                lineNumber: 143,
+                                columnNumber: 11
+                            }, this),
+                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("h1", {
+                                id: "page-title",
+                                children: [
+                                    "Every word.",
+                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("br", {}, void 0, false, {
+                                        fileName: "src/KWIC2.jsx",
+                                        lineNumber: 144,
+                                        columnNumber: 42
+                                    }, this),
+                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                                        children: "In context."
+                                    }, void 0, false, {
+                                        fileName: "src/KWIC2.jsx",
+                                        lineNumber: 144,
+                                        columnNumber: 48
+                                    }, this)
+                                ]
+                            }, void 0, true, {
+                                fileName: "src/KWIC2.jsx",
+                                lineNumber: 144,
+                                columnNumber: 11
+                            }, this)
+                        ]
+                    }, void 0, true, {
+                        fileName: "src/KWIC2.jsx",
+                        lineNumber: 142,
+                        columnNumber: 9
+                    }, this),
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                        className: "workspace",
+                        children: [
+                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("section", {
+                                className: "panel",
+                                "aria-labelledby": "input-heading",
+                                children: [
+                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                                        className: "panel-heading",
+                                        children: [
+                                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("h2", {
+                                                id: "input-heading",
+                                                children: [
+                                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                                                        className: "step",
+                                                        children: "01"
+                                                    }, void 0, false, {
+                                                        fileName: "src/KWIC2.jsx",
+                                                        lineNumber: 149,
+                                                        columnNumber: 67
+                                                    }, this),
+                                                    "Your text"
+                                                ]
+                                            }, void 0, true, {
+                                                fileName: "src/KWIC2.jsx",
+                                                lineNumber: 149,
+                                                columnNumber: 44
+                                            }, this),
+                                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                                                className: "tag",
+                                                children: "INPUT"
+                                            }, void 0, false, {
+                                                fileName: "src/KWIC2.jsx",
+                                                lineNumber: 149,
+                                                columnNumber: 113
+                                            }, this)
+                                        ]
+                                    }, void 0, true, {
+                                        fileName: "src/KWIC2.jsx",
+                                        lineNumber: 149,
+                                        columnNumber: 13
+                                    }, this),
+                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("form", {
+                                        onSubmit: generateIndex,
+                                        children: [
+                                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("label", {
+                                                htmlFor: "kwic-input",
+                                                children: "Input text"
+                                            }, void 0, false, {
+                                                fileName: "src/KWIC2.jsx",
+                                                lineNumber: 151,
+                                                columnNumber: 15
+                                            }, this),
+                                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
+                                                id: "input-help",
+                                                className: "help",
+                                                children: "Enter one phrase or sentence per line. Blank lines are ignored."
+                                            }, void 0, false, {
+                                                fileName: "src/KWIC2.jsx",
+                                                lineNumber: 152,
+                                                columnNumber: 15
+                                            }, this),
+                                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("textarea", {
+                                                id: "kwic-input",
+                                                value: text,
+                                                onChange: (event)=>updateText(event.target.value),
+                                                placeholder: "software architecture project\nkey word in context",
+                                                maxLength: 10000,
+                                                disabled: isProcessing,
+                                                "aria-describedby": "input-help input-limits",
+                                                spellCheck: "false"
+                                            }, void 0, false, {
+                                                fileName: "src/KWIC2.jsx",
+                                                lineNumber: 153,
+                                                columnNumber: 15
+                                            }, this),
+                                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                                                className: "input-meta",
+                                                children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                                                    children: [
+                                                        text.length.toLocaleString(),
+                                                        " / 10,000"
+                                                    ]
+                                                }, void 0, true, {
+                                                    fileName: "src/KWIC2.jsx",
+                                                    lineNumber: 156,
+                                                    columnNumber: 43
+                                                }, this)
+                                            }, void 0, false, {
+                                                fileName: "src/KWIC2.jsx",
+                                                lineNumber: 156,
+                                                columnNumber: 15
+                                            }, this),
+                                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
+                                                id: "input-limits",
+                                                className: "limits",
+                                                children: "Up to 100 lines \xb7 50 words per line \xb7 1,000 words total"
+                                            }, void 0, false, {
+                                                fileName: "src/KWIC2.jsx",
+                                                lineNumber: 157,
+                                                columnNumber: 15
+                                            }, this),
+                                            error && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
+                                                className: "error",
+                                                role: "alert",
+                                                children: error
+                                            }, void 0, false, {
+                                                fileName: "src/KWIC2.jsx",
+                                                lineNumber: 158,
+                                                columnNumber: 25
+                                            }, this),
+                                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                                                className: "actions",
+                                                children: [
+                                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
+                                                        className: "primary-button",
+                                                        type: "submit",
+                                                        disabled: !text.trim() || isProcessing,
+                                                        children: [
+                                                            isProcessing ? "Generating\u2026" : "Generate index",
+                                                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                                                                "aria-hidden": "true",
+                                                                children: " \u2192"
+                                                            }, void 0, false, {
+                                                                fileName: "src/KWIC2.jsx",
+                                                                lineNumber: 160,
+                                                                columnNumber: 155
+                                                            }, this)
+                                                        ]
+                                                    }, void 0, true, {
+                                                        fileName: "src/KWIC2.jsx",
+                                                        lineNumber: 160,
+                                                        columnNumber: 17
+                                                    }, this),
+                                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
+                                                        className: "secondary-button",
+                                                        type: "button",
+                                                        disabled: !text || isProcessing,
+                                                        onClick: ()=>{
+                                                            updateText("");
+                                                            setResult(null);
+                                                        },
+                                                        children: "Clear"
+                                                    }, void 0, false, {
+                                                        fileName: "src/KWIC2.jsx",
+                                                        lineNumber: 161,
+                                                        columnNumber: 17
+                                                    }, this)
+                                                ]
+                                            }, void 0, true, {
+                                                fileName: "src/KWIC2.jsx",
+                                                lineNumber: 159,
+                                                columnNumber: 15
+                                            }, this)
+                                        ]
+                                    }, void 0, true, {
+                                        fileName: "src/KWIC2.jsx",
+                                        lineNumber: 150,
+                                        columnNumber: 13
+                                    }, this)
+                                ]
+                            }, void 0, true, {
+                                fileName: "src/KWIC2.jsx",
+                                lineNumber: 148,
+                                columnNumber: 11
+                            }, this),
+                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("section", {
+                                className: "panel results-panel",
+                                "aria-labelledby": "results-heading",
+                                "aria-busy": isProcessing,
+                                children: [
+                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                                        className: "panel-heading",
+                                        children: [
+                                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("h2", {
+                                                id: "results-heading",
+                                                children: [
+                                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                                                        className: "step",
+                                                        children: "02"
+                                                    }, void 0, false, {
+                                                        fileName: "src/KWIC2.jsx",
+                                                        lineNumber: 167,
+                                                        columnNumber: 69
+                                                    }, this),
+                                                    "Your index"
+                                                ]
+                                            }, void 0, true, {
+                                                fileName: "src/KWIC2.jsx",
+                                                lineNumber: 167,
+                                                columnNumber: 44
+                                            }, this),
+                                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                                                className: "tag",
+                                                children: "A\u2013Z"
+                                            }, void 0, false, {
+                                                fileName: "src/KWIC2.jsx",
+                                                lineNumber: 167,
+                                                columnNumber: 116
+                                            }, this)
+                                        ]
+                                    }, void 0, true, {
+                                        fileName: "src/KWIC2.jsx",
+                                        lineNumber: 167,
+                                        columnNumber: 13
+                                    }, this),
+                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
+                                        className: "result-summary",
+                                        role: "status",
+                                        children: isProcessing ? "Generating your index\u2026" : result ? `${result.shiftCount} rotations from ${result.inputLineCount} input ${result.inputLineCount === 1 ? "line" : "lines"}` : "Your results will appear here."
+                                    }, void 0, false, {
+                                        fileName: "src/KWIC2.jsx",
+                                        lineNumber: 168,
+                                        columnNumber: 13
+                                    }, this),
+                                    result ? /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("ol", {
+                                        className: "results",
+                                        children: result.lines.map((line, index)=>/*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("li", {
+                                                children: line
+                                            }, index, false, {
+                                                fileName: "src/KWIC2.jsx",
+                                                lineNumber: 169,
+                                                columnNumber: 82
+                                            }, this))
+                                    }, void 0, false, {
+                                        fileName: "src/KWIC2.jsx",
+                                        lineNumber: 169,
+                                        columnNumber: 23
+                                    }, this) : /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                                        className: "empty-state",
+                                        children: [
+                                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                                                className: "rotation-example",
+                                                "aria-hidden": "true",
+                                                children: [
+                                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                                                        children: "word in context"
+                                                    }, void 0, false, {
+                                                        fileName: "src/KWIC2.jsx",
+                                                        lineNumber: 170,
+                                                        columnNumber: 97
+                                                    }, this),
+                                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                                                        children: "in context word"
+                                                    }, void 0, false, {
+                                                        fileName: "src/KWIC2.jsx",
+                                                        lineNumber: 170,
+                                                        columnNumber: 125
+                                                    }, this),
+                                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                                                        children: "context word in"
+                                                    }, void 0, false, {
+                                                        fileName: "src/KWIC2.jsx",
+                                                        lineNumber: 170,
+                                                        columnNumber: 153
+                                                    }, this)
+                                                ]
+                                            }, void 0, true, {
+                                                fileName: "src/KWIC2.jsx",
+                                                lineNumber: 170,
+                                                columnNumber: 44
+                                            }, this),
+                                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
+                                                children: isProcessing ? "Rotating words and sorting lines." : ""
+                                            }, void 0, false, {
+                                                fileName: "src/KWIC2.jsx",
+                                                lineNumber: 170,
+                                                columnNumber: 187
+                                            }, this)
+                                        ]
+                                    }, void 0, true, {
+                                        fileName: "src/KWIC2.jsx",
+                                        lineNumber: 170,
+                                        columnNumber: 15
+                                    }, this)
+                                ]
+                            }, void 0, true, {
+                                fileName: "src/KWIC2.jsx",
+                                lineNumber: 166,
+                                columnNumber: 11
+                            }, this),
+                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("section", {
+                                className: "panel results-panel",
+                                "aria-labelledby": "results-heading",
+                                "aria-busy": isProcessing,
+                                children: [
+                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                                        className: "panel-heading",
+                                        children: [
+                                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("h2", {
+                                                id: "results-heading",
+                                                children: [
+                                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                                                        className: "step",
+                                                        children: "02"
+                                                    }, void 0, false, {
+                                                        fileName: "src/KWIC2.jsx",
+                                                        lineNumber: 174,
+                                                        columnNumber: 69
+                                                    }, this),
+                                                    "Circular Shifts index"
+                                                ]
+                                            }, void 0, true, {
+                                                fileName: "src/KWIC2.jsx",
+                                                lineNumber: 174,
+                                                columnNumber: 44
+                                            }, this),
+                                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                                                className: "tag",
+                                                children: "A\u2013Z"
+                                            }, void 0, false, {
+                                                fileName: "src/KWIC2.jsx",
+                                                lineNumber: 174,
+                                                columnNumber: 127
+                                            }, this)
+                                        ]
+                                    }, void 0, true, {
+                                        fileName: "src/KWIC2.jsx",
+                                        lineNumber: 174,
+                                        columnNumber: 13
+                                    }, this),
+                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
+                                        className: "result-summary",
+                                        role: "status",
+                                        children: isProcessing ? "Generating your index\u2026" : circularShifts ? `${circularShifts.shiftCount} rotations from ${circularShifts.inputLineCount} input ${circularShifts.inputLineCount === 1 ? "line" : "lines"}` : "Your results will appear here."
+                                    }, void 0, false, {
+                                        fileName: "src/KWIC2.jsx",
+                                        lineNumber: 175,
+                                        columnNumber: 13
+                                    }, this),
+                                    result ? /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("ol", {
+                                        className: "results",
+                                        children: circularShifts.shifts.map((line, index)=>/*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("li", {
+                                                children: line
+                                            }, index, false, {
+                                                fileName: "src/KWIC2.jsx",
+                                                lineNumber: 176,
+                                                columnNumber: 91
+                                            }, this))
+                                    }, void 0, false, {
+                                        fileName: "src/KWIC2.jsx",
+                                        lineNumber: 176,
+                                        columnNumber: 23
+                                    }, this) : /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                                        className: "empty-state",
+                                        children: [
+                                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                                                className: "rotation-example",
+                                                "aria-hidden": "true",
+                                                children: [
+                                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                                                        children: "word in context"
+                                                    }, void 0, false, {
+                                                        fileName: "src/KWIC2.jsx",
+                                                        lineNumber: 177,
+                                                        columnNumber: 97
+                                                    }, this),
+                                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                                                        children: "in context word"
+                                                    }, void 0, false, {
+                                                        fileName: "src/KWIC2.jsx",
+                                                        lineNumber: 177,
+                                                        columnNumber: 125
+                                                    }, this),
+                                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                                                        children: "context word in"
+                                                    }, void 0, false, {
+                                                        fileName: "src/KWIC2.jsx",
+                                                        lineNumber: 177,
+                                                        columnNumber: 153
+                                                    }, this)
+                                                ]
+                                            }, void 0, true, {
+                                                fileName: "src/KWIC2.jsx",
+                                                lineNumber: 177,
+                                                columnNumber: 44
+                                            }, this),
+                                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
+                                                children: isProcessing ? "Rotating words and sorting lines." : ""
+                                            }, void 0, false, {
+                                                fileName: "src/KWIC2.jsx",
+                                                lineNumber: 177,
+                                                columnNumber: 187
+                                            }, this)
+                                        ]
+                                    }, void 0, true, {
+                                        fileName: "src/KWIC2.jsx",
+                                        lineNumber: 177,
+                                        columnNumber: 15
+                                    }, this)
+                                ]
+                            }, void 0, true, {
+                                fileName: "src/KWIC2.jsx",
+                                lineNumber: 173,
+                                columnNumber: 11
+                            }, this),
+                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("section", {
+                                className: "panel results-panel",
+                                "aria-labelledby": "results-heading",
+                                "aria-busy": isProcessing,
+                                children: [
+                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                                        className: "panel-heading",
+                                        children: [
+                                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("h2", {
+                                                id: "results-heading",
+                                                children: [
+                                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                                                        className: "step",
+                                                        children: "02"
+                                                    }, void 0, false, {
+                                                        fileName: "src/KWIC2.jsx",
+                                                        lineNumber: 181,
+                                                        columnNumber: 69
+                                                    }, this),
+                                                    "Alphabetized index"
+                                                ]
+                                            }, void 0, true, {
+                                                fileName: "src/KWIC2.jsx",
+                                                lineNumber: 181,
+                                                columnNumber: 44
+                                            }, this),
+                                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                                                className: "tag",
+                                                children: "A\u2013Z"
+                                            }, void 0, false, {
+                                                fileName: "src/KWIC2.jsx",
+                                                lineNumber: 181,
+                                                columnNumber: 124
+                                            }, this)
+                                        ]
+                                    }, void 0, true, {
+                                        fileName: "src/KWIC2.jsx",
+                                        lineNumber: 181,
+                                        columnNumber: 13
+                                    }, this),
+                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
+                                        className: "result-summary",
+                                        role: "status",
+                                        children: isProcessing ? "Generating your index\u2026" : alphabetizer ? `${alphabetizer.shiftCount} rotations from ${alphabetizer.inputLineCount} input ${alphabetizer.inputLineCount === 1 ? "line" : "lines"}` : "Your results will appear here."
+                                    }, void 0, false, {
+                                        fileName: "src/KWIC2.jsx",
+                                        lineNumber: 182,
+                                        columnNumber: 13
+                                    }, this),
+                                    result ? /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("ol", {
+                                        className: "results",
+                                        children: alphabetizer.alpha.map((line, index)=>/*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("li", {
+                                                children: line
+                                            }, index, false, {
+                                                fileName: "src/KWIC2.jsx",
+                                                lineNumber: 183,
+                                                columnNumber: 88
+                                            }, this))
+                                    }, void 0, false, {
+                                        fileName: "src/KWIC2.jsx",
+                                        lineNumber: 183,
+                                        columnNumber: 23
+                                    }, this) : /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                                        className: "empty-state",
+                                        children: [
+                                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                                                className: "rotation-example",
+                                                "aria-hidden": "true",
+                                                children: [
+                                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                                                        children: "word in context"
+                                                    }, void 0, false, {
+                                                        fileName: "src/KWIC2.jsx",
+                                                        lineNumber: 184,
+                                                        columnNumber: 97
+                                                    }, this),
+                                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                                                        children: "in context word"
+                                                    }, void 0, false, {
+                                                        fileName: "src/KWIC2.jsx",
+                                                        lineNumber: 184,
+                                                        columnNumber: 125
+                                                    }, this),
+                                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                                                        children: "context word in"
+                                                    }, void 0, false, {
+                                                        fileName: "src/KWIC2.jsx",
+                                                        lineNumber: 184,
+                                                        columnNumber: 153
+                                                    }, this)
+                                                ]
+                                            }, void 0, true, {
+                                                fileName: "src/KWIC2.jsx",
+                                                lineNumber: 184,
+                                                columnNumber: 44
+                                            }, this),
+                                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
+                                                children: isProcessing ? "Rotating words and sorting lines." : ""
+                                            }, void 0, false, {
+                                                fileName: "src/KWIC2.jsx",
+                                                lineNumber: 184,
+                                                columnNumber: 187
+                                            }, this)
+                                        ]
+                                    }, void 0, true, {
+                                        fileName: "src/KWIC2.jsx",
+                                        lineNumber: 184,
+                                        columnNumber: 15
+                                    }, this)
+                                ]
+                            }, void 0, true, {
+                                fileName: "src/KWIC2.jsx",
+                                lineNumber: 180,
+                                columnNumber: 11
+                            }, this)
+                        ]
+                    }, void 0, true, {
+                        fileName: "src/KWIC2.jsx",
+                        lineNumber: 147,
+                        columnNumber: 9
+                    }, this)
+                ]
+            }, void 0, true, {
+                fileName: "src/KWIC2.jsx",
+                lineNumber: 141,
+                columnNumber: 7
+            }, this),
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("footer", {
+                children: [
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                        children: [
+                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("strong", {
+                                children: "SE 6362 \xb7 Software Architecture"
+                            }, void 0, false, {
+                                fileName: "src/KWIC2.jsx",
+                                lineNumber: 190,
+                                columnNumber: 20
+                            }, this),
+                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
+                                children: "Kalani Kawaguchi \xb7 Zhi Li \xb7 Jonathan Loper \xb7 Mitchell Vu"
+                            }, void 0, false, {
+                                fileName: "src/KWIC2.jsx",
+                                lineNumber: 190,
+                                columnNumber: 68
+                            }, this)
+                        ]
+                    }, void 0, true, {
+                        fileName: "src/KWIC2.jsx",
+                        lineNumber: 190,
+                        columnNumber: 15
+                    }, this),
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("a", {
+                        href: (0, _preliminaryProjectPlanPdfDefault.default),
+                        children: "Preliminary project plan \u2197"
+                    }, void 0, false, {
+                        fileName: "src/KWIC2.jsx",
+                        lineNumber: 190,
+                        columnNumber: 137
+                    }, this)
+                ]
+            }, void 0, true, {
+                fileName: "src/KWIC2.jsx",
+                lineNumber: 190,
+                columnNumber: 7
+            }, this)
+        ]
+    }, void 0, true, {
+        fileName: "src/KWIC2.jsx",
+        lineNumber: 133,
+        columnNumber: 5
+    }, this);
+}
+_s(KWIC2, "bXsVo5zygDIiuktSoM3Df0mb82U=");
+_c = KWIC2;
+var _c;
+$RefreshReg$(_c, "KWIC2");
+
+  $parcel$ReactRefreshHelpers$c85b.postlude(module);
+} finally {
+  globalThis.$RefreshReg$ = prevRefreshReg;
+  globalThis.$RefreshSig$ = prevRefreshSig;
+}
+},{"react/jsx-dev-runtime":"dVPUn","./documents/PreliminaryProjectPlan.pdf":"getRJ","react":"jMk1U","./styles.css":"lW6qc","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"7h6Pi"}],"lW6qc":[function() {},{}]},["hiyDA","gYcKb"], "gYcKb", "parcelRequire10c2", {}, "./", "/", "http://localhost:1234")
 
 //# sourceMappingURL=frontend.ad93b51f.js.map
