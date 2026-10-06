@@ -34,8 +34,9 @@ public class MasterControl
         ExecutorService executor = Executors.newFixedThreadPool(threadCount);
 
         // Instantiate the shared input component
-        try (InputBuffer inputBuffer = new InputBuffer(inputFile))
+        try (InputBuffer inputBuffer = new InputBuffer())
         {
+            inputBuffer.readFromFile(inputFile);
 
             // Launch consumers
             for (int i = 0; i < threadCount; i++)
@@ -48,7 +49,7 @@ public class MasterControl
                         while (true)
                         {
                             // Consumers pull work directly from the independent component
-                            LineStorage storage = inputBuffer.getInputLine();
+                            LineStorage storage = inputBuffer.getInputLines(1);
 
                             // Break out if the inputManager file component reports
                             if (storage.getLineCount() == 0)
@@ -79,7 +80,7 @@ public class MasterControl
 
     public void saveOutput() throws SQLException
     {
-        outputBuffer.saveToDB();
+        outputBuffer.writeToDatabase();
     }
 
     public String getOutput()
@@ -96,12 +97,12 @@ public class MasterControl
     private void processLines(LineList lineList)
     {
         CircularShift circularShift = new CircularShift();
-        circularShift.processLines(lineList);
+        circularShift.circularShiftLines(lineList);
         appendJson(circularShiftArray, circularShift.toString());
         Alphabetizer alphabetizer = new Alphabetizer();
-        alphabetizer.processLines(circularShift);
+        alphabetizer.alphabetizeLines(circularShift);
         appendJson(alphabetizerArray, alphabetizer.toString());
-        outputBuffer.processLines(alphabetizer);
+        outputBuffer.setOutputLines(alphabetizer);
     }
 
     private synchronized void appendJson(ArrayNode array, String lines)

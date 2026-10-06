@@ -2,11 +2,9 @@ package com.se6362.kwic.core;
 
 import java.util.ArrayList;
 import java.util.List;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 public abstract class LineList
 {
-    private static final ObjectMapper JSON_MAPPER = new ObjectMapper();
     protected ArrayList<ArrayList<String>> lines = new ArrayList<>();
 
     public String getWord(int lineNumber, int wordNumber)

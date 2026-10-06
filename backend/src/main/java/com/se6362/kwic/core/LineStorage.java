@@ -2,7 +2,7 @@ package com.se6362.kwic.core;
 
 public class LineStorage extends LineList
 {
-    public void setLine(String line)
+    public void storeLine(String line)
     {
         int lineNo = super.getLineCount();
         int wordNo = 0;
