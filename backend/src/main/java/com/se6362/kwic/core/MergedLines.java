@@ -2,7 +2,7 @@ package com.se6362.kwic.core;
 
 public class MergedLines extends LineList
 {
-    public void merge(LineList oldList, LineList newList)
+    public void mergeLines(LineList oldList, LineList newList)
     {
         this.clear();
         int oldListPointer = 0;

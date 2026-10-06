@@ -4,13 +4,18 @@ public class OutputBuffer extends LineList
 {
     private MergedLines outputStorage = new MergedLines();
 
-    public synchronized void processLines(Alphabetizer newList)
+    public synchronized void setOutputLines(Alphabetizer newList)
     {
         MergedLines temp = new MergedLines();
-        temp.merge(outputStorage, newList);
+        temp.mergeLines(outputStorage, newList);
         outputStorage = temp;
     }
 
+    public void writeToDatabase()
+    {
+        // TO DO: Save results to database
+    }
+    
     @Override
     public synchronized void clear()
     {
@@ -18,10 +23,6 @@ public class OutputBuffer extends LineList
         outputStorage.clear();
     }
 
-    public void saveToDB()
-    {
-        // TO DO: Save results to database
-    }
 
     public String toString()
     {
