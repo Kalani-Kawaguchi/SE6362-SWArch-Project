@@ -15,20 +15,17 @@ public class MasterControl
     private static final ObjectMapper JSON_MAPPER = new ObjectMapper();
     private final OutputBuffer outputBuffer = new OutputBuffer();
     ObjectNode jsonOutput;
-    ArrayNode circularShiftArray;
-    ArrayNode alphabetizerArray;
+    ArrayNode incrementalOutputArray;
 
     public MasterControl()
     {
         jsonOutput = JSON_MAPPER.createObjectNode();
-        circularShiftArray = jsonOutput.putArray("circularShift");
-        alphabetizerArray = jsonOutput.putArray("alphabetizer");
+        incrementalOutputArray = jsonOutput.putArray("incrementalOutput");
     }
 
     public void runIncremental(Path inputFile) throws IOException
     {
-        circularShiftArray.removeAll();
-        alphabetizerArray.removeAll();
+        incrementalOutputArray.removeAll();
         int threadCount = Runtime.getRuntime().availableProcessors();
 
         ExecutorService executor = Executors.newFixedThreadPool(threadCount);
@@ -89,7 +86,7 @@ public class MasterControl
 
     public synchronized ObjectNode toJsonElement()
     {
-        jsonOutput.put("output", getOutput());
+        jsonOutput.put("mergedOutput", getOutput());
         return jsonOutput;
     }
 
@@ -97,15 +94,19 @@ public class MasterControl
     {
         CircularShift circularShift = new CircularShift();
         circularShift.processLines(lineList);
-        appendJson(circularShiftArray, circularShift.toString());
         Alphabetizer alphabetizer = new Alphabetizer();
         alphabetizer.processLines(circularShift);
-        appendJson(alphabetizerArray, alphabetizer.toString());
         outputBuffer.processLines(alphabetizer);
+
+        ObjectNode incrementalOutput = JSON_MAPPER.createObjectNode();
+        incrementalOutput.put("inputLines", lineList.toString());
+        incrementalOutput.put("shiftedLines", circularShift.toString());
+        incrementalOutput.put("alphabetizedLines", alphabetizer.toString());
+        appendIncrementalJson(incrementalOutput);
     }
 
-    private synchronized void appendJson(ArrayNode array, String lines)
+    private synchronized void appendIncrementalJson(ObjectNode incrementalOutput)
     {
-        array.add(lines);
+        incrementalOutputArray.add(incrementalOutput);
     }
 }

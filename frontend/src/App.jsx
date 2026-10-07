@@ -37,7 +37,7 @@ export default function App() {
       <h3>Backend Status</h3>
       <p>{backendStatus}</p>
 
-      <KWIC />
+
       <KWIC2 />
 
     </main>
