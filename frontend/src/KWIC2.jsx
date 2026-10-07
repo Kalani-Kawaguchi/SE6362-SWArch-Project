@@ -310,7 +310,7 @@ export default function KWIC2() {
           >
             <div className="incremental-heading">
               <h2 id="incremental-results-heading">
-                Processing Results
+                Line-by-Line Results
               </h2>
 
               <span className="tag">

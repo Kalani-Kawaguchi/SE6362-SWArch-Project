@@ -12,6 +12,11 @@ export default function KwicResultRow({
             lines: circularShifts
                 .split(/\r?\n/)
                 .filter((line) => line.trim() !== ""),
+            shiftCount: circularShifts
+                .split(/\r?\n/)
+                .filter((line) => line.trim() !== "")
+                .length,
+            inputLineCount: 1
         }
         : null;
 
@@ -20,6 +25,11 @@ export default function KwicResultRow({
             lines: sortedAlphabetically
                 .split(/\r?\n/)
                 .filter((line) => line.trim() !== ""),
+            shiftCount: sortedAlphabetically
+                .split(/\r?\n/)
+                .filter((line) => line.trim() !== "")
+                .length,
+            inputLineCount: 1
         }
         : null;
 
@@ -38,7 +48,7 @@ export default function KwicResultRow({
                 />
 
                 <ResultPanel
-                    title="Sorted Alphabetically"
+                    title="Alphabetized"
                     data={alphabetizedData}
                     showResults={
                         !isProcessing && alphabetizedData !== null
