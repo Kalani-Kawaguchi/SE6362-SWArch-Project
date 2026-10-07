@@ -1,49 +1,116 @@
 package com.se6362.kwic.core;
 
-import java.io.IOException;
 import java.io.FileReader;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.nio.file.Path;
 
 public class InputBuffer implements AutoCloseable
 {
     private static final ObjectMapper MAPPER = new ObjectMapper();
-    private final JsonParser parser;
 
-    public InputBuffer(Path filePath) throws IOException
+    private static final String END_OF_FILE = "";
+
+    private final BlockingQueue<String> queue = new LinkedBlockingQueue<>();
+
+    private Thread readerThread;
+    private volatile IOException readException;
+
+    public void readFromFile(Path filePath) throws IOException
     {
-        this.parser = MAPPER.createParser(new FileReader(filePath.toString()));
+        if (readerThread != null && readerThread.isAlive())
+        {
+            throw new IOException("A file is already being read.");
+        }
+
+        queue.clear();
+        readException = null;
+
+        readerThread = new Thread(() ->
+        {
+            try (JsonParser parser = MAPPER.createParser(
+                    new FileReader(filePath.toString())))
+            {
+                JsonNode element;
+
+                while ((element = MAPPER.readTree(parser)) != null)
+                {
+                    queue.put(element.path("text").asText());
+                }
+            }
+            catch (IOException exception)
+            {
+                readException = exception;
+            }
+            catch (InterruptedException exception)
+            {
+                Thread.currentThread().interrupt();
+            }
+            finally
+            {
+                try
+                {
+                    queue.put(END_OF_FILE);
+                }
+                catch (InterruptedException exception)
+                {
+                    Thread.currentThread().interrupt();
+                }
+            }
+        });
+
+        readerThread.start();
     }
 
-    /**
-     * Thread-safe method to read a JSON element.
-     * Returns an empty list when the file is fully processed.
-     */
-    public synchronized LineStorage getInputLine() throws IOException
+    public LineStorage getInputLines(int numberOfLines) throws IOException
     {
         LineStorage storage = new LineStorage();
 
-        JsonNode element;
-        while ((element = MAPPER.readTree(parser)) != null)
+        try
         {
-            storage.setLine(element.path("text").asText());
-            if (storage.getLineCount() > 0)
+            for (int i = 0; i < numberOfLines; i++)
             {
-                return storage;
-            }
-        }
+                String next = queue.take();
 
-        return storage;
+                if (next == END_OF_FILE)
+                {
+                    // Make EOF available to other workers.
+                    queue.put(END_OF_FILE);
+
+                    if (readException != null)
+                    {
+                        throw readException;
+                    }
+
+                    break;
+                }
+
+                // Add the line(s) from next to storage.
+                storage.storeLine(next);
+            }
+
+            return storage;
+        }
+        catch (InterruptedException exception)
+        {
+            Thread.currentThread().interrupt();
+            throw new IOException(
+                    "Thread interrupted while waiting for input.",
+                    exception);
+        }
     }
 
     @Override
-    public synchronized void close() throws IOException
+    public void close() throws IOException
     {
-        if (parser != null)
+        if (readerThread != null && readerThread.isAlive())
         {
-            parser.close();
+            readerThread.interrupt();
         }
     }
 }

@@ -25,8 +25,8 @@ public class LineListTest
     void testStorageLineList()
     {
         LineStorage lineList = new LineStorage();
-        lineList.setLine("I am testing this method.");
-        lineList.setLine("Here is a second line to look at.");
+        lineList.storeLine("I am testing this method.");
+        lineList.storeLine("Here is a second line to look at.");
 
         // Assert Junit style: (Expected, Actual)
         assertEquals(lineList.getLineCount(), 2);
@@ -52,10 +52,10 @@ public class LineListTest
     void testCircShiftedLineList()
     {
         LineStorage lineList = new LineStorage();
-        lineList.setLine("a b c d e");
-        lineList.setLine("aa bb cc dd ee ff");
+        lineList.storeLine("a b c d e");
+        lineList.storeLine("aa bb cc dd ee ff");
         CircularShift circularShifts = new CircularShift();
-        circularShifts.processLines(lineList);
+        circularShifts.circularShiftLines(lineList);
 
         // Line 0: "a b c d e"
         assertEquals("a", circularShifts.getWord(0, 0));
@@ -146,22 +146,22 @@ public class LineListTest
     {
         LineStorage lineList = new LineStorage();
 
-        lineList.setLine("aa aa aa");
-        lineList.setLine("bb bb bb");
-        lineList.setLine("cc cc cc");
-        lineList.setLine("aa");
-        lineList.setLine("aa bb");
-        lineList.setLine("aa bb cc");
-        lineList.setLine("ab bb cc");
-        lineList.setLine("aa bc cd");
-        lineList.setLine("aa cc bb");
-        lineList.setLine("bb aa cc");
-        lineList.setLine("bb cc aa");
-        lineList.setLine("cc aa bb");
-        lineList.setLine("cc bb aa");
+        lineList.storeLine("aa aa aa");
+        lineList.storeLine("bb bb bb");
+        lineList.storeLine("cc cc cc");
+        lineList.storeLine("aa");
+        lineList.storeLine("aa bb");
+        lineList.storeLine("aa bb cc");
+        lineList.storeLine("ab bb cc");
+        lineList.storeLine("aa bc cd");
+        lineList.storeLine("aa cc bb");
+        lineList.storeLine("bb aa cc");
+        lineList.storeLine("bb cc aa");
+        lineList.storeLine("cc aa bb");
+        lineList.storeLine("cc bb aa");
 
         Alphabetizer alphabetizedLineList = new Alphabetizer();
-        alphabetizedLineList.processLines(lineList);
+        alphabetizedLineList.alphabetizeLines(lineList);
 
         // 0: "aa"
         assertEquals("aa", alphabetizedLineList.getWord(0, 0));
@@ -232,26 +232,26 @@ public class LineListTest
         LineStorage lineList1 = new LineStorage();
         LineStorage lineList2 = new LineStorage();
 
-        lineList1.setLine("aa aa aa");
-        lineList2.setLine("bb bb bb");
-        lineList1.setLine("cc cc cc");
-        lineList2.setLine("aa");
-        lineList1.setLine("aa bb");
-        lineList2.setLine("aa bb cc");
-        lineList1.setLine("ab bb cc");
-        lineList2.setLine("aa bc cd");
-        lineList1.setLine("aa cc bb");
-        lineList2.setLine("bb aa cc");
-        lineList1.setLine("bb cc aa");
-        lineList2.setLine("cc aa bb");
-        lineList1.setLine("cc bb aa");
+        lineList1.storeLine("aa aa aa");
+        lineList2.storeLine("bb bb bb");
+        lineList1.storeLine("cc cc cc");
+        lineList2.storeLine("aa");
+        lineList1.storeLine("aa bb");
+        lineList2.storeLine("aa bb cc");
+        lineList1.storeLine("ab bb cc");
+        lineList2.storeLine("aa bc cd");
+        lineList1.storeLine("aa cc bb");
+        lineList2.storeLine("bb aa cc");
+        lineList1.storeLine("bb cc aa");
+        lineList2.storeLine("cc aa bb");
+        lineList1.storeLine("cc bb aa");
 
         Alphabetizer alpha1 = new Alphabetizer();
-        alpha1.processLines(lineList1);
+        alpha1.alphabetizeLines(lineList1);
         Alphabetizer alpha2 = new Alphabetizer();
-        alpha2.processLines(lineList2);
+        alpha2.alphabetizeLines(lineList2);
         MergedLines merge = new MergedLines();
-        merge.merge(alpha1, alpha2);
+        merge.mergeLines(alpha1, alpha2);
 
         // 0: "aa"
         assertEquals("aa", merge.getWord(0, 0));

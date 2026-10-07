@@ -3,7 +3,7 @@ package com.se6362.kwic.core;
 public class CircularShift extends LineList
 {
 
-    public void processLines(LineList lineList)
+    public void circularShiftLines(LineList lineList)
     {
         clear();
 

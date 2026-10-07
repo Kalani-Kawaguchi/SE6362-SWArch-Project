@@ -3,7 +3,7 @@ package com.se6362.kwic.core;
 public class Alphabetizer extends LineList
 {
 
-    public void processLines(LineList lineList)
+    public void alphabetizeLines(LineList lineList)
     {
         clear();
 
@@ -12,10 +12,10 @@ public class Alphabetizer extends LineList
             appendLine(lineList, lineNo);
         }
 
-        alpha();
+        sortAlpha();
     }
 
-    private void alpha()
+    private void sortAlpha()
     {
         lines.sort(LineList::compareLines);
     }
