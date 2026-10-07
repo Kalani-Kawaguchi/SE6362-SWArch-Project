@@ -98,7 +98,7 @@ public class MasterControl
         Alphabetizer alphabetizer = new Alphabetizer();
         alphabetizer.alphabetizeLines(circularShift);
         outputBuffer.setOutputLines(alphabetizer);
-      
+
         ObjectNode incrementalOutput = JSON_MAPPER.createObjectNode();
         incrementalOutput.put("inputLines", lineList.toString());
         incrementalOutput.put("shiftedLines", circularShift.toString());
@@ -114,8 +114,7 @@ public class MasterControl
     public synchronized void clear()
     {
         outputBuffer.clear();
-        circularShiftArray.removeAll();
-        alphabetizerArray.removeAll();
+        incrementalOutputArray.removeAll();
         jsonOutput.put("output", "");
     }
 }

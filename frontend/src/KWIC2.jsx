@@ -167,6 +167,28 @@ export default function KWIC2() {
     }
   }
 
+  async function clearData() {
+    if (isProcessing) return;
+
+    setIsProcessing(true);
+    setError("");
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/kwic`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        throw new Error(`Backend returned HTTP ${response.status}`);
+      }
+    } catch (error) {
+      console.error("Unable to clear KWIC data:", error);
+      setError("Failed to clear data.");
+    } finally {
+      setIsProcessing(false);
+    }
+  }
+
   return (
     <div className="app-shell">
       <header className="topbar">
@@ -283,6 +305,7 @@ export default function KWIC2() {
                     type="button"
                     disabled={!text || isProcessing}
                     onClick={() => {
+                      clearData();
                       updateText("");
                       setResult(null);
                       setIncrementalResults([]);
