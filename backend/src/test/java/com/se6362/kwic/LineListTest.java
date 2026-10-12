@@ -11,6 +11,8 @@ import com.se6362.kwic.core.CircularShift;
 import com.se6362.kwic.core.LineStorage;
 import com.se6362.kwic.core.MergedLines;
 
+import java.net.URI;
+
 // 1. Removed unnecessary com.se6362.kwic imports since you are already in this package.
 // 2. Cleaned up unused Mockito imports since this specific test uses pure Java logic.
 
@@ -52,8 +54,8 @@ public class LineListTest
     void testCircShiftedLineList()
     {
         LineStorage lineList = new LineStorage();
-        lineList.storeLine("a b c d e");
-        lineList.storeLine("aa bb cc dd ee ff");
+        lineList.storeLine("a b c d e", URI.create("example1.com"));
+        lineList.storeLine("aa bb cc dd ee ff", URI.create("example2.com"));
         CircularShift circularShifts = new CircularShift();
         circularShifts.circularShiftLines(lineList);
 
@@ -63,6 +65,7 @@ public class LineListTest
         assertEquals("c", circularShifts.getWord(0, 2));
         assertEquals("d", circularShifts.getWord(0, 3));
         assertEquals("e", circularShifts.getWord(0, 4));
+        assertEquals("example1.com", circularShifts.getURI(0).toString());
 
         // Line 1: "b c d e a"
         assertEquals("b", circularShifts.getWord(1, 0));
@@ -70,6 +73,7 @@ public class LineListTest
         assertEquals("d", circularShifts.getWord(1, 2));
         assertEquals("e", circularShifts.getWord(1, 3));
         assertEquals("a", circularShifts.getWord(1, 4));
+        assertEquals("example1.com", circularShifts.getURI(1).toString());
 
         // Line 2: "c d e a b"
         assertEquals("c", circularShifts.getWord(2, 0));
@@ -77,6 +81,7 @@ public class LineListTest
         assertEquals("e", circularShifts.getWord(2, 2));
         assertEquals("a", circularShifts.getWord(2, 3));
         assertEquals("b", circularShifts.getWord(2, 4));
+        assertEquals("example1.com", circularShifts.getURI(2).toString());
 
         // Line 3: "d e a b c"
         assertEquals("d", circularShifts.getWord(3, 0));
@@ -84,6 +89,7 @@ public class LineListTest
         assertEquals("a", circularShifts.getWord(3, 2));
         assertEquals("b", circularShifts.getWord(3, 3));
         assertEquals("c", circularShifts.getWord(3, 4));
+        assertEquals("example1.com", circularShifts.getURI(3).toString());
 
         // Line 4: "e a b c d"
         assertEquals("e", circularShifts.getWord(4, 0));
@@ -91,6 +97,7 @@ public class LineListTest
         assertEquals("b", circularShifts.getWord(4, 2));
         assertEquals("c", circularShifts.getWord(4, 3));
         assertEquals("d", circularShifts.getWord(4, 4));
+        assertEquals("example1.com", circularShifts.getURI(4).toString());
 
         // Line 5: "aa bb cc dd e ff"
         assertEquals("aa", circularShifts.getWord(5, 0));
@@ -99,6 +106,7 @@ public class LineListTest
         assertEquals("dd", circularShifts.getWord(5, 3));
         assertEquals("ee", circularShifts.getWord(5, 4));
         assertEquals("ff", circularShifts.getWord(5, 5));
+        assertEquals("example2.com", circularShifts.getURI(5).toString());
 
         // Line 6: "bb cc dd e ff aa"
         assertEquals("bb", circularShifts.getWord(6, 0));
@@ -107,6 +115,7 @@ public class LineListTest
         assertEquals("ee", circularShifts.getWord(6, 3));
         assertEquals("ff", circularShifts.getWord(6, 4));
         assertEquals("aa", circularShifts.getWord(6, 5));
+        assertEquals("example2.com", circularShifts.getURI(6).toString());
 
         // Line 7: "cc dd e ff aa bb"
         assertEquals("cc", circularShifts.getWord(7, 0));
@@ -115,6 +124,7 @@ public class LineListTest
         assertEquals("ff", circularShifts.getWord(7, 3));
         assertEquals("aa", circularShifts.getWord(7, 4));
         assertEquals("bb", circularShifts.getWord(7, 5));
+        assertEquals("example2.com", circularShifts.getURI(7).toString());
 
         // Line 8: "dd e ff aa bb cc"
         assertEquals("dd", circularShifts.getWord(8, 0));
@@ -123,6 +133,7 @@ public class LineListTest
         assertEquals("aa", circularShifts.getWord(8, 3));
         assertEquals("bb", circularShifts.getWord(8, 4));
         assertEquals("cc", circularShifts.getWord(8, 5));
+        assertEquals("example2.com", circularShifts.getURI(8).toString());
 
         // Line 9: "e ff aa bb cc dd"
         assertEquals("ee", circularShifts.getWord(9, 0));
@@ -131,6 +142,7 @@ public class LineListTest
         assertEquals("bb", circularShifts.getWord(9, 3));
         assertEquals("cc", circularShifts.getWord(9, 4));
         assertEquals("dd", circularShifts.getWord(9, 5));
+        assertEquals("example2.com", circularShifts.getURI(9).toString());
 
         // Line 10: "ff aa bb cc dd e"
         assertEquals("ff", circularShifts.getWord(10, 0));
@@ -139,6 +151,7 @@ public class LineListTest
         assertEquals("cc", circularShifts.getWord(10, 3));
         assertEquals("dd", circularShifts.getWord(10, 4));
         assertEquals("ee", circularShifts.getWord(10, 5));
+        assertEquals("example2.com", circularShifts.getURI(10).toString());
     }
 
     @Test
@@ -146,7 +159,7 @@ public class LineListTest
     {
         LineStorage lineList = new LineStorage();
 
-        lineList.storeLine("aa aa aa");
+        lineList.storeLine("aa aa aa", URI.create("1"));
         lineList.storeLine("bb bb bb");
         lineList.storeLine("cc cc cc");
         lineList.storeLine("aa");
@@ -170,6 +183,7 @@ public class LineListTest
         assertEquals("aa", alphabetizedLineList.getWord(1, 0));
         assertEquals("aa", alphabetizedLineList.getWord(1, 1));
         assertEquals("aa", alphabetizedLineList.getWord(1, 2));
+        assertEquals("1", alphabetizedLineList.getURI(1).toString());
 
         // 2: "aa bb"
         assertEquals("aa", alphabetizedLineList.getWord(2, 0));
@@ -232,8 +246,8 @@ public class LineListTest
         LineStorage lineList1 = new LineStorage();
         LineStorage lineList2 = new LineStorage();
 
-        lineList1.storeLine("aa aa aa");
-        lineList2.storeLine("bb bb bb");
+        lineList1.storeLine("aa aa aa", URI.create("1"));
+        lineList2.storeLine("bb bb bb", URI.create("2"));
         lineList1.storeLine("cc cc cc");
         lineList2.storeLine("aa");
         lineList1.storeLine("aa bb");
@@ -260,6 +274,7 @@ public class LineListTest
         assertEquals("aa", merge.getWord(1, 0));
         assertEquals("aa", merge.getWord(1, 1));
         assertEquals("aa", merge.getWord(1, 2));
+        assertEquals("1", merge.getURI(1).toString());
 
         // 2: "aa bb"
         assertEquals("aa", merge.getWord(2, 0));
@@ -294,6 +309,7 @@ public class LineListTest
         assertEquals("bb", merge.getWord(8, 0));
         assertEquals("bb", merge.getWord(8, 1));
         assertEquals("bb", merge.getWord(8, 2));
+        assertEquals("2", merge.getURI(8).toString());
 
         // 9: "bb cc aa"
         assertEquals("bb", merge.getWord(9, 0));

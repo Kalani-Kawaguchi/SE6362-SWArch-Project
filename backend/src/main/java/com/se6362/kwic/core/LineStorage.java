@@ -1,5 +1,7 @@
 package com.se6362.kwic.core;
 
+import java.net.URI;
+
 public class LineStorage extends LineList
 {
     public void storeLine(String line)
@@ -18,5 +20,11 @@ public class LineStorage extends LineList
             super.setWord(lineNo, wordNo, word);
             wordNo++;
         }
+    }
+
+    public void storeLine(String line, URI uri)
+    {
+        storeLine(line);
+        setURI(getLineCount() - 1, uri);
     }
 }

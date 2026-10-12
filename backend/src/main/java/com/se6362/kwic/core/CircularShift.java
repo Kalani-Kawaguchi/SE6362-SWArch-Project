@@ -27,6 +27,7 @@ public class CircularShift extends LineList
                         wordNo,
                         lineList.getWord(lineNo, (offset + wordNo) % wordCount));
             }
+            setURI(shiftedLineNumber, lineList.getURI(lineNo));
         }
     }
 }

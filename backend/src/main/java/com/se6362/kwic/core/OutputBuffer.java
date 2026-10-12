@@ -11,18 +11,17 @@ public class OutputBuffer extends LineList
         outputStorage = temp;
     }
 
-    public void writeToDatabase()
+    public synchronized void writeToDatabase()
     {
         // TO DO: Save results to database
     }
-    
+
     @Override
     public synchronized void clear()
     {
         super.clear();
         outputStorage.clear();
     }
-
 
     public String toString()
     {

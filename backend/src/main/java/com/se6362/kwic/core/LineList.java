@@ -2,14 +2,49 @@ package com.se6362.kwic.core;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.net.URI;
+import com.se6362.kwic.core.Line;
 
 public abstract class LineList
 {
-    protected ArrayList<ArrayList<String>> lines = new ArrayList<>();
+    protected ArrayList<Line> lines = new ArrayList<>();
+
+    public URI getURI(int lineNumber)
+    {
+        try
+        {
+            if (lineNumber >= lines.size())
+            {
+                throw new IllegalArgumentException("URI with this index does not exist.");
+            }
+            return lines.get(lineNumber).getURI();
+        }
+        catch (IllegalArgumentException e)
+        {
+            System.err.println("Illegal argument: " + e.getMessage());
+            return null;
+        }
+    }
+
+    protected void setURI(int lineNumber, URI uri)
+    {
+        try
+        {
+            if (lineNumber >= lines.size())
+            {
+                throw new IllegalArgumentException("URI must be associated with an existing line.");
+            }
+            lines.get(lineNumber).setURI(uri);
+        }
+        catch (IllegalArgumentException e)
+        {
+            System.err.println("Illegal argument: " + e.getMessage());
+        }
+    }
 
     public String getWord(int lineNumber, int wordNumber)
     {
-        return lines.get(lineNumber).get(wordNumber);
+        return lines.get(lineNumber).getWord(wordNumber);
     }
 
     protected void setWord(int lineNumber, int wordNumber, String word)
@@ -20,19 +55,16 @@ public abstract class LineList
             {
                 throw new IllegalArgumentException("Blank string not allowed.");
             }
-            if (lineNumber == lines.size() && wordNumber == 0) // adding a new line
+            if (lineNumber == lines.size() && wordNumber == 0)
             {
-                lines.add(new ArrayList<>());
+                lines.add(new Line());
             }
-            ArrayList<String> line = lines.get(lineNumber);
-            if (wordNumber == line.size()) // appending a new word to end of a line
+            else if (lineNumber >= lines.size())
             {
-                line.add(word);
+                throw new IllegalArgumentException("Cannot set words beyond (n + 1)-th position.");
             }
-            else // replacing a word in an existing line
-            {
-                line.set(wordNumber, word);
-            }
+            lines.get(lineNumber).setWord(wordNumber, word);
+
         }
         catch (IndexOutOfBoundsException e)
         {
@@ -53,11 +85,12 @@ public abstract class LineList
         {
             this.setWord(nextLine, wordNo, lineList.getWord(lineNo, wordNo));
         }
+        this.setURI(nextLine, lineList.getURI(lineNo));
     }
 
     public int getWordCount(int lineNumber)
     {
-        return lines.get(lineNumber).size();
+        return lines.get(lineNumber).getWordCount();
     }
 
     public int getLineCount()
@@ -72,29 +105,29 @@ public abstract class LineList
 
     // returns 0 if they are the same, negative if leftLine is less than rightLine,
     // positive if leftLine is greater
-    protected static int compareLines(List<String> leftLine, List<String> rightLine)
+    protected static int compareLines(Line leftLine, Line rightLine)
     {
-        int wordCount = Math.min(leftLine.size(), rightLine.size());
+        int wordCount = Math.min(leftLine.getWordCount(), rightLine.getWordCount());
 
         for (int wordNumber = 0; wordNumber < wordCount; wordNumber++)
         {
-            int comparison = leftLine.get(wordNumber).compareToIgnoreCase(rightLine.get(wordNumber));
+            int comparison = leftLine.getWord(wordNumber).compareToIgnoreCase(rightLine.getWord(wordNumber));
             if (comparison != 0)
             {
                 return comparison;
             }
         }
-        return Integer.compare(leftLine.size(), rightLine.size());
+        return Integer.compare(leftLine.getWordCount(), rightLine.getWordCount());
     }
 
     public String toString()
     {
         StringBuilder output = new StringBuilder();
-        for (ArrayList<String> line : lines)
+        for (Line line : lines)
         {
-            for (String word : line)
+            for (int i = 0; i < line.getWordCount(); i++)
             {
-                output.append(word).append(" ");
+                output.append(line.getWord(i)).append(" ");
             }
             output.append("\n");
         }
