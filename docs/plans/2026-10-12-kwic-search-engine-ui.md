@@ -807,9 +807,9 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import com.se6362.kwic.index.FetchException;
 import com.se6362.kwic.index.HtmlTextExtractor;
@@ -829,7 +829,7 @@ public class KwicIndexServiceTest
     @Autowired
     KwicIndexService service;
 
-    @MockBean
+    @MockitoBean
     UrlFetcher fetcher;
 
     @Test
@@ -1242,8 +1242,8 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.se6362.kwic.controller.IndexController;
@@ -1258,10 +1258,10 @@ public class IndexControllerTest
     @Autowired
     MockMvc mockMvc;
 
-    @MockBean
+    @MockitoBean
     KwicIndexService indexService;
 
-    @MockBean
+    @MockitoBean
     SearchService searchService;
 
     @Test
