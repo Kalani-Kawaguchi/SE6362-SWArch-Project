@@ -15,8 +15,10 @@
   "type": "commonjs",
   "homepage": "https://kalani-kawaguchi.github.io/SE6362-SWArch-Project/",
   "dependencies": {
+    "dom": "^0.0.3",
     "react": "^19.3.0",
-    "react-dom": "^19.3.0"
+    "react-dom": "^19.3.0",
+    "router": "^2.2.0"
   },
   "alias": {
     "react": "./node_modules/react"
