@@ -65,6 +65,24 @@
 			<version>2.18.0</version> <!-- Replace with the latest stable version if needed -->
 		</dependency>
 
+		<dependency>
+			<groupId>org.jsoup</groupId>
+			<artifactId>jsoup</artifactId>
+			<version>1.18.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-data-jpa-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+
 
 	</dependencies>
 
@@ -76,5 +94,21 @@
 			</plugin>
 		</plugins>
 	</build>
+
+	<profiles>
+		<!-- Local run against an embedded H2 database (no MySQL needed).
+		     Activate with: ./mvnw spring-boot:run -Pdev -Dspring-boot.run.profiles=dev
+		     H2 stays out of the default/production build. -->
+		<profile>
+			<id>dev</id>
+			<dependencies>
+				<dependency>
+					<groupId>com.h2database</groupId>
+					<artifactId>h2</artifactId>
+					<scope>runtime</scope>
+				</dependency>
+			</dependencies>
+		</profile>
+	</profiles>
 
 </project>

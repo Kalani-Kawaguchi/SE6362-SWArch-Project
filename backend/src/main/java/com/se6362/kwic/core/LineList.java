@@ -88,6 +88,34 @@ public abstract class LineList
         this.setURI(nextLine, lineList.getURI(lineNo));
     }
 
+    public List<Rotation> getRotations()
+    {
+        List<Rotation> rotations = new ArrayList<>();
+        for (Line line : lines)
+        {
+            int wordCount = line.getWordCount();
+            if (wordCount == 0)
+            {
+                continue;
+            }
+            StringBuilder text = new StringBuilder();
+            for (int i = 0; i < wordCount; i++)
+            {
+                if (i > 0)
+                {
+                    text.append(' ');
+                }
+                text.append(line.getWord(i));
+            }
+            URI uri = line.getURI();
+            rotations.add(new Rotation(
+                    uri == null ? null : uri.toString(),
+                    line.getWord(0),
+                    text.toString()));
+        }
+        return rotations;
+    }
+
     public int getWordCount(int lineNumber)
     {
         return lines.get(lineNumber).getWordCount();
