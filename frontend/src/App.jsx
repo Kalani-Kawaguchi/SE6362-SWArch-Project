@@ -1,7 +1,10 @@
-import ProjPlan from "./documents/PreliminaryProjectPlan.pdf";
+import { BrowserRouter, Routes, Route, NavLink } from "react-router-dom";
+import Home from "./pages/Home.jsx";
+import KWIC from "./pages/KWIC.jsx";
+import Search from "./pages/Search.jsx";
 import { useEffect, useState } from "react";
-import KWIC from "./KWIC.jsx"
-import KWIC2 from "./KWIC2.jsx"
+import ProjPlan from "./documents/PreliminaryProjectPlan.pdf";
+import KWIC from "./pages/KWIC.jsx"
 
 const API_BASE_URL = process.env.API_BASE_URL;
 
@@ -10,36 +13,59 @@ export default function App() {
     "Checking backend status...",
   );
 
-  // useEffect(() => {
-  //   fetch(`${API_BASE_URL}/api/health`)
-  //     .then((response) => {
-  //       if (!response.ok) {
-  //         throw new Error("Backend request failed from the frontend");
-  //       }
-
-  //       return response.text();
-  //     })
-  //     .then((data) => {
-  //       setBackendStatus(data);
-  //     })
-  //     .catch((error) => {
-  //       console.error(error);
-  //       setBackendStatus("Unable to connect to backend");
-  //     });
-  // }, []);
 
   return (
-    <main>
-      <h1>Software Architecture Project</h1>
-      <h2>Group: Kalani Kawaguchi, Zhi Li, Jonathan Loper, Mitchell Vu</h2>
-      <a href={ProjPlan}>Preliminary Project Plan</a>
-
-      <h3>Backend Status</h3>
-      <p>{backendStatus}</p>
+    <div className="app-shell">
 
 
-      <KWIC2 />
+      <BrowserRouter>
+        <header className="topbar">
+          <a className="brand" href="/">
+            <span className="brand-icon" aria-hidden="true">
+              SE 6362
+            </span>
+            <span>Course Project</span>
+          </a>
 
-    </main>
+          <nav>
+            <NavLink to="/">Home</NavLink>
+            <NavLink to="/kwic">KWIC</NavLink>
+            <NavLink to="/search">Search</NavLink>
+          </nav>
+
+          <span
+            className={`connection ${backendStatus === "Backend connected" ? "connected" : ""
+              }`}
+          >
+            <span className="status-dot" aria-hidden="true" />
+            {backendStatus}
+          </span>
+        </header>
+
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/kwic" element={<KWIC />} />
+          <Route path="/search" element={<Search />} />
+        </Routes>
+      </BrowserRouter>
+
+
+      <footer>
+        <div>
+          <strong>
+            SE 6362 · Software Architecture
+          </strong>
+
+          <p>
+            Kalani Kawaguchi · Zhi Li · Jonathan Loper · Mitchell Vu
+          </p>
+        </div>
+
+        <a href={ProjPlan}>
+          Preliminary project plan ↗
+        </a>
+      </footer>
+
+    </div>
   );
 }

@@ -50,14 +50,6 @@ a {
   padding: 0 48px;
 }
 
-.topbar {
-  min-height: 94px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-  border-bottom: 1px solid #d9e1d9;
-}
 
 .brand {
   display: flex;
@@ -70,7 +62,7 @@ a {
 .brand-icon {
   display: grid;
   place-items: center;
-  width: 36px;
+  width: 112px;
   height: 36px;
   border-radius: 10px;
   background: #174e43;
@@ -515,4 +507,83 @@ footer a {
 /* * Make the main KWIC Index result panel visually * match the height of the input panel. */
 .workspace-top>.results-panel {
   min-height: 100%;
+}
+
+
+.topbar {
+  min-height: 94px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 28px;
+  border-bottom: 1px solid #d9e1d9;
+}
+
+nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  flex: 1;
+}
+
+nav a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 16px;
+  border-radius: 8px;
+  color: #617169;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+nav a:hover {
+  background: #e8efe7;
+  color: #1c5b47;
+}
+
+nav a.active {
+  background: #1c5b47;
+  color: #fff;
+}
+
+nav a.active:hover {
+  background: #124333;
+  color: #fff;
+}
+
+@media (max-width: 760px) {
+  .topbar {
+    min-height: 76px;
+    gap: 12px;
+    flex-wrap: wrap;
+    padding: 14px 0;
+  }
+
+  nav {
+    order: 3;
+    flex: 0 0 100%;
+    justify-content: flex-start;
+    padding-top: 8px;
+    border-top: 1px solid #e4e9e1;
+  }
+
+  nav a {
+    padding: 9px 14px;
+    font-size: 12px;
+  }
+
+  .connection {
+    font-size: 10px;
+  }
+
+  .brand-detail {
+    display: none;
+  }
 }
