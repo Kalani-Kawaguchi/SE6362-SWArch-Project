@@ -6,7 +6,9 @@ import java.util.List;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.springframework.stereotype.Component;
 
+@Component
 public class HtmlTextExtractor
 {
     private static final int MAX_WORDS_PER_LINE = 50;
