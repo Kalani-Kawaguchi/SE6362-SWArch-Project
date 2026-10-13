@@ -1,5 +1,6 @@
 package com.se6362.kwic;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -11,6 +12,29 @@ import com.se6362.kwic.index.HtmlTextExtractor;
 
 public class HtmlTextExtractorTest
 {
+    @Test
+    void keepsInlineDescendantText()
+    {
+        String html = "<p>The <a href='x'>keyword</a> is <strong>important</strong>.</p>";
+
+        List<String> lines = new HtmlTextExtractor().extractLines(html);
+
+        assertTrue(lines.contains("The keyword is important."),
+                "inline <a>/<strong> text must be preserved, got: " + lines);
+    }
+
+    @Test
+    void doesNotDuplicateNestedBlocks()
+    {
+        // A <p> nested inside an <li> must not produce two separate lines.
+        String html = "<ul><li>outer text <p>inner text</p></li></ul>";
+
+        List<String> lines = new HtmlTextExtractor().extractLines(html);
+
+        assertEquals(1, lines.size(), "nested block duplicated, got: " + lines);
+        assertTrue(lines.get(0).contains("inner text"));
+    }
+
     @Test
     void extractsBlockTextAndDropsScriptAndStyle()
     {

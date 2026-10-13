@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -75,5 +76,17 @@ public class KwicIndexServiceTest
         assertTrue(result.indexed().isEmpty());
         assertEquals(1, result.failed().size());
         assertEquals("http://bad", result.failed().get(0).url());
+    }
+
+    @Test
+    void nullUrlIsReportedNotThrown()
+    {
+        List<String> urls = new ArrayList<>();
+        urls.add(null);
+
+        IndexResult result = service.index(urls);
+
+        assertTrue(result.indexed().isEmpty());
+        assertEquals(1, result.failed().size());
     }
 }

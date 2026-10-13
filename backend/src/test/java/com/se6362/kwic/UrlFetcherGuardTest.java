@@ -35,4 +35,18 @@ public class UrlFetcherGuardTest
         assertFalse(fetcher.isAllowed("http://192.168.1.1/"));
         assertFalse(fetcher.isAllowed("http://169.254.169.254/latest/meta-data"));
     }
+
+    @Test
+    void blocksIpv6LoopbackAndUniqueLocal()
+    {
+        assertFalse(fetcher.isAllowed("http://[::1]/"));
+        assertFalse(fetcher.isAllowed("http://[fd00::1]/"));
+        assertFalse(fetcher.isAllowed("http://[fc00::1]/"));
+    }
+
+    @Test
+    void blocksNullUrl()
+    {
+        assertFalse(fetcher.isAllowed(null));
+    }
 }

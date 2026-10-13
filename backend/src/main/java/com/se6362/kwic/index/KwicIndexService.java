@@ -16,6 +16,8 @@ import com.se6362.kwic.core.Rotation;
 public class KwicIndexService
 {
     private static final int MAX_URLS = 20;
+    // Must not exceed KwicLine.uri's column length (768).
+    private static final int MAX_URL_LENGTH = 768;
 
     private final UrlFetcher fetcher;
     private final HtmlTextExtractor extractor;
@@ -44,6 +46,17 @@ public class KwicIndexService
 
         for (String url : limited)
         {
+            if (url == null || url.isBlank())
+            {
+                failed.add(new IndexResult.Failed(url, "blank URL"));
+                continue;
+            }
+            if (url.length() > MAX_URL_LENGTH)
+            {
+                failed.add(new IndexResult.Failed(url, "URL too long"));
+                continue;
+            }
+
             try
             {
                 String html = fetcher.fetch(url);

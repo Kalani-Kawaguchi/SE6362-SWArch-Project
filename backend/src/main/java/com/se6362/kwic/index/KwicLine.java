@@ -19,7 +19,10 @@ public class KwicLine
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "uri", length = 2048)
+    // 768 chars is the longest utf8mb4 VARCHAR that still fits InnoDB's
+    // 3072-byte index-key limit (768 * 4 = 3072), so idx_uri creates cleanly
+    // on MySQL. URLs longer than this are rejected before persistence.
+    @Column(name = "uri", length = 768)
     private String uri;
 
     @Column(name = "first_word", length = 255)
