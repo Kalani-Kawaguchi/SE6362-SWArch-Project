@@ -107,7 +107,7 @@ export default function KWIC2() {
             type="search"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search a keyword (e.g. software)"
+            placeholder="Search a keyword (e.g. keyword, context, index)"
             aria-label="Search keyword"
             disabled={isSearching}
             spellCheck="false"
