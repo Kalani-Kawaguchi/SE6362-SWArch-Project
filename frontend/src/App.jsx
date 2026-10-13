@@ -28,7 +28,7 @@ export default function App() {
 
           <nav>
             <NavLink to="/">Home</NavLink>
-            <NavLink to="/kwic">KWIC</NavLink>
+            <NavLink to="/kwic">Index</NavLink>
             <NavLink to="/search">Search</NavLink>
           </nav>
 

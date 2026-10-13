@@ -7,10 +7,46 @@ export default function Home() {
 
 
     return (
-        <main>
-            <h1>Software Architecture Project</h1>
-            <h2>Group: Kalani Kawaguchi, Zhi Li, Jonathan Loper, Mitchell Vu</h2>
-            <a href={ProjPlan}>Preliminary Project Plan</a>
+
+        <main className="home-page">
+            <section className="home-hero">
+                <p className="eyebrow">SE 6362 · SOFTWARE ARCHITECTURE</p>
+
+                <h1>
+                    Software Architecture
+                    <span> Project</span>
+                </h1>
+
+                <p className="home-description">
+                    Welcome to our course project. Explore our team and
+                    project documentation below.
+                </p>
+            </section>
+
+            <section className="team-section">
+                <h2>Our Team</h2>
+
+                <ul className="team-list">
+                    <li>Kalani Kawaguchi (Backend Developer)</li>
+                    <li>Zhi Li (UI Designer)</li>
+                    <li>Jonathan Loper (System Architect)</li>
+                    <li>Mitchell Vu (Frontend Developer)</li>
+                </ul>
+            </section>
+
+            <section className="documentation-section">
+                <p className="eyebrow">PROJECT RESOURCES</p>
+                <h2>Documentation</h2>
+
+                <a className="documentation-link" href={ProjPlan} target="_blank" rel="noreferrer">
+                    <span className="document-icon" aria-hidden="true">↗</span>
+                    <span className="document-text">
+                        <strong>Preliminary Project Plan</strong>
+                        <span>View our initial project proposal</span>
+                    </span>
+                    <span className="document-arrow" aria-hidden="true">→</span>
+                </a>
+            </section>
         </main>
     );
 }

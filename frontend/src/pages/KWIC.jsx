@@ -199,9 +199,7 @@ export default function KWIC() {
         </p>
 
         <h1 id="page-title">
-          Every word.
-          <br />
-          <span>In context.</span>
+          <span>KWIC</span> Index Builder
         </h1>
       </section>
 
