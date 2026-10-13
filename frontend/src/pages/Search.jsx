@@ -77,9 +77,7 @@ export default function Search() {
                 </p>
 
                 <h1 id="page-title">
-                    Enter Key Words.
-                    <br />
-                    <span>Find a Webpage.</span>
+                    Search Engine
                 </h1>
             </section>
 
