@@ -25,7 +25,8 @@ export default function SearchResults({ query, result, isSearching }) {
   if (!result) {
     return (
       <p className="result-summary">
-        Build an index, then search a keyword to see matching pages.
+        Add pages under “Build the index” below, then search a keyword. Results come
+        only from pages you’ve indexed.
       </p>
     );
   }

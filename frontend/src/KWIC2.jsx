@@ -133,7 +133,11 @@ export default function KWIC2() {
 
           <form onSubmit={buildIndex}>
             <label htmlFor="url-input">Pages to index</label>
-            <p className="help">One URL per line. The backend fetches each page and indexes its text.</p>
+            <p className="help">
+              Add one URL per line, then press Build index. Search only looks inside
+              pages you’ve indexed here — it doesn’t crawl the web. The examples below
+              are just placeholders; the box starts empty.
+            </p>
             <textarea
               id="url-input"
               value={urls}
