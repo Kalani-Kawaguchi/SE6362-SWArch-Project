@@ -16,7 +16,8 @@
   "homepage": "https://kalani-kawaguchi.github.io/SE6362-SWArch-Project/",
   "dependencies": {
     "react": "^19.3.0",
-    "react-dom": "^19.3.0"
+    "react-dom": "^19.3.0",
+    "react-router-dom": "^7.18.4"
   },
   "alias": {
     "react": "./node_modules/react"
@@ -37,5 +38,8 @@
     "@swc/core@1.16.2": true,
     "lmdb@2.8.5": true,
     "msgpackr-extract@3.0.4": true
+  },
+  "overrides": {
+    "@swc/core": "1.15.47"
   }
 }

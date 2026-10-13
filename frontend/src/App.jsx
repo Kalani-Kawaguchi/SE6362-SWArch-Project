@@ -1,10 +1,9 @@
-import { BrowserRouter, Routes, Route, NavLink } from "react-router-dom";
+import { HashRouter, Routes, Route, NavLink, Link } from "react-router-dom";
 import Home from "./pages/Home.jsx";
 import KWIC from "./pages/KWIC.jsx";
 import Search from "./pages/Search.jsx";
 import { useEffect, useState } from "react";
 import ProjPlan from "./documents/PreliminaryProjectPlan.pdf";
-import KWIC from "./pages/KWIC.jsx"
 
 const API_BASE_URL = process.env.API_BASE_URL;
 
@@ -18,14 +17,14 @@ export default function App() {
     <div className="app-shell">
 
 
-      <BrowserRouter>
+      <HashRouter>
         <header className="topbar">
-          <a className="brand" href="/">
+          <Link className="brand" to="/">
             <span className="brand-icon" aria-hidden="true">
               SE 6362
             </span>
             <span>Course Project</span>
-          </a>
+          </Link>
 
           <nav>
             <NavLink to="/">Home</NavLink>
@@ -47,7 +46,7 @@ export default function App() {
           <Route path="/kwic" element={<KWIC />} />
           <Route path="/search" element={<Search />} />
         </Routes>
-      </BrowserRouter>
+      </HashRouter>
 
 
       <footer>
