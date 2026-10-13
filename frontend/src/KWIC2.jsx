@@ -1,191 +1,83 @@
 import ProjPlan from "./documents/PreliminaryProjectPlan.pdf";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import "./styles.css";
-import ResultPanel from "./ResultPanel";
-import KwicResultRow from "./KwicResultRow";
+import SearchResults from "./SearchResults";
 
 const API_BASE_URL = (process.env.API_BASE_URL || "http://localhost:8080")
   .replace(/\/+$/, "");
-const MAX_LINES = 100;
-const MAX_WORDS_PER_LINE = 50;
-const MAX_WORDS_TOTAL = 1000;
-
-// Returns an error message, or "" if the input is valid.
-function validateInput(text) {
-  const lines = text
-    .split(/\r?\n/)
-    .map((l) => l.trim())
-    .filter(Boolean);
-
-  if (lines.length === 0) {
-    return "Enter at least one line of text.";
-  }
-
-  if (lines.length > MAX_LINES) {
-    return `Use at most ${MAX_LINES} lines (you have ${lines.length}).`;
-  }
-
-  let total = 0;
-
-  for (let i = 0; i < lines.length; i++) {
-    const words = lines[i].split(/\s+/).length;
-
-    if (words > MAX_WORDS_PER_LINE) {
-      return `Line ${i + 1} has ${words} words. Use at most ${MAX_WORDS_PER_LINE} per line.`;
-    }
-
-    total += words;
-  }
-
-  if (total > MAX_WORDS_TOTAL) {
-    return `Use at most ${MAX_WORDS_TOTAL.toLocaleString()} words in total (you have ${total.toLocaleString()}).`;
-  }
-
-  return "";
-}
 
 export default function KWIC2() {
-  const [text, setText] = useState("");
-  const [result, setResult] = useState(null);
-  const [incrementalResults, setIncrementalResults] = useState([]);
-  const [error, setError] = useState("");
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [backendStatus, setBackendStatus] = useState("Checking backend…");
+  const [urls, setUrls] = useState("");
+  const [indexStatus, setIndexStatus] = useState(null);
+  const [isIndexing, setIsIndexing] = useState(false);
+  const [indexError, setIndexError] = useState("");
 
-  // Check whether the backend is reachable.
-  useEffect(() => {
-    let cancelled = false;
+  const [query, setQuery] = useState("");
+  const [submittedQuery, setSubmittedQuery] = useState("");
+  const [searchResult, setSearchResult] = useState(null);
+  const [isSearching, setIsSearching] = useState(false);
+  const [searchError, setSearchError] = useState("");
 
-    fetch(API_BASE_URL, { mode: "no-cors" })
-      .then(() => {
-        if (!cancelled) {
-          setBackendStatus("Backend connected");
-        }
-      })
-      .catch(() => {
-        if (!cancelled) {
-          setBackendStatus("Backend unavailable");
-        }
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  function updateText(value) {
-    setText(value);
-    setError("");
-  }
-
-  async function generateIndex(event) {
+  async function buildIndex(event) {
     event.preventDefault();
+    if (isIndexing) return;
 
-    if (isProcessing) {
+    const list = urls
+      .split(/\r?\n/)
+      .map((u) => u.trim())
+      .filter(Boolean);
+
+    if (list.length === 0) {
+      setIndexError("Enter at least one URL.");
       return;
     }
 
-    const validationError = validateInput(text);
-
-    if (validationError) {
-      setError(validationError);
-      return;
-    }
-
-    // Clear previous results before starting a new request.
-    setResult(null);
-    setIncrementalResults([]);
-    setError("");
-    setIsProcessing(true);
+    setIndexError("");
+    setIndexStatus(null);
+    setIsIndexing(true);
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/kwic`,
-        {
-          method: "POST",
-          headers:
-          {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({ text })
-        });
-
-      if (!response.ok) {
-        throw new Error(`Backend returned HTTP ${response.status}`);
-      }
-
-      const results = await response.json();
-
-      console.log("KWIC backend response:", results);
-
-      /*
-       * Main KWIC output.
-       *
-       * The backend now returns the complete merged output
-       * as a newline-separated string.
-       */
-      const mergedLines = String(results.mergedOutput ?? "")
-        .split(/\r?\n/)
-        .map((line) => line.trim())
-        .filter(Boolean);
-
-      setResult(
-        {
-          lines: mergedLines,
-          shiftCount: mergedLines.length,
-          inputLineCount: text
-            .split(/\r?\n/)
-            .filter((line) => line.trim())
-            .length
-        }
-      );
-
-      /*
-       * Incremental output.
-       *
-       * Each element in incrementalOutput becomes
-       * exactly one KwicResultRow.
-       */
-      const incremental = Array.isArray(results.incrementalOutput)
-        ? results.incrementalOutput
-        : [];
-
-      setIncrementalResults(incremental);
-
-      setBackendStatus("Backend connected");
-    }
-    catch (err) {
-      console.error("Unable to generate KWIC index:", err);
-
-      setBackendStatus("Backend unavailable");
-
-      setError(
-        "Couldn't reach the KWIC backend. Check that it is running and try again."
-      );
-    }
-    finally {
-      setIsProcessing(false);
+      const response = await fetch(`${API_BASE_URL}/api/index`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ urls: list }),
+      });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      setIndexStatus(await response.json());
+    } catch (err) {
+      console.error("Index build failed:", err);
+      setIndexError("Couldn't reach the backend to build the index.");
+    } finally {
+      setIsIndexing(false);
     }
   }
 
-  async function clearData() {
-    if (isProcessing) return;
+  async function runSearch(event) {
+    event.preventDefault();
+    if (isSearching) return;
 
-    setIsProcessing(true);
-    setError("");
+    const q = query.trim();
+    if (!q) {
+      setSearchError("Enter a keyword to search.");
+      return;
+    }
+
+    setSearchError("");
+    setIsSearching(true);
+    setSubmittedQuery(q);
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/kwic`, {
-        method: "DELETE",
-      });
-
-      if (!response.ok) {
-        throw new Error(`Backend returned HTTP ${response.status}`);
-      }
-    } catch (error) {
-      console.error("Unable to clear KWIC data:", error);
-      setError("Failed to clear data.");
+      const response = await fetch(
+        `${API_BASE_URL}/api/search?q=${encodeURIComponent(q)}`
+      );
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      setSearchResult(await response.json());
+    } catch (err) {
+      console.error("Search failed:", err);
+      setSearchError("Couldn't reach the backend to search.");
+      setSearchResult(null);
     } finally {
-      setIsProcessing(false);
+      setIsSearching(false);
     }
   }
 
@@ -193,185 +85,92 @@ export default function KWIC2() {
     <div className="app-shell">
       <header className="topbar">
         <a className="brand" href="#main">
-          <span className="brand-icon" aria-hidden="true">
-            K
-          </span>
+          <span className="brand-icon" aria-hidden="true">K</span>
           KWIC
-          <span className="brand-detail">
-            / Text lab
-          </span>
+          <span className="brand-detail">/ Search</span>
         </a>
-
-        <span
-          className={`connection ${backendStatus === "Backend connected" ? "connected" : ""
-            }`}
-        >
-          <span className="status-dot" aria-hidden="true" />
-          {backendStatus}
-        </span>
       </header>
 
       <main id="main">
         <section className="intro" aria-labelledby="page-title">
-          <p className="eyebrow">
-            KEY WORD IN CONTEXT
-          </p>
-
+          <p className="eyebrow">KEY WORD IN CONTEXT</p>
           <h1 id="page-title">
-            Every word.
+            Search the web,
             <br />
-            <span>In context.</span>
+            <span>in context.</span>
           </h1>
         </section>
 
-        <div className="workspace">
+        {/* Search bar */}
+        <form className="search-bar" onSubmit={runSearch} role="search">
+          <input
+            type="search"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search a keyword (e.g. software)"
+            aria-label="Search keyword"
+            disabled={isSearching}
+            spellCheck="false"
+          />
+          <button className="primary-button" type="submit" disabled={isSearching}>
+            {isSearching ? "Searching…" : "Search"}
+          </button>
+        </form>
+        {searchError && <p className="error" role="alert">{searchError}</p>}
 
-          {/* Top row */}
-          <div className="workspace-top">
+        <SearchResults
+          query={submittedQuery}
+          result={searchResult}
+          isSearching={isSearching}
+        />
 
-            {/* Input panel */}
-            <section
-              className="panel input-panel"
-              aria-labelledby="input-heading"
-            >
-              <div className="panel-heading">
-                <h2 id="input-heading">
-                  Your Text
-                </h2>
-
-                <span className="tag">
-                  INPUT
-                </span>
-              </div>
-
-              <form onSubmit={generateIndex}>
-                <label htmlFor="kwic-input">
-                  Input text
-                </label>
-
-                <p id="input-help" className="help">
-                  Enter one phrase or sentence per line.
-                  Blank lines are ignored.
-                </p>
-
-                <textarea
-                  id="kwic-input"
-                  value={text}
-                  onChange={(event) =>
-                    updateText(event.target.value)
-                  }
-                  placeholder={
-                    "software architecture project\nkey word in context"
-                  }
-                  maxLength={10000}
-                  disabled={isProcessing}
-                  aria-describedby="input-help input-limits"
-                  spellCheck="false"
-                />
-
-                <div className="input-meta">
-                  <span>
-                    {text.length.toLocaleString()} / 10,000
-                  </span>
-                </div>
-
-                <p id="input-limits" className="limits">
-                  Up to 100 lines · 50 words per line · 1,000 words total
-                </p>
-
-                {error && (
-                  <p className="error" role="alert">
-                    {error}
-                  </p>
-                )}
-
-                <div className="actions">
-                  <button
-                    className="primary-button"
-                    type="submit"
-                    disabled={!text.trim() || isProcessing}
-                  >
-                    {isProcessing
-                      ? "Generating…"
-                      : "Generate index"}
-
-                    <span aria-hidden="true">
-                      {" "}→
-                    </span>
-                  </button>
-
-                  <button
-                    className="secondary-button"
-                    type="button"
-                    disabled={!text || isProcessing}
-                    onClick={() => {
-                      clearData();
-                      updateText("");
-                      setResult(null);
-                      setIncrementalResults([]);
-                    }}
-                  >
-                    Clear
-                  </button>
-                </div>
-              </form>
-            </section>
-
-            {/* Main KWIC output */}
-            <ResultPanel
-              title="KWIC Index"
-              data={result}
-              showResults={!isProcessing && result !== null}
-              isProcessing={isProcessing}
-            />
+        {/* Build index */}
+        <section className="panel input-panel" aria-labelledby="index-heading">
+          <div className="panel-heading">
+            <h2 id="index-heading">Build the index</h2>
+            <span className="tag">URLS</span>
           </div>
 
-          {/* Incremental results */}
-          <section
-            className="incremental-results"
-            aria-labelledby="incremental-results-heading"
-          >
-            <div className="incremental-heading">
-              <h2 id="incremental-results-heading">
-                Line-by-Line Results
-              </h2>
-
-              <span className="tag">
-                INCREMENTAL
-              </span>
+          <form onSubmit={buildIndex}>
+            <label htmlFor="url-input">Pages to index</label>
+            <p className="help">One URL per line. The backend fetches each page and indexes its text.</p>
+            <textarea
+              id="url-input"
+              value={urls}
+              onChange={(e) => { setUrls(e.target.value); setIndexError(""); }}
+              placeholder={"https://en.wikipedia.org/wiki/Key_Word_in_Context\nhttps://example.com/article"}
+              rows={5}
+              disabled={isIndexing}
+              spellCheck="false"
+            />
+            {indexError && <p className="error" role="alert">{indexError}</p>}
+            <div className="actions">
+              <button className="primary-button" type="submit"
+                disabled={!urls.trim() || isIndexing}>
+                {isIndexing ? "Indexing…" : "Build index"} <span aria-hidden="true"> →</span>
+              </button>
             </div>
+          </form>
 
-            <div className="vertical-list">
-              {incrementalResults.map((incrementalResult, index) => (
-                <KwicResultRow
-                  key={index}
-                  lineNumber={index + 1}
-                  inputLine={incrementalResult.inputLines}
-                  circularShifts={incrementalResult.shiftedLines}
-                  sortedAlphabetically={incrementalResult.alphabetizedLines}
-                  isProcessing={isProcessing}
-                />
+          {indexStatus && (
+            <ul className="index-status">
+              {indexStatus.indexed.map((d) => (
+                <li className="ok" key={`ok-${d.url}`}>✓ {d.url} — {d.lineCount} lines</li>
               ))}
-            </div>
-          </section>
-
-        </div>
+              {indexStatus.failed.map((f) => (
+                <li className="fail" key={`fail-${f.url}`}>✗ {f.url} — {f.error}</li>
+              ))}
+            </ul>
+          )}
+        </section>
       </main>
 
       <footer>
         <div>
-          <strong>
-            SE 6362 · Software Architecture
-          </strong>
-
-          <p>
-            Kalani Kawaguchi · Zhi Li · Jonathan Loper · Mitchell Vu
-          </p>
+          <strong>SE 6362 · Software Architecture</strong>
+          <p>Kalani Kawaguchi · Zhi Li · Jonathan Loper · Mitchell Vu</p>
         </div>
-
-        <a href={ProjPlan}>
-          Preliminary project plan ↗
-        </a>
+        <a href={ProjPlan}>Preliminary project plan ↗</a>
       </footer>
     </div>
   );
