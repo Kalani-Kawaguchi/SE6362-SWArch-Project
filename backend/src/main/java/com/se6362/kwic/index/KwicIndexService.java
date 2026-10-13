@@ -40,9 +40,18 @@ public class KwicIndexService
         List<IndexResult.Failed> failed = new ArrayList<>();
         int totalRotations = 0;
 
-        List<String> limited = urls.size() > MAX_URLS
-                ? urls.subList(0, MAX_URLS)
-                : urls;
+        List<String> limited = urls;
+        if (urls.size() > MAX_URLS)
+        {
+            // Don't silently drop the overflow: report each excluded URL so the
+            // caller knows it was never indexed.
+            for (String dropped : urls.subList(MAX_URLS, urls.size()))
+            {
+                failed.add(new IndexResult.Failed(
+                        dropped, "exceeds max batch of " + MAX_URLS + " URLs"));
+            }
+            limited = urls.subList(0, MAX_URLS);
+        }
 
         for (String url : limited)
         {

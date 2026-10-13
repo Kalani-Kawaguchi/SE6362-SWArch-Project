@@ -3,6 +3,7 @@ package com.se6362.kwic.index;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.net.InetAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -10,8 +11,13 @@ import java.net.UnknownHostException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.springframework.stereotype.Component;
 
@@ -21,6 +27,7 @@ public class UrlFetcher
     private static final Duration TIMEOUT = Duration.ofSeconds(10);
     private static final int MAX_BYTES = 2_000_000;
     private static final int MAX_REDIRECTS = 5;
+    private static final int MAX_PORT = 65535;
 
     // Redirects are NOT followed automatically: each hop must pass the SSRF
     // guard before we fetch it, so a public URL cannot redirect us to a
@@ -54,6 +61,13 @@ public class UrlFetcher
             return false;
         }
 
+        // A syntactically valid URI can still carry an out-of-range port that
+        // HttpClient would reject with IllegalArgumentException.
+        if (uri.getPort() > MAX_PORT)
+        {
+            return false;
+        }
+
         String host = uri.getHost();
         if (host == null || host.isBlank())
         {
@@ -75,6 +89,14 @@ public class UrlFetcher
             return false;
         }
 
+        // NOTE (known limitation): this is a time-of-check/time-of-use guard —
+        // HttpClient re-resolves the hostname when it connects, so a hostile
+        // DNS entry that changes between here and the connection (DNS
+        // rebinding) could still reach a private address. Fully closing this
+        // requires pinning the connection to the validated IP (which breaks
+        // TLS SNI / virtual hosts) or routing through a trusted egress proxy;
+        // both are out of scope here. Re-validating every redirect hop keeps
+        // the window small.
         return true;
     }
 
@@ -124,6 +146,11 @@ public class UrlFetcher
 
                 response = client.send(request, HttpResponse.BodyHandlers.ofInputStream());
             }
+            catch (IllegalArgumentException e)
+            {
+                // e.g. an out-of-range port that slipped past URI parsing.
+                throw new FetchException("Invalid URL: " + current, e);
+            }
             catch (IOException | InterruptedException e)
             {
                 if (e instanceof InterruptedException)
@@ -145,7 +172,14 @@ public class UrlFetcher
                 }
                 // Resolve relative redirects against the current URL, then
                 // loop so the next destination is re-validated by isAllowed.
-                current = URI.create(current).resolve(location).toString();
+                try
+                {
+                    current = URI.create(current).resolve(location).toString();
+                }
+                catch (IllegalArgumentException e)
+                {
+                    throw new FetchException("Invalid redirect location: " + location, e);
+                }
                 continue;
             }
 
@@ -164,15 +198,46 @@ public class UrlFetcher
                 throw new FetchException("Unsupported content-type: " + contentType);
             }
 
-            return readBounded(response.body());
+            byte[] body = readBounded(response.body());
+            return new String(body, charsetOf(contentType));
         }
 
         throw new FetchException("Too many redirects for: " + url);
     }
 
-    // Reads at most MAX_BYTES from the stream, so an oversized response can
-    // never exhaust memory, and closes the stream when done.
-    private String readBounded(InputStream body) throws FetchException
+    // Reads at most MAX_BYTES, bounded by a wall-clock deadline so a server that
+    // stalls its body cannot hang the request (and its DB transaction). On
+    // timeout the stream is closed, which unblocks the background read.
+    private byte[] readBounded(InputStream body) throws FetchException
+    {
+        CompletableFuture<byte[]> future =
+                CompletableFuture.supplyAsync(() -> readAll(body));
+        try
+        {
+            return future.get(TIMEOUT.toSeconds(), TimeUnit.SECONDS);
+        }
+        catch (TimeoutException e)
+        {
+            future.cancel(true);
+            drainQuietly(body);
+            throw new FetchException("Body read timed out");
+        }
+        catch (ExecutionException e)
+        {
+            drainQuietly(body);
+            Throwable cause = e.getCause();
+            throw new FetchException(
+                    "Read failed: " + (cause == null ? e.getMessage() : cause.getMessage()), e);
+        }
+        catch (InterruptedException e)
+        {
+            Thread.currentThread().interrupt();
+            drainQuietly(body);
+            throw new FetchException("Interrupted while reading body", e);
+        }
+    }
+
+    private byte[] readAll(InputStream body)
     {
         try (InputStream stream = body)
         {
@@ -186,12 +251,35 @@ public class UrlFetcher
                 buffer.write(chunk, 0, allowed);
                 total += allowed;
             }
-            return buffer.toString(StandardCharsets.UTF_8);
+            return buffer.toByteArray();
         }
         catch (IOException e)
         {
-            throw new FetchException("Read failed: " + e.getMessage(), e);
+            throw new UncheckedIOException(e);
         }
+    }
+
+    // Decode with the charset declared in the Content-Type header, falling back
+    // to UTF-8, so non-UTF-8 pages aren't corrupted before indexing.
+    private Charset charsetOf(String contentType)
+    {
+        for (String part : contentType.split(";"))
+        {
+            String token = part.trim();
+            if (token.regionMatches(true, 0, "charset=", 0, 8))
+            {
+                String name = token.substring(8).trim().replace("\"", "");
+                try
+                {
+                    return Charset.forName(name);
+                }
+                catch (RuntimeException ignored)
+                {
+                    // Unknown/invalid charset name; fall through to UTF-8.
+                }
+            }
+        }
+        return StandardCharsets.UTF_8;
     }
 
     private void drainQuietly(InputStream body)

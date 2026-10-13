@@ -2,6 +2,7 @@ package com.se6362.kwic;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -88,5 +89,24 @@ public class KwicIndexServiceTest
 
         assertTrue(result.indexed().isEmpty());
         assertEquals(1, result.failed().size());
+    }
+
+    @Test
+    void urlsBeyondBatchLimitAreReportedNotDropped() throws FetchException
+    {
+        when(fetcher.fetch(anyString())).thenThrow(new FetchException("stub"));
+
+        List<String> urls = new ArrayList<>();
+        for (int i = 0; i < 25; i++)
+        {
+            urls.add("http://example.com/" + i);
+        }
+
+        IndexResult result = service.index(urls);
+
+        // Every URL is accounted for: 20 attempted (and stubbed to fail) + 5 over-limit.
+        assertEquals(25, result.failed().size());
+        assertTrue(result.failed().stream()
+                .anyMatch(f -> f.error().contains("exceeds max batch")));
     }
 }

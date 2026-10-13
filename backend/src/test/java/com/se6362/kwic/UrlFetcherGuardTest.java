@@ -49,4 +49,10 @@ public class UrlFetcherGuardTest
     {
         assertFalse(fetcher.isAllowed(null));
     }
+
+    @Test
+    void blocksOutOfRangePort()
+    {
+        assertFalse(fetcher.isAllowed("http://example.com:99999/"));
+    }
 }
