@@ -3,7 +3,6 @@ package com.se6362.kwic.core;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.sql.SQLException;
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -79,11 +78,6 @@ public class MasterControl
     public void saveOutput() throws SQLException
     {
         outputBuffer.writeToDatabase();
-    }
-    
-    public List<SearchResult> search(String keyword)
-    {
-        return outputBuffer.search(keyword);
     }
 
     public String getOutput()
