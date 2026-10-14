@@ -175,3 +175,18 @@ Root Directory: /backend
 ```
 
 Changes pushed to the configured branch trigger a Railway backend deployment.
+
+### Local Deployment
+
+You can deploy the frontend and backend on your local Windows machine using the following commands:
+
+In Command Prompt:
+cd backend
+set "SPRING_DATASOURCE_URL=jdbc:mysql://altaria.proxy.rlwy.net:10497/railway"
+set "SPRING_DATASOURCE_USERNAME=root"
+set "SPRING_DATASOURCE_PASSWORD=xhgpPYgBtXLRPGgjaWwuNXVCBHXUAZwf"
+.\mvnw.cmd spring-boot:run
+
+In PowerShell:
+cd frontend
+npm start
