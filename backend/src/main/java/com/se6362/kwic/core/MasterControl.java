@@ -85,6 +85,11 @@ public class MasterControl
         return outputBuffer.toString();
     }
 
+    public LineStorage getOutputLines()
+    {
+        return outputBuffer.getOutputLines();
+    }
+
     public synchronized ObjectNode toJsonElement()
     {
         jsonOutput.put("mergedOutput", getOutput());

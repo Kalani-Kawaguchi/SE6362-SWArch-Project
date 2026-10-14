@@ -16,6 +16,16 @@ public class OutputBuffer extends LineList
         // TO DO: Save results to database
     }
 
+    public synchronized LineStorage getOutputLines()
+    {
+        LineStorage copy = new LineStorage();
+        for (int lineNo = 0; lineNo < outputStorage.getLineCount(); lineNo++)
+        {
+            copy.appendLine(outputStorage, lineNo);
+        }
+        return copy;
+    }
+
     @Override
     public synchronized void clear()
     {
