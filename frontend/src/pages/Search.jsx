@@ -43,6 +43,29 @@ function validateInput(text) {
     return "";
 }
 
+// Several shifted lines can come from the same page, so group them by URL.
+function groupByUrl(results) {
+    const groups = new Map();
+
+    for (const result of results) {
+        const key = result.url ?? "(no URL)";
+        if (!groups.has(key)) {
+            groups.set(key, []);
+        }
+        groups.get(key).push(result.context);
+    }
+
+    return Array.from(groups, ([url, contexts]) => ({ url, contexts }));
+}
+
+function hostnameOf(url) {
+    try {
+        return new URL(url).hostname;
+    } catch {
+        return url;
+    }
+}
+
 export default function Search() {
     const [backendStatus, setBackendStatus] = useState("Checking backend…");
 
@@ -67,6 +90,42 @@ export default function Search() {
         };
     }, []);
 
+    const [query, setQuery] = useState("");
+    const [results, setResults] = useState(null);
+    const [error, setError] = useState("");
+    const [isSearching, setIsSearching] = useState(false);
+
+    async function runSearch(event) {
+        event.preventDefault();
+
+        const q = query.trim();
+        if (!q) {
+            setError("Enter a keyword to search.");
+            return;
+        }
+
+        setError("");
+        setIsSearching(true);
+
+        try {
+            const response = await fetch(
+                `${API_BASE_URL}/api/search?q=${encodeURIComponent(q)}`
+            );
+
+            if (!response.ok) {
+                throw new Error(`Backend returned HTTP ${response.status}`);
+            }
+
+            const data = await response.json();
+            setResults(groupByUrl(data));
+        } catch (err) {
+            setResults(null);
+            setError(err.message);
+        } finally {
+            setIsSearching(false);
+        }
+    }
+
 
     return (
 
@@ -82,7 +141,7 @@ export default function Search() {
                 </h1>
             </section>
 
-            <form className="search-form" role="search" onSubmit={(event) => event.preventDefault()}>
+            <form className="search-form" role="search" onSubmit={runSearch}>
                 <label className="sr-only" htmlFor="search-input">
                     Search the web
                 </label>
@@ -92,25 +151,55 @@ export default function Search() {
                     className="search-input"
                     type="search"
                     placeholder="Enter your search query..."
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
                 />
 
-                <button className="search-button" type="submit">
-                    Search
+                <button className="search-button" type="submit" disabled={isSearching}>
+                    {isSearching ? "Searching…" : "Search"}
                 </button>
             </form>
 
-            <ul className="search-results-list">
-                <SearchResult
-                    title="Google"
-                    url="http://google.com"
-                    description="Google is a world famous search engine."
-                />
-                <SearchResult
-                    title="Facebook"
-                    url="http://facebook.com"
-                    description="Connect with Friends and Family."
-                />
-            </ul>
+            {error && <p className="error">{error}</p>}
+
+            {results === null && (
+                <ul className="search-results-list">
+                    <SearchResult
+                        title="Google"
+                        url="http://google.com"
+                        description="Google is a world famous search engine."
+                    />
+                    <SearchResult
+                        title="Facebook"
+                        url="http://facebook.com"
+                        description="Connect with Friends and Family."
+                    />
+                </ul>
+            )}
+
+            {results !== null && (
+                <ul className="search-results-list">
+                    {results.length === 0 && (
+                        <li className="search-result">No pages contain that keyword.</li>
+                    )}
+
+                    {results.map(({ url, contexts }) => (
+                        <SearchResult
+                            key={url}
+                            title={hostnameOf(url)}
+                            url={url}
+                            description={contexts.map((context, i) => {
+                                const [keyword, ...rest] = context.split(" ");
+                                return (
+                                    <span key={i} style={{ display: "block" }}>
+                                        <strong>{keyword}</strong> {rest.join(" ")}
+                                    </span>
+                                );
+                            })}
+                        />
+                    ))}
+                </ul>
+            )}
         </main>
     );
 }

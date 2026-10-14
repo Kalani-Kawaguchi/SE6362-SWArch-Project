@@ -44,4 +44,9 @@ public class Line
         return words.size();
     }
 
+    public java.util.List<String> getWords()
+    {
+        return words;
+    }
+
 }

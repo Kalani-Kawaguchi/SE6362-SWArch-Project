@@ -88,11 +88,47 @@ public abstract class LineList
         this.setURI(nextLine, lineList.getURI(lineNo));
     }
 
+        public String getLineText(int lineNumber)
+    {
+        return String.join(" ", lines.get(lineNumber).getWords());
+    }
+
+    public List<Integer> findLinesStartingWith(String keyword)
+    {
+        List<Integer> matches = new ArrayList<>();
+
+        int low = 0;
+        int high = lines.size();
+        while (low < high)
+        {
+            int mid = (low + high) / 2;
+            if (lines.get(mid).getWord(0).compareToIgnoreCase(keyword) < 0)
+            {
+                low = mid + 1;
+            }
+            else
+            {
+                high = mid;
+            }
+        }
+
+        for (int lineNo = low; lineNo < lines.size(); lineNo++)
+        {
+            if (!lines.get(lineNo).getWord(0).equalsIgnoreCase(keyword))
+            {
+                break;
+            }
+            matches.add(lineNo);
+        }
+
+        return matches;
+    }
+    
     public int getWordCount(int lineNumber)
     {
         return lines.get(lineNumber).getWordCount();
     }
-
+     
     public int getLineCount()
     {
         return lines.size();
