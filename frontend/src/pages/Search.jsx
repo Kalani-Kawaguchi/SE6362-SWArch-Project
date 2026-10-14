@@ -1,78 +1,95 @@
-import ProjPlan from "../documents/PreliminaryProjectPlan.pdf";
-import { useEffect, useState } from "react";
+
+import { useState } from "react";
 import SearchResult from "../SearchResult";
 import "../styles.css";
 
-const API_BASE_URL = (process.env.API_BASE_URL || "http://localhost:8080")
-    .replace(/\/+$/, "");
-const MAX_LINES = 100;
-const MAX_WORDS_PER_LINE = 50;
-const MAX_WORDS_TOTAL = 1000;
+const API_BASE_URL = (
+    process.env.API_BASE_URL || "http://localhost:8080"
+).replace(/\/+$/, "");
 
-// Returns an error message, or "" if the input is valid.
-function validateInput(text) {
-    const lines = text
-        .split(/\r?\n/)
-        .map((l) => l.trim())
-        .filter(Boolean);
-
-    if (lines.length === 0) {
-        return "Enter at least one line of text.";
-    }
-
-    if (lines.length > MAX_LINES) {
-        return `Use at most ${MAX_LINES} lines (you have ${lines.length}).`;
-    }
-
-    let total = 0;
-
-    for (let i = 0; i < lines.length; i++) {
-        const words = lines[i].split(/\s+/).length;
-
-        if (words > MAX_WORDS_PER_LINE) {
-            return `Line ${i + 1} has ${words} words. Use at most ${MAX_WORDS_PER_LINE} per line.`;
-        }
-
-        total += words;
-    }
-
-    if (total > MAX_WORDS_TOTAL) {
-        return `Use at most ${MAX_WORDS_TOTAL.toLocaleString()} words in total (you have ${total.toLocaleString()}).`;
-    }
-
-    return "";
-}
+const MAX_QUERY_LENGTH = 500;
 
 export default function Search() {
-    const [backendStatus, setBackendStatus] = useState("Checking backend…");
+    const [text, setText] = useState("");
+    const [results, setResults] = useState([]);
+    const [error, setError] = useState("");
+    const [isProcessing, setIsProcessing] = useState(false);
+    const [hasSearched, setHasSearched] = useState(false);
 
-    // Check whether the backend is reachable.
-    useEffect(() => {
-        let cancelled = false;
+    async function getSearchResults(event) {
+        event.preventDefault();
 
-        fetch(API_BASE_URL, { mode: "no-cors" })
-            .then(() => {
-                if (!cancelled) {
-                    setBackendStatus("Backend connected");
+        if (isProcessing) {
+            return;
+        }
+
+        const query = text.trim();
+
+        if (!query) {
+            setError("Enter a search query.");
+            return;
+        }
+
+        if (query.length > MAX_QUERY_LENGTH) {
+            setError(
+                `Search queries must be at most ${MAX_QUERY_LENGTH} characters.`
+            );
+            return;
+        }
+
+        setResults([]);
+        setError("");
+        setHasSearched(false);
+        setIsProcessing(true);
+
+        try {
+            const response = await fetch(
+                `${API_BASE_URL}/api/search`,
+                {
+                    method: "POST",
+                    headers:
+                    {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ query })
                 }
-            })
-            .catch(() => {
-                if (!cancelled) {
-                    setBackendStatus("Backend unavailable");
-                }
-            });
+            );
 
-        return () => {
-            cancelled = true;
-        };
-    }, []);
+            if (!response.ok) {
+                throw new Error(
+                    `Backend returned HTTP ${response.status}`
+                );
+            }
 
+            const data = await response.json();
+
+            if (!Array.isArray(data)) {
+                throw new Error(
+                    "The backend returned an unexpected response format."
+                );
+            }
+
+            setResults(data);
+            setHasSearched(true);
+        }
+        catch (err) {
+            console.error("Unable to search:", err);
+
+            setError(
+                "Couldn't retrieve search results. Check the backend connection and try again."
+            );
+        }
+        finally {
+            setIsProcessing(false);
+        }
+    }
 
     return (
-
-
         <main id="main">
-            <section className="intro" aria-labelledby="page-title">
+            <section
+                className="intro"
+                aria-labelledby="page-title"
+            >
                 <p className="eyebrow">
                     SEARCH ENGINE
                 </p>
@@ -82,8 +99,15 @@ export default function Search() {
                 </h1>
             </section>
 
-            <form className="search-form" role="search" onSubmit={(event) => event.preventDefault()}>
-                <label className="sr-only" htmlFor="search-input">
+            <form
+                className="search-form"
+                role="search"
+                onSubmit={getSearchResults}
+            >
+                <label
+                    className="sr-only"
+                    htmlFor="search-input"
+                >
                     Search the web
                 </label>
 
@@ -91,25 +115,52 @@ export default function Search() {
                     id="search-input"
                     className="search-input"
                     type="search"
+                    value={text}
+                    onChange={(event) => {
+                        setText(event.target.value);
+                        setError("");
+                    }}
                     placeholder="Enter your search query..."
+                    maxLength={MAX_QUERY_LENGTH}
+                    disabled={isProcessing}
                 />
 
-                <button className="search-button" type="submit">
-                    Search
+                <button
+                    className="search-button"
+                    type="submit"
+                    disabled={isProcessing}
+                >
+                    {isProcessing ? "Searching..." : "Search"}
                 </button>
             </form>
 
+            {error && (
+                <p className="error" role="alert">
+                    {error}
+                </p>
+            )}
+
+            {isProcessing && (
+                <p role="status">
+                    Searching the web...
+                </p>
+            )}
+
+            {hasSearched && !isProcessing && results.length === 0 && (
+                <p role="status">
+                    No results found.
+                </p>
+            )}
+
             <ul className="search-results-list">
-                <SearchResult
-                    title="Google"
-                    url="http://google.com"
-                    description="Google is a world famous search engine."
-                />
-                <SearchResult
-                    title="Facebook"
-                    url="http://facebook.com"
-                    description="Connect with Friends and Family."
-                />
+                {results.map((result, index) => (
+                    <SearchResult
+                        key={index}
+                        title={result.title}
+                        url={result.url}
+                        description={result.description}
+                    />
+                ))}
             </ul>
         </main>
     );

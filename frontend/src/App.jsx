@@ -12,6 +12,27 @@ export default function App() {
     "Checking backend status...",
   );
 
+  // Check whether the backend is reachable.
+  useEffect(() => {
+    let cancelled = false;
+
+    fetch(API_BASE_URL, { mode: "no-cors" })
+      .then(() => {
+        if (!cancelled) {
+          setBackendStatus("Backend connected");
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setBackendStatus("Backend unavailable");
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
 
   return (
     <div className="app-shell">
