@@ -24,7 +24,11 @@ public class LineStorage extends LineList
 
     public void storeLine(String line, URI uri)
     {
+        int lineNo = getLineCount();
         storeLine(line);
-        setURI(getLineCount() - 1, uri);
+        if (getLineCount() > lineNo)
+        {
+            setURI(lineNo, uri);
+        }
     }
 }
