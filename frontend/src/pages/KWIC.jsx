@@ -127,13 +127,9 @@ export default function KWIC() {
         : [];
 
       setIncrementalResults(incremental);
-
-      setBackendStatus("Backend connected");
     }
     catch (err) {
       console.error("Unable to generate KWIC index:", err);
-
-      setBackendStatus("Backend unavailable");
 
       setError(
         "Couldn't reach the KWIC backend. Check that it is running and try again."
