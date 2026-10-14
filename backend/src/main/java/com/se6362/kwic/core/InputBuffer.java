@@ -1,7 +1,9 @@
 package com.se6362.kwic.core;
 
-import java.io.FileReader;
+import java.nio.charset.StandardCharsets;
 import java.io.IOException;
+import java.net.URI;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -14,9 +16,9 @@ public class InputBuffer implements AutoCloseable
 {
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
-    private static final String END_OF_FILE = "";
+    private static final InputLine END_OF_FILE = new InputLine("", null);
 
-    private final BlockingQueue<String> queue = new LinkedBlockingQueue<>();
+    private final BlockingQueue<InputLine> queue = new LinkedBlockingQueue<>();
 
     private Thread readerThread;
     private volatile IOException readException;
@@ -34,13 +36,16 @@ public class InputBuffer implements AutoCloseable
         readerThread = new Thread(() ->
         {
             try (JsonParser parser = MAPPER.createParser(
-                    new FileReader(filePath.toString())))
+                    Files.newBufferedReader(filePath, StandardCharsets.UTF_8)))
             {
                 JsonNode element;
 
                 while ((element = MAPPER.readTree(parser)) != null)
                 {
-                    queue.put(element.path("text").asText());
+                    InputLine input = parseInput(element);
+                    if (!input.text().isBlank()) {
+                        queue.put(input);
+                    }
                 }
             }
             catch (IOException exception)
@@ -75,7 +80,7 @@ public class InputBuffer implements AutoCloseable
         {
             for (int i = 0; i < numberOfLines; i++)
             {
-                String next = queue.take();
+                InputLine next = queue.take();
 
                 if (next == END_OF_FILE)
                 {
@@ -91,7 +96,7 @@ public class InputBuffer implements AutoCloseable
                 }
 
                 // Add the line(s) from next to storage.
-                storage.storeLine(next);
+                storage.storeLine(next.text(), next.uri());
             }
 
             return storage;
@@ -104,6 +109,30 @@ public class InputBuffer implements AutoCloseable
                     exception);
         }
     }
+
+    private static InputLine parseInput(JsonNode element) throws IOException {
+        if (!element.isObject() || !element.path("text").isTextual()){
+            throw new IOException("Each input record must contain a string text field.");
+        }
+        JsonNode url = element.get("url");
+        if (url == null || url.isNull()){
+            return new InputLine(element.get("text").asText(), null);
+        }
+        if (!url.isTextual()){
+            throw new IOException("The url field must be a string.");
+        }
+        try {
+            URI uri = URI.create(url.asText());
+            if ((!"http".equalsIgnoreCase(uri.getScheme()) && !"https".equalsIgnoreCase(uri.getScheme()))) {
+                throw new IOException("The url field must use http or https scheme.");
+            }
+            return new InputLine(element.get("text").asText(), uri);
+        } catch (IllegalArgumentException e) {
+            throw new IOException("Invalid webpage URL: " + url.asText(), e);
+        }
+    }
+
+    private record InputLine(String text, URI uri) {}
 
     @Override
     public void close() throws IOException
