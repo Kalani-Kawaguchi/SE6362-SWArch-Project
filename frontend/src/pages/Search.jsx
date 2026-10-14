@@ -13,17 +13,17 @@ export default function Search() {
     const [text, setText] = useState("");
     const [results, setResults] = useState([]);
     const [error, setError] = useState("");
-    const [isProcessing, setIsProcessing] = useState(false);
+    const [isSearching, setIsSearching] = useState(false);
     const [hasSearched, setHasSearched] = useState(false);
 
     async function getSearchResults(event) {
         event.preventDefault();
 
-        if (isProcessing) {
+        if (isSearching) {
             return;
         }
 
-        const query = text.trim();
+        const query = text.trim().split(/\s+/);
 
         if (!query) {
             setError("Enter a search query.");
@@ -40,7 +40,7 @@ export default function Search() {
         setResults([]);
         setError("");
         setHasSearched(false);
-        setIsProcessing(true);
+        setIsSearching(true);
 
         try {
             const response = await fetch(
@@ -80,7 +80,7 @@ export default function Search() {
             );
         }
         finally {
-            setIsProcessing(false);
+            setIsSearching(false);
         }
     }
 
@@ -122,15 +122,15 @@ export default function Search() {
                     }}
                     placeholder="Enter your search query..."
                     maxLength={MAX_QUERY_LENGTH}
-                    disabled={isProcessing}
+                    disabled={isSearching}
                 />
 
                 <button
                     className="search-button"
                     type="submit"
-                    disabled={isProcessing}
+                    disabled={isSearching}
                 >
-                    {isProcessing ? "Searching..." : "Search"}
+                    {isSearching ? "Searching..." : "Search"}
                 </button>
             </form>
 
@@ -140,13 +140,13 @@ export default function Search() {
                 </p>
             )}
 
-            {isProcessing && (
+            {isSearching && (
                 <p role="status">
                     Searching the web...
                 </p>
             )}
 
-            {hasSearched && !isProcessing && results.length === 0 && (
+            {hasSearched && !isSearching && results.length === 0 && (
                 <p role="status">
                     No results found.
                 </p>
