@@ -1,9 +1,7 @@
 package com.se6362.kwic.core;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.net.URI;
-import com.se6362.kwic.core.Line;
 
 public abstract class LineList
 {

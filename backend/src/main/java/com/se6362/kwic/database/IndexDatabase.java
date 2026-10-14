@@ -2,6 +2,7 @@ package com.se6362.kwic.database;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +32,26 @@ public class IndexDatabase {
     @Transactional(readOnly = true)
     public List<WebpageRecord> getPages() {
         return List.copyOf(database.query(SELECT_PAGES, PAGE_MAPPER));
+    }
+
+    @Transactional(readOnly = true)
+    public List<WebpageRecord> search(List<String> keywords) {
+        if (keywords.isEmpty()) {
+            return List.of();
+        }
+        String placeholders = String.join(", ", Collections.nCopies(keywords.size(), "?"));
+        String sql = """
+                SELECT w.Title, w.Url, w.Description
+                FROM WEB_PAGE w
+                JOIN (
+                    SELECT PageTitle, COUNT(DISTINCT Keyword) AS MatchCount
+                    FROM INDEX_ENTRY
+                    WHERE Keyword IN (%s)
+                    GROUP BY PageTitle
+                ) matches ON matches.PageTitle = w.Title
+                ORDER BY matches.MatchCount DESC, LOWER(w.Title) ASC, w.Title ASC
+                """.formatted(placeholders);
+        return List.copyOf(database.query(sql, PAGE_MAPPER, keywords.toArray()));
     }
 
     @Transactional
