@@ -1,0 +1,97 @@
+/* Search results list */
+.search-results-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+/* Individual search result */
+.search-result {
+    padding: 22px 0;
+    border-bottom: 1px solid #e3e9e0;
+    overflow-wrap: anywhere;
+}
+
+.search-result:first-child {
+    padding-top: 8px;
+}
+
+.search-result:last-child {
+    border-bottom: none;
+}
+
+/* URL and favicon row */
+.search-result-url {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    margin-bottom: 7px;
+    min-width: 0;
+}
+
+.search-result-favicon {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    border: 1px solid #dbe3d9;
+    border-radius: 50%;
+    background: #f8faf5;
+    color: #39816a;
+    font-size: 13px;
+    text-decoration: none;
+}
+
+.search-result-url p {
+    margin: 0;
+    color: #617169;
+    font-size: 12px;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+    text-decoration: none;
+}
+
+/* Clickable result title */
+.search-result-title {
+    margin: 0 0 7px;
+    font: 500 20px/1.35 "Space Grotesk", system-ui, sans-serif;
+    letter-spacing: -0.025em;
+}
+
+.search-result-title a {
+    color: #286d56;
+    text-decoration: none;
+    text-underline-offset: 4px;
+}
+
+.search-result-title a:hover {
+    color: #124333;
+    text-decoration: underline;
+}
+
+/* Result description */
+.search-result-description {
+    margin: 0;
+    max-width: 760px;
+    color: #607167;
+    font-size: 13px;
+    line-height: 1.75;
+}
+
+@media (max-width: 760px) {
+    .search-result {
+        padding: 18px 0;
+    }
+
+    .search-result-title {
+        font-size: 18px;
+    }
+
+    .search-result-description {
+        font-size: 12px;
+    }
+}

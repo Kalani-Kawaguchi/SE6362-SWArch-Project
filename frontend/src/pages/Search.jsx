@@ -1,5 +1,6 @@
 import ProjPlan from "../documents/PreliminaryProjectPlan.pdf";
 import { useEffect, useState } from "react";
+import SearchResult from "../SearchResult";
 import "../styles.css";
 
 const API_BASE_URL = (process.env.API_BASE_URL || "http://localhost:8080")
@@ -77,13 +78,39 @@ export default function Search() {
                 </p>
 
                 <h1 id="page-title">
-                    Search Engine
+                    <span>Search</span> the Web
                 </h1>
             </section>
 
+            <form className="search-form" role="search" onSubmit={(event) => event.preventDefault()}>
+                <label className="sr-only" htmlFor="search-input">
+                    Search the web
+                </label>
 
+                <input
+                    id="search-input"
+                    className="search-input"
+                    type="search"
+                    placeholder="Enter your search query..."
+                />
+
+                <button className="search-button" type="submit">
+                    Search
+                </button>
+            </form>
+
+            <ul className="search-results-list">
+                <SearchResult
+                    title="Google"
+                    url="http://google.com"
+                    description="Google is a world famous search engine."
+                />
+                <SearchResult
+                    title="Facebook"
+                    url="http://facebook.com"
+                    description="Connect with Friends and Family."
+                />
+            </ul>
         </main>
-
-
     );
 }
