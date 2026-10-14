@@ -1,5 +1,4 @@
-import ProjPlan from "../documents/PreliminaryProjectPlan.pdf";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import "../styles.css";
 import ResultPanel from "../ResultPanel";
 import KwicResultRow from "../KwicResultRow";
@@ -50,28 +49,6 @@ export default function KWIC() {
   const [incrementalResults, setIncrementalResults] = useState([]);
   const [error, setError] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
-  const [backendStatus, setBackendStatus] = useState("Checking backend…");
-
-  // Check whether the backend is reachable.
-  useEffect(() => {
-    let cancelled = false;
-
-    fetch(API_BASE_URL, { mode: "no-cors" })
-      .then(() => {
-        if (!cancelled) {
-          setBackendStatus("Backend connected");
-        }
-      })
-      .catch(() => {
-        if (!cancelled) {
-          setBackendStatus("Backend unavailable");
-        }
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, []);
 
   function updateText(value) {
     setText(value);
