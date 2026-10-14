@@ -2,7 +2,7 @@ package com.se6362.kwic.core;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.sql.SQLException;
+import com.se6362.kwic.database.IndexDatabase;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -75,9 +75,9 @@ public class MasterControl
         }
     }
 
-    public void saveOutput() throws SQLException
+    public int saveOutput(IndexDatabase database)
     {
-        outputBuffer.writeToDatabase();
+        return outputBuffer.writeToDatabase(database);
     }
 
     public String getOutput()

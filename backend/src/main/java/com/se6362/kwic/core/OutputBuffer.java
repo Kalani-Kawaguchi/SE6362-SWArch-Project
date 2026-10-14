@@ -1,5 +1,7 @@
 package com.se6362.kwic.core;
 
+import com.se6362.kwic.database.IndexDatabase;
+
 public class OutputBuffer extends LineList
 {
     private MergedLines outputStorage = new MergedLines();
@@ -11,9 +13,9 @@ public class OutputBuffer extends LineList
         outputStorage = temp;
     }
 
-    public synchronized void writeToDatabase()
+    public int writeToDatabase(IndexDatabase database)
     {
-        // TO DO: Save results to database
+        return database.replaceIndex(getOutputLines());
     }
 
     public synchronized LineStorage getOutputLines()
