@@ -14,7 +14,7 @@ import java.nio.file.Path;
 @ExtendWith(MockitoExtension.class)
 public class KwicSystemTest
 {
-
+    // test the system with testData.jsonl as input
     @Test
     void testKwicSystem() throws IOException
     {

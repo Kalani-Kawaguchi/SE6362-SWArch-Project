@@ -16,6 +16,19 @@ public class MergedLines extends LineList
             }
             else
             {
+                // if lines are duplicates
+                if (compareLines(oldList.lines.get(oldListPointer), newList.lines.get(newListPointer)) == 0)
+                {
+                    if (oldList.getURI(oldListPointer) == null && newList.getURI(newListPointer) == null)
+                    {
+                        newListPointer++; // remove duplicate if URIs are null
+                    }
+                    else if (oldList.getURI(oldListPointer) != null && newList.getURI(newListPointer) != null &&
+                            oldList.getURI(oldListPointer).toString() == newList.getURI(newListPointer).toString())
+                    {
+                        newListPointer++; // also remove duplicate if URIs are the same
+                    }
+                }
                 appendLine(oldList, oldListPointer);
                 oldListPointer++;
             }
