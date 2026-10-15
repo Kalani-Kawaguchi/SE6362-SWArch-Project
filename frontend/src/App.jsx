@@ -4,6 +4,7 @@ import KWIC from "./pages/KWIC.jsx";
 import Search from "./pages/Search.jsx";
 import { useEffect, useState } from "react";
 import ProjPlan from "./documents/PreliminaryProjectPlan.pdf";
+import ProjDev1 from "./documents/SoftwareArchitectureProject1.pdf";
 
 const API_BASE_URL = process.env.API_BASE_URL;
 
@@ -80,10 +81,15 @@ export default function App() {
             Kalani Kawaguchi · Zhi Li · Jonathan Loper · Mitchell Vu
           </p>
         </div>
+        <div>
+          <a href={ProjPlan}>
+            Preliminary project plan ↗
+          </a>
+          <a href={ProjDev1}>
+            Project phase 1 deliverable ↗
+          </a>
+        </div>
 
-        <a href={ProjPlan}>
-          Preliminary project plan ↗
-        </a>
       </footer>
 
     </div>

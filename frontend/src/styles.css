@@ -395,6 +395,7 @@ footer p {
 }
 
 footer a {
+  margin: 0 10px 10px;
   white-space: nowrap;
 }
 
@@ -688,6 +689,7 @@ nav a.active:hover {
   gap: 15px;
   width: 100%;
   padding: 20px;
+  margin: 10px 0 0;
   border: 1px solid #dbe3d9;
   border-radius: 14px;
   background: #fff;

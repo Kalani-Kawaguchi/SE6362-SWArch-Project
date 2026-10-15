@@ -1,5 +1,5 @@
 import ProjPlan from "../documents/PreliminaryProjectPlan.pdf";
-import { useEffect, useState } from "react";
+import ProjDev1 from "../documents/SoftwareArchitectureProject1.pdf";
 
 const API_BASE_URL = process.env.API_BASE_URL;
 
@@ -43,6 +43,14 @@ export default function Home() {
                     <span className="document-text">
                         <strong>Preliminary Project Plan</strong>
                         <span>View our initial project proposal</span>
+                    </span>
+                    <span className="document-arrow" aria-hidden="true">→</span>
+                </a>
+                <a className="documentation-link" href={ProjDev1} target="_blank" rel="noreferrer">
+                    <span className="document-icon" aria-hidden="true">↗</span>
+                    <span className="document-text">
+                        <strong>Project Phase 1 Deliverable</strong>
+                        <span>View our documentation for project phase 1</span>
                     </span>
                     <span className="document-arrow" aria-hidden="true">→</span>
                 </a>
