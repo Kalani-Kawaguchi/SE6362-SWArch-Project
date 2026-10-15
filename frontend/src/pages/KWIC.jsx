@@ -213,7 +213,7 @@ export default function KWIC() {
                   updateText(event.target.value)
                 }
                 placeholder={
-                  "software architecture project\nkey word in context"
+                  "Beauty and the beast\nthe lion king"
                 }
                 maxLength={10000}
                 disabled={isProcessing}

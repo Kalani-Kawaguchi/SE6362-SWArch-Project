@@ -25,8 +25,7 @@ export default function ResultPanel({
                 {isProcessing
                     ? "Generating your index…"
                     : data
-                        ? `${data.shiftCount} rotations from ${data.inputLineCount} input ${data.inputLineCount === 1 ? "line" : "lines"
-                        }`
+                        ? ``
                         : "Your results will appear here."}
             </p>
 
@@ -39,9 +38,9 @@ export default function ResultPanel({
             ) : (
                 <div className="empty-state">
                     <div className="rotation-example" aria-hidden="true">
-                        <span>word in context</span>
-                        <span>in context word</span>
-                        <span>context word in</span>
+                        <span>the lion king</span>
+                        <span>lion king the</span>
+                        <span>king the lion</span>
                     </div>
 
                     <p>
