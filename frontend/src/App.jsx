@@ -1,3 +1,11 @@
+/*
+    SE 6362.001
+    Course Project: KWIC Index System
+    Team Members: Jonathan Loper, Kalani Kawaguchi, Zhi Li, Mitchell Vu
+    File Name: App.jsx
+    Description: Root react component
+ */
+
 import { HashRouter, Routes, Route, NavLink, Link } from "react-router-dom";
 import Home from "./pages/Home.jsx";
 import KWIC from "./pages/KWIC.jsx";

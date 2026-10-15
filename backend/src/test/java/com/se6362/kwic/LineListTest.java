@@ -1,3 +1,11 @@
+/*
+    SE 6362.001
+    Course Project: KWIC Index System
+    Team Members: Jonathan Loper, Kalani Kawaguchi, Zhi Li, Mitchell Vu
+    File Name: LineListTest.java
+    Description: Tests LineList class and all subclasses individually
+ */
+
 package com.se6362.kwic;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -13,15 +21,9 @@ import com.se6362.kwic.core.MergedLines;
 
 import java.net.URI;
 
-// 1. Removed unnecessary com.se6362.kwic imports since you are already in this package.
-// 2. Cleaned up unused Mockito imports since this specific test uses pure Java logic.
-
 @ExtendWith(MockitoExtension.class)
 public class LineListTest
 {
-
-    // Instantiating your real object directly (Great choice since it doesn't need
-    // external mocks!)
 
     @Test
     void testStorageLineList()

@@ -1,6 +1,13 @@
+/*
+    SE 6362.001
+    Course Project: KWIC Index System
+    Team Members: Jonathan Loper, Kalani Kawaguchi, Zhi Li, Mitchell Vu
+    File Name: SearchResult.jsx
+    Description: Generic react component for displaying a single result from the search engine
+ */
+
 import "./styles.css";
 import "./searchResultStyles.css";
-
 
 export default function SearchResult({
     title,

@@ -1,3 +1,11 @@
+/*
+    SE 6362.001
+    Course Project: KWIC Index System
+    Team Members: Jonathan Loper, Kalani Kawaguchi, Zhi Li, Mitchell Vu
+    File Name: KwicSystemTest.java
+    Description: Tests complete kwic index processing from input to output (does not test database)
+ */
+
 package com.se6362.kwic;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

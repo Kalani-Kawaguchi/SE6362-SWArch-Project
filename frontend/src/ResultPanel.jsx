@@ -1,3 +1,11 @@
+/*
+    SE 6362.001
+    Course Project: KWIC Index System
+    Team Members: Jonathan Loper, Kalani Kawaguchi, Zhi Li, Mitchell Vu
+    File Name: ResultPanel.jsx
+    Description: Generic react component for displaying any type of processed lines
+ */
+
 export default function ResultPanel({
     title,
     data,

@@ -1,3 +1,11 @@
+/*
+    SE 6362.001
+    Course Project: KWIC Index System
+    Team Members: Jonathan Loper, Kalani Kawaguchi, Zhi Li, Mitchell Vu
+    File Name: KwicResultRow.jsx
+    Description: React component for displaying incremental KWIC output for a single input line
+ */
+
 import ResultPanel from "./ResultPanel";
 
 export default function KwicResultRow({

@@ -1,3 +1,11 @@
+/*
+    SE 6362.001
+    Course Project: KWIC Index System
+    Team Members: Jonathan Loper, Kalani Kawaguchi, Zhi Li, Mitchell Vu
+    File Name: CircularShift.java
+    Description: Module to circular shift all lines in a LineList object
+ */
+
 package com.se6362.kwic.core;
 
 import java.util.HashSet;
@@ -5,7 +13,7 @@ import java.util.Set;
 
 public class CircularShift extends LineList
 {
-
+    // Takes a LineList objects and stores all circular shifts of every line
     public void circularShiftLines(LineList lineList)
     {
         clear();
@@ -16,6 +24,7 @@ public class CircularShift extends LineList
         }
     }
 
+    // Generates the circular shifts for a specific line
     private void genShifts(LineList lineList, int lineNo)
     {
         int wordCount = lineList.getWordCount(lineNo);

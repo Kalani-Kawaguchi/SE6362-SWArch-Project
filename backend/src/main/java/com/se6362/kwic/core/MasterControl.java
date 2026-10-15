@@ -1,3 +1,11 @@
+/*
+    SE 6362.001
+    Course Project: KWIC Index System
+    Team Members: Jonathan Loper, Kalani Kawaguchi, Zhi Li, Mitchell Vu
+    File Name: MasterControl.java
+    Description: Controls sequence of KWIC processing steps all the way from input to output
+ */
+
 package com.se6362.kwic.core;
 
 import java.io.IOException;
@@ -23,6 +31,8 @@ public class MasterControl
         incrementalOutputArray = jsonOutput.putArray("incrementalOutput");
     }
 
+    // Runs the KWIC indexing system with "inputFile" as input. Uses incremental
+    // processing
     public void runIncremental(Path inputFile) throws IOException
     {
         incrementalOutputArray.removeAll();
@@ -35,7 +45,7 @@ public class MasterControl
         {
             inputBuffer.readFromFile(inputFile);
 
-            // Launch consumers
+            // Launch Multiple Threads to process the input lines
             for (int i = 0; i < threadCount; i++)
             {
                 final int workerId = i;
@@ -43,6 +53,7 @@ public class MasterControl
                 {
                     try
                     {
+                        // Continue to read and process lines until all lines have been processed
                         while (true)
                         {
                             // Consumers pull work directly from the independent component
@@ -75,27 +86,34 @@ public class MasterControl
         }
     }
 
+    // Saves output stored in output buffer to a SQL database
     public int saveOutput(IndexDatabase database)
     {
         return outputBuffer.writeToDatabase(database);
     }
 
+    // Returns all output lines. Used to display output back to user.
     public String getOutput()
     {
         return outputBuffer.toString();
     }
 
+    // Returns a LineList object containing the output lines.
     public LineStorage getOutputLines()
     {
         return outputBuffer.getOutputLines();
     }
 
+    // Returns a json representation of both incremental and merged output
     public synchronized ObjectNode toJsonElement()
     {
         jsonOutput.put("mergedOutput", getOutput());
         return jsonOutput;
     }
 
+    // Processes Lines in a LineList object by perfroming the circular shifting,
+    // alphabetization, and merging
+    // This is where must of the work happens to build the KWIC index.
     private void processLines(LineList lineList)
     {
         CircularShift circularShift = new CircularShift();
@@ -111,11 +129,13 @@ public class MasterControl
         appendIncrementalJson(incrementalOutput);
     }
 
+    // Appends a new json element to the existing json array of incremental output
     private synchronized void appendIncrementalJson(ObjectNode incrementalOutput)
     {
         incrementalOutputArray.add(incrementalOutput);
     }
 
+    // clears the current output in the buffer (does not clear the database entries)
     public synchronized void clear()
     {
         outputBuffer.clear();

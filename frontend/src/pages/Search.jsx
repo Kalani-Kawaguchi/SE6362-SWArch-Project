@@ -1,3 +1,10 @@
+/*
+    SE 6362.001
+    Course Project: KWIC Index System
+    Team Members: Jonathan Loper, Kalani Kawaguchi, Zhi Li, Mitchell Vu
+    File Name: Search.jsx
+    Description: React component for search engine
+ */
 
 import { useState } from "react";
 import SearchResult from "../SearchResult";
@@ -16,6 +23,7 @@ export default function Search() {
     const [isSearching, setIsSearching] = useState(false);
     const [hasSearched, setHasSearched] = useState(false);
 
+    // Get results of keyword search by calling backend API
     async function getSearchResults(event) {
         event.preventDefault();
 

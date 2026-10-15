@@ -1,3 +1,11 @@
+/*
+    SE 6362.001
+    Course Project: KWIC Index System
+    Team Members: Jonathan Loper, Kalani Kawaguchi, Zhi Li, Mitchell Vu
+    File Name: KwicController.java
+    Description: REST controller mapping POST requests sent from the KWIC Index Builder
+ */
+
 package com.se6362.kwic.controller;
 
 import com.se6362.kwic.core.*;
@@ -30,6 +38,7 @@ public class KwicController
     MasterControl masterControl = new MasterControl();
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
+    // Generate a KWIC index from user input and return the result as json file
     @PostMapping("/kwic")
     public synchronized String receiveInput(@RequestBody KwicRequest input) throws IOException
     {
@@ -75,6 +84,7 @@ public class KwicController
         }
     }
 
+    // Delete current user generated KWIC index
     @DeleteMapping("/kwic")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public synchronized void clear()

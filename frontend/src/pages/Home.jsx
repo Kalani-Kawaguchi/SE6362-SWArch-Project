@@ -1,3 +1,11 @@
+/*
+    SE 6362.001
+    Course Project: KWIC Index System
+    Team Members: Jonathan Loper, Kalani Kawaguchi, Zhi Li, Mitchell Vu
+    File Name: Home.jsx
+    Description: React component for home page
+ */
+
 import ProjPlan from "../documents/PreliminaryProjectPlan.pdf";
 import ProjDev1 from "../documents/SoftwareArchitectureProject1.pdf";
 

@@ -1,3 +1,11 @@
+/*
+    SE 6362.001
+    Course Project: KWIC Index System
+    Team Members: Jonathan Loper, Kalani Kawaguchi, Zhi Li, Mitchell Vu
+    File Name: KWIC.jsx
+    Description: React component for KWIC Index Builder
+ */
+
 import { useState } from "react";
 import "../styles.css";
 import ResultPanel from "../ResultPanel";
@@ -50,11 +58,13 @@ export default function KWIC() {
   const [error, setError] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
 
+  // Updates input text box as user enters text
   function updateText(value) {
     setText(value);
     setError("");
   }
 
+  // Generates KWIC index for user input by calling backend API
   async function generateIndex(event) {
     event.preventDefault();
 
@@ -140,6 +150,7 @@ export default function KWIC() {
     }
   }
 
+  // Removes all lines from KWIC index in backend, and clears frontend displays as well.
   async function clearData() {
     if (isProcessing) return;
 
