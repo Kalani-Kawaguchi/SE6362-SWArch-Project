@@ -10,7 +10,7 @@ package com.se6362.kwic.core;
 
 import com.se6362.kwic.database.IndexDatabase;
 
-public class OutputBuffer extends LineList
+public class OutputBuffer
 {
     private MergedLines outputStorage = new MergedLines();
 
@@ -34,18 +34,16 @@ public class OutputBuffer extends LineList
     public synchronized LineStorage getOutputLines()
     {
         LineStorage copy = new LineStorage();
-        for (int lineNo = 0; lineNo < outputStorage.getLineCount(); lineNo++)
+        for (WebPage page : outputStorage)
         {
-            copy.appendLine(outputStorage, lineNo);
+            copy.appendPage(page);
         }
         return copy;
     }
 
     // Removes all lines currently store in the output buffer
-    @Override
     public synchronized void clear()
     {
-        super.clear();
         outputStorage.clear();
     }
 

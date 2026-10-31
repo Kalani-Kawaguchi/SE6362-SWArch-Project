@@ -10,7 +10,6 @@ package com.se6362.kwic.core;
 
 import java.nio.charset.StandardCharsets;
 import java.io.IOException;
-import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.concurrent.BlockingQueue;
@@ -24,7 +23,7 @@ public class InputBuffer implements AutoCloseable
 {
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
-    private static final InputLine END_OF_FILE = new InputLine("", null);
+    private static final InputLine END_OF_FILE = new InputLine("", "");
 
     private final BlockingQueue<InputLine> queue = new LinkedBlockingQueue<>();
 
@@ -141,7 +140,7 @@ public class InputBuffer implements AutoCloseable
         // if no url is included in the json file, just return an InputLine with no url
         if (url == null || url.isNull())
         {
-            return new InputLine(element.get("text").asText(), null);
+            return new InputLine(element.get("text").asText(), "");
         }
 
         // if there is a "url" json element, make sure it is textual before using it
@@ -151,13 +150,8 @@ public class InputBuffer implements AutoCloseable
         }
         try
         {
-            URI uri = URI.create(url.asText());
-            if ((!"http".equalsIgnoreCase(uri.getScheme()) && !"https".equalsIgnoreCase(uri.getScheme())))
-            {
-                throw new IOException("The url field must use http or https scheme.");
-            }
             // return element InputLine element containing both url and text
-            return new InputLine(element.get("text").asText(), uri);
+            return new InputLine(element.get("text").asText(), url.asText());
         }
         catch (IllegalArgumentException e)
         {
@@ -166,7 +160,7 @@ public class InputBuffer implements AutoCloseable
     }
 
     // simple data structure storing a url/string pair
-    private record InputLine(String text, URI uri)
+    private record InputLine(String text, String uri)
     {
     }
 

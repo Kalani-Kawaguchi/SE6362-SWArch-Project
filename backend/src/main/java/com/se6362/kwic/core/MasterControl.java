@@ -60,7 +60,7 @@ public class MasterControl
                             LineStorage storage = inputBuffer.getInputLines(1);
 
                             // Break out if the inputManager file component reports
-                            if (storage.getLineCount() == 0)
+                            if (storage.getPageCount() == 0)
                             {
                                 break;
                             }
@@ -114,16 +114,16 @@ public class MasterControl
     // Processes Lines in a LineList object by perfroming the circular shifting,
     // alphabetization, and merging
     // This is where must of the work happens to build the KWIC index.
-    private void processLines(LineList lineList)
+    private void processLines(PageList pageList)
     {
         CircularShift circularShift = new CircularShift();
-        circularShift.circularShiftLines(lineList);
+        circularShift.circularShiftLines(pageList);
         Alphabetizer alphabetizer = new Alphabetizer();
         alphabetizer.alphabetizeLines(circularShift);
         outputBuffer.setOutputLines(alphabetizer);
 
         ObjectNode incrementalOutput = JSON_MAPPER.createObjectNode();
-        incrementalOutput.put("inputLines", lineList.toString());
+        incrementalOutput.put("inputLines", pageList.toString());
         incrementalOutput.put("shiftedLines", circularShift.toString());
         incrementalOutput.put("alphabetizedLines", alphabetizer.toString());
         appendIncrementalJson(incrementalOutput);

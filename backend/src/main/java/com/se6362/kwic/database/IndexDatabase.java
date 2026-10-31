@@ -9,6 +9,7 @@
 package com.se6362.kwic.database;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -21,8 +22,10 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.se6362.kwic.core.LineList;
+import com.se6362.kwic.core.PageList;
+import com.se6362.kwic.core.WebPage;
 import com.se6362.kwic.core.LineStorage;
+import com.se6362.kwic.core.Descriptor;
 import com.se6362.kwic.importer.TsvToJsonl.WebpageRecord;
 
 @Repository
@@ -72,17 +75,27 @@ public class IndexDatabase
 
     // Replaces current database index with new index
     @Transactional
-    public int replaceIndex(LineList shifts)
+    public int replaceIndex(PageList shifts)
     {
         List<WebpageRecord> pages = database.query(SELECT_PAGES + " FOR UPDATE", PAGE_MAPPER);
-        List<Object[]> entries = prepareEntries(shifts, pages);
+        List<Object[]> entries;
+        try
+        {
+            entries = prepareEntries(shifts, pages);
+        }
+        catch (URISyntaxException e)
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return 0;
+        }
         database.update("DELETE FROM INDEX_ENTRY");
         database.batchUpdate("INSERT INTO INDEX_ENTRY (Keyword, ShiftText, PageTitle) VALUES (?, ?, ?)", entries);
         return entries.size();
     }
 
     // Format database entries for insertion
-    private static List<Object[]> prepareEntries(LineList shifts, List<WebpageRecord> pages)
+    private static List<Object[]> prepareEntries(PageList shifts, List<WebpageRecord> pages) throws URISyntaxException
     {
         if (pages.isEmpty())
         {
@@ -103,31 +116,29 @@ public class IndexDatabase
             {
                 throw new IllegalStateException("Duplicate WEB_PAGE entry for URL: " + page.url());
             }
-            LineStorage source = new LineStorage();
-            source.storeLine(page.text());
-            if (source.getLineCount() == 0)
+            if (page.text().isBlank())
             {
                 throw new IllegalStateException("WEB_PAGE entry has no text: " + page.title());
             }
+            Descriptor descriptor = new Descriptor(page.text());
             Map<String, Integer> frequencies = new HashMap<>();
-            int count = source.getWordCount(0);
-            for (int wordNo = 0; wordNo < count; wordNo++)
+            for (int wordNo = 0; wordNo < descriptor.getLength(); wordNo++)
             {
-                frequencies.merge(source.getWord(0, wordNo), 1, Integer::sum);
+                frequencies.merge(descriptor.getWord(wordNo), 1, Integer::sum);
             }
             remainingWords.put(uri, frequencies);
-            wordCounts.put(uri, count);
+            wordCounts.put(uri, descriptor.getLength());
         }
         List<Object[]> entries = new ArrayList<>();
-        for (int lineNo = 0; lineNo < shifts.getLineCount(); lineNo++)
+        for (WebPage shift : shifts)
         {
-            URI uri = shifts.getURI(lineNo);
+            URI uri = new URI(shift.getUrl());
             WebpageRecord page = pagesByUri.get(uri);
-            if (page == null || shifts.getWordCount(lineNo) != wordCounts.get(uri))
+            if (page == null || shift.getDescriptor().getLength() != wordCounts.get(uri))
             {
                 throw new IllegalStateException("A shift has an unknown URL or incorrect word count.");
             }
-            String keyword = shifts.getWord(lineNo, 0);
+            String keyword = shift.getDescriptor().getWord(0);
             if (keyword.codePointCount(0, keyword.length()) > 512)
             {
                 throw new IllegalStateException("Keyword exceeds INDEX_ENTRY's 512-character limit.");
@@ -146,12 +157,7 @@ public class IndexDatabase
             {
                 remaining.put(keyword, occurrences - 1);
             }
-            StringJoiner text = new StringJoiner(" ");
-            for (int wordNo = 0; wordNo < shifts.getWordCount(lineNo); wordNo++)
-            {
-                text.add(shifts.getWord(lineNo, wordNo));
-            }
-            entries.add(new Object[] { keyword, text.toString(), page.title() });
+            entries.add(new Object[] { keyword, shift.getDescriptor().toString(), page.title() });
         }
         if (remainingWords.values().stream().anyMatch(words -> !words.isEmpty()))
         {

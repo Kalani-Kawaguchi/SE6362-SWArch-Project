@@ -8,51 +8,45 @@
 
 package com.se6362.kwic.core;
 
-public class MergedLines extends LineList
+public class MergedLines extends PageList
 {
     // Merges Lines from oldList and newList into single list
-    public void mergeLines(LineList oldList, LineList newList)
+    public void mergeLines(PageList oldList, PageList newList)
     {
         this.clear();
         int oldListPointer = 0;
         int newListPointer = 0;
         // Same as merge operation from merge-sort
-        while (oldListPointer < oldList.getLineCount() && newListPointer < newList.getLineCount())
+        while (oldListPointer < oldList.getPageCount() && newListPointer < newList.getPageCount())
         {
-            if (compareLines(oldList.lines.get(oldListPointer), newList.lines.get(newListPointer)) > 0)
+            if (oldList.getPage(oldListPointer).compareTo(newList.getPage(newListPointer)) > 0)
             {
-                appendLine(newList, newListPointer);
+                this.appendPage(newList.getPage(newListPointer));
                 newListPointer++;
             }
+            else if (oldList.getPage(oldListPointer).compareTo(newList.getPage(newListPointer)) < 0)
+            {
+                this.appendPage(oldList.getPage(oldListPointer));
+                oldListPointer++;
+            }
+            // if both are the same, only keep one.
             else
             {
-                // if lines are duplicates, remove them unless the URIs don't match
-                if (compareLines(oldList.lines.get(oldListPointer), newList.lines.get(newListPointer)) == 0)
-                {
-                    if (oldList.getURI(oldListPointer) == null && newList.getURI(newListPointer) == null)
-                    {
-                        newListPointer++; // remove duplicate if URIs are null
-                    }
-                    else if (oldList.getURI(oldListPointer) != null && newList.getURI(newListPointer) != null &&
-                            oldList.getURI(oldListPointer).toString() == newList.getURI(newListPointer).toString())
-                    {
-                        newListPointer++; // also remove duplicate if URIs are the same
-                    }
-                }
-                appendLine(oldList, oldListPointer);
+                this.appendPage(oldList.getPage(oldListPointer));
                 oldListPointer++;
+                newListPointer++;
             }
         }
 
-        while (oldListPointer < oldList.getLineCount())
+        while (oldListPointer < oldList.getPageCount())
         {
-            appendLine(oldList, oldListPointer);
+            this.appendPage(oldList.getPage(oldListPointer));
             oldListPointer++;
         }
 
-        while (newListPointer < newList.getLineCount())
+        while (newListPointer < newList.getPageCount())
         {
-            appendLine(newList, newListPointer);
+            this.appendPage(newList.getPage(newListPointer));
             newListPointer++;
         }
     }

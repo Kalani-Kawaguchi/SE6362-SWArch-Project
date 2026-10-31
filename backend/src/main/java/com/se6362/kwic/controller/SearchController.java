@@ -60,14 +60,14 @@ public class SearchController
         }
         LineStorage input = new LineStorage();
         input.storeLine(String.join(" ", request.query()));
-        if (input.getLineCount() == 0)
+        if (input.getPageCount() == 0)
         {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Provide at least one searchable word");
         }
         Set<String> keywords = new LinkedHashSet<>();
-        for (int wordNo = 0; wordNo < input.getWordCount(0); wordNo++)
+        for (int wordNo = 0; wordNo < input.getPage(0).getDescriptor().getLength(); wordNo++)
         {
-            keywords.add(input.getWord(0, wordNo).toLowerCase(Locale.ROOT));
+            keywords.add(input.getPage(0).getDescriptor().getWord(wordNo).toLowerCase(Locale.ROOT));
         }
         return database.search(List.copyOf(keywords)).stream()
                 .map(page -> new SearchResult(page.title(), page.url(), page.text()))

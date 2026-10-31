@@ -8,24 +8,31 @@
 
 package com.se6362.kwic.core;
 
-public class Alphabetizer extends LineList
+public class Alphabetizer extends PageList
 {
     // Takes a LineList objects and stores all lines in alphabetical order
-    public void alphabetizeLines(LineList lineList)
+    public void alphabetizeLines(PageList pageList)
     {
         clear();
 
-        for (int lineNo = 0; lineNo < lineList.getLineCount(); lineNo++)
+        for (WebPage page : pageList)
         {
-            appendLine(lineList, lineNo);
+            appendPage(page);
         }
 
-        sortAlpha();
+        aplphabetize();
     }
 
     // Sorts lines in alphabetical order
-    private void sortAlpha()
+    private void aplphabetize()
     {
-        lines.sort(LineList::compareLines);
+        super.sortPages();
+        for (int i = 1; i < this.getPageCount(); i++)
+        {
+            if (this.getPage(i - 1).compareTo(this.getPage(i)) == 0)
+            {
+                this.deletePage(i); // because i is a duplicate
+            }
+        }
     }
 }
