@@ -29,8 +29,8 @@ public class LineListTest
     void testStorageLineList()
     {
         LineStorage lineList = new LineStorage();
-        lineList.storeLine("I am testing this method.");
-        lineList.storeLine("Here is a second line to look at.");
+        lineList.storeLine("I am testing this method");
+        lineList.storeLine("Here is a second line to look at");
 
         // Assert Junit style: (Expected, Actual)
         assertEquals(lineList.getPageCount(), 2);

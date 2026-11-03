@@ -40,7 +40,6 @@ public class WebPage implements Comparable<WebPage>
     @Override
     public int compareTo(WebPage other)
     {
-        // Safe integer comparison to prevent overflow
         int descriptorComp = descriptor.toFilteredString().compareToIgnoreCase(other.descriptor.toFilteredString());
         if (descriptorComp != 0)
         {

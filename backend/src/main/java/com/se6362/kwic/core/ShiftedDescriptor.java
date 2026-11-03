@@ -13,18 +13,6 @@ public class ShiftedDescriptor extends Descriptor
     }
 
     @Override
-    public String toString()
-    {
-        String[] words = getWords();
-        StringJoiner stringJoiner = new StringJoiner(" ");
-        for (int i = 0; i < words.length; i++)
-        {
-            stringJoiner.add(words[(i + shiftAmount) % words.length]);
-        }
-        return stringJoiner.toString();
-    }
-
-    @Override
     public String getWord(int index)
     {
         return super.getWord((index + shiftAmount) % getLength());
