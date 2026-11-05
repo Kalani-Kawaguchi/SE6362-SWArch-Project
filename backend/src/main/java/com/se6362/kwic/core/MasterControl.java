@@ -10,7 +10,6 @@ package com.se6362.kwic.core;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import com.se6362.kwic.database.IndexDatabase;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -43,7 +42,7 @@ public class MasterControl
         // Instantiate the shared input component
         try (InputBuffer inputBuffer = new InputBuffer())
         {
-            inputBuffer.readFromFile(inputFile);
+            inputBuffer.readIntoBuffer(inputFile);
 
             // Launch Multiple Threads to process the input lines
             for (int i = 0; i < threadCount; i++)
@@ -57,7 +56,7 @@ public class MasterControl
                         while (true)
                         {
                             // Consumers pull work directly from the independent component
-                            LineStorage storage = inputBuffer.getInputLines(1);
+                            PageList storage = inputBuffer.getInput(1);
 
                             // Break out if the inputManager file component reports
                             if (storage.getPageCount() == 0)
@@ -87,9 +86,9 @@ public class MasterControl
     }
 
     // Saves output stored in output buffer to a SQL database
-    public int saveOutput(IndexDatabase database)
+    public void saveOutput(DatabaseManager database)
     {
-        return outputBuffer.writeToDatabase(database);
+        outputBuffer.writeToDatabase(database);
     }
 
     // Returns all output lines. Used to display output back to user.
@@ -99,7 +98,7 @@ public class MasterControl
     }
 
     // Returns a LineList object containing the output lines.
-    public LineStorage getOutputLines()
+    public PageList getOutputLines()
     {
         return outputBuffer.getOutputLines();
     }
@@ -120,7 +119,7 @@ public class MasterControl
         circularShift.circularShiftLines(pageList);
         Alphabetizer alphabetizer = new Alphabetizer();
         alphabetizer.alphabetizeLines(circularShift);
-        outputBuffer.setOutputLines(alphabetizer);
+        outputBuffer.setOuput(alphabetizer, pageList);
 
         ObjectNode incrementalOutput = JSON_MAPPER.createObjectNode();
         incrementalOutput.put("inputLines", pageList.toString());

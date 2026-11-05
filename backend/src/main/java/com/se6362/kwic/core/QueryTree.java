@@ -2,7 +2,7 @@ package com.se6362.kwic.core;
 
 import java.util.ArrayList;
 
-public class SearchQuery
+public class QueryTree
 {
     public interface QueryNode
     {
@@ -11,15 +11,17 @@ public class SearchQuery
 
     public record KeywordNode(String keyword) implements QueryNode
     {
+
     }
 
     public record NotNode(QueryNode operand) implements QueryNode
     {
+
     }
 
-    public record BinaryNode(String operator, QueryNode left, QueryNode right)
-            implements QueryNode
+    public record BinaryNode(String operator, QueryNode left, QueryNode right) implements QueryNode
     {
+
     }
 
     private String queryString;
@@ -27,13 +29,13 @@ public class SearchQuery
     private QueryNode root;
     int tokenIndex;
 
-    public SearchQuery(String queryString)
+    public QueryTree(String queryString)
     {
         this.queryString = queryString;
         parseQueryString();
     }
 
-    public QueryNode getParseTree()
+    public QueryNode getRoot()
     {
         return root;
     }

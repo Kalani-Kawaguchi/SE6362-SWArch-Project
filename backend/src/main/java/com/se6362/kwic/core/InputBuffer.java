@@ -8,76 +8,41 @@
 
 package com.se6362.kwic.core;
 
-import java.nio.charset.StandardCharsets;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 public class InputBuffer implements AutoCloseable
 {
-    private static final ObjectMapper MAPPER = new ObjectMapper();
-
-    private static final InputLine END_OF_FILE = new InputLine("", "");
-
-    private final BlockingQueue<InputLine> queue = new LinkedBlockingQueue<>();
+    private final BlockingQueue<WebPage> buffer = new LinkedBlockingQueue<>(1000);
 
     private Thread readerThread;
     private volatile IOException readException;
 
     // Reads in data from file in a separate thread. Use getInputLines to get a line
     // of input that was read.
-    public void readFromFile(Path filePath) throws IOException
+    public void readIntoBuffer(Path filePath) throws IOException
     {
         if (readerThread != null && readerThread.isAlive())
         {
             throw new IOException("A file is already being read.");
         }
 
-        queue.clear();
+        buffer.clear();
         readException = null;
+        JsonReader reader = new JsonReader(filePath, buffer);
 
         // Creates new thread to read file.
         readerThread = new Thread(() ->
         {
-            try (JsonParser parser = MAPPER.createParser(
-                    Files.newBufferedReader(filePath, StandardCharsets.UTF_8)))
+            try
             {
-                JsonNode element;
-
-                // while the file still has data to read
-                while ((element = MAPPER.readTree(parser)) != null)
-                {
-                    InputLine input = parseInput(element);
-                    if (!input.text().isBlank())
-                    {
-                        queue.put(input);
-                    }
-                }
+                reader.readFile();
             }
             catch (IOException exception)
             {
                 readException = exception;
-            }
-            catch (InterruptedException exception)
-            {
-                Thread.currentThread().interrupt();
-            }
-            finally
-            {
-                try
-                {
-                    queue.put(END_OF_FILE);
-                }
-                catch (InterruptedException exception)
-                {
-                    Thread.currentThread().interrupt();
-                }
             }
         });
 
@@ -85,86 +50,43 @@ public class InputBuffer implements AutoCloseable
     }
 
     // Returns the next input lines in the input queue
-    public LineStorage getInputLines(int numberOfLines) throws IOException
+    public synchronized PageList getInput(int numberOfLines) throws IOException
     {
-        LineStorage storage = new LineStorage();
+        PageList pages = new PageList();
 
         try
         {
             for (int i = 0; i < numberOfLines; i++)
             {
-                InputLine next = queue.take();
+                WebPage next = buffer.take();
 
                 // if the end of file was reached, the put END_OF_FILE back into the queue so
                 // other threads can read it.
-                if (next == END_OF_FILE)
+                if (next == JsonReader.END_OF_FILE)
                 {
-                    // Make EOF available to other workers.
-                    queue.put(END_OF_FILE);
+                    buffer.put(JsonReader.END_OF_FILE);
 
                     if (readException != null)
                     {
                         throw readException;
                     }
-
                     break;
                 }
 
                 // Add the line(s) from next to storage.
-                storage.storeLine(next.text(), next.uri());
+                pages.appendPage(next);
             }
 
-            return storage;
+            return pages;
         }
         catch (InterruptedException exception)
         {
             Thread.currentThread().interrupt();
-            throw new IOException(
-                    "Thread interrupted while waiting for input.",
-                    exception);
+            throw new IOException("Thread interrupted while waiting for input.", exception);
         }
     }
 
-    // Returns an InputLine containing the results from parsing a json element
-    // If json element does not have url attribute, the InputLine will only contain
-    // the text.
-    private static InputLine parseInput(JsonNode element) throws IOException
-    {
-        // check if json node is text element
-        if (!element.isObject() || !element.path("text").isTextual())
-        {
-            throw new IOException("Each input record must contain a string text field.");
-        }
-        JsonNode url = element.get("url");
-
-        // if no url is included in the json file, just return an InputLine with no url
-        if (url == null || url.isNull())
-        {
-            return new InputLine(element.get("text").asText(), "");
-        }
-
-        // if there is a "url" json element, make sure it is textual before using it
-        if (!url.isTextual())
-        {
-            throw new IOException("The url field must be a string.");
-        }
-        try
-        {
-            // return element InputLine element containing both url and text
-            return new InputLine(element.get("text").asText(), url.asText());
-        }
-        catch (IllegalArgumentException e)
-        {
-            throw new IOException("Invalid webpage URL: " + url.asText(), e);
-        }
-    }
-
-    // simple data structure storing a url/string pair
-    private record InputLine(String text, String uri)
-    {
-    }
-
-    // Closes the file once reading is complete
+    // closes the file once reading is complete
     @Override
     public void close() throws IOException
     {

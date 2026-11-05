@@ -16,10 +16,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.se6362.kwic.core.Alphabetizer;
 import com.se6362.kwic.core.CircularShift;
-import com.se6362.kwic.core.LineStorage;
 import com.se6362.kwic.core.MergedLines;
-
-import java.net.URI;
+import com.se6362.kwic.core.PageList;
+import com.se6362.kwic.core.WebPage;
 
 @ExtendWith(MockitoExtension.class)
 public class LineListTest
@@ -28,9 +27,9 @@ public class LineListTest
     @Test
     void testStorageLineList()
     {
-        LineStorage lineList = new LineStorage();
-        lineList.storeLine("I am testing this method");
-        lineList.storeLine("Here is a second line to look at");
+        PageList lineList = new PageList();
+        lineList.appendPage(new WebPage("", "", "I am testing this method"));
+        lineList.appendPage(new WebPage("", "", "Here is a second line to look at"));
 
         // Assert Junit style: (Expected, Actual)
         assertEquals(lineList.getPageCount(), 2);
@@ -56,9 +55,9 @@ public class LineListTest
     @Test
     void testCircShiftedLineList()
     {
-        LineStorage lineList = new LineStorage();
-        lineList.storeLine("a b c d e", "http://example1.com");
-        lineList.storeLine("aa bb cc dd ee ff", "http://example2.com");
+        PageList lineList = new PageList();
+        lineList.appendPage(new WebPage("title", "http://example1.com", "a b c d e"));
+        lineList.appendPage(new WebPage("title", "http://example2.com", "aa bb cc dd ee ff"));
         CircularShift circularShifts = new CircularShift();
         circularShifts.circularShiftLines(lineList);
 
@@ -162,21 +161,21 @@ public class LineListTest
     @Test
     void testAlphabetizedLineList()
     {
-        LineStorage lineList = new LineStorage();
-
-        lineList.storeLine("aa aa aa");
-        lineList.storeLine("bb bb bb");
-        lineList.storeLine("cc cc cc");
-        lineList.storeLine("aa");
-        lineList.storeLine("aa bb");
-        lineList.storeLine("aa bb cc");
-        lineList.storeLine("ab bb cc");
-        lineList.storeLine("aa bc cd");
-        lineList.storeLine("aa cc bb");
-        lineList.storeLine("bb aa cc");
-        lineList.storeLine("bb cc aa");
-        lineList.storeLine("cc aa bb");
-        lineList.storeLine("cc bb aa");
+        PageList lineList = new PageList();
+        lineList.appendPage(new WebPage("title", "http://example.com", "aa aa aa"));
+        lineList.appendPage(new WebPage("title", "http://example.com", "bb aa cc"));
+        lineList.appendPage(new WebPage("title", "http://example.com", "cc cc cc"));
+        lineList.appendPage(new WebPage("title", "http://example.com", "aa"));
+        lineList.appendPage(new WebPage("title", "http://example.com", "aa bb"));
+        lineList.appendPage(new WebPage("title", "http://example.com", "aa bb cc"));
+        lineList.appendPage(new WebPage("title", "http://example.com", "aa bb cc"));
+        lineList.appendPage(new WebPage("title", "http://example.com", "aa bc cd"));
+        lineList.appendPage(new WebPage("title", "http://example.com", "aa cc bb"));
+        lineList.appendPage(new WebPage("title", "http://example.com", "ab bb cc"));
+        lineList.appendPage(new WebPage("title", "http://example.com", "bb cc aa"));
+        lineList.appendPage(new WebPage("title", "http://example.com", "bb bb bb"));
+        lineList.appendPage(new WebPage("title", "http://example.com", "cc aa bb"));
+        lineList.appendPage(new WebPage("title", "http://example.com", "cc bb aa"));
 
         Alphabetizer alphabetizedLineList = new Alphabetizer();
         alphabetizedLineList.alphabetizeLines(lineList);
@@ -247,22 +246,23 @@ public class LineListTest
     @Test
     void testMergedLines()
     {
-        LineStorage lineList1 = new LineStorage();
-        LineStorage lineList2 = new LineStorage();
 
-        lineList1.storeLine("aa aa aa");
-        lineList2.storeLine("bb bb bb");
-        lineList1.storeLine("cc cc cc");
-        lineList2.storeLine("aa");
-        lineList1.storeLine("aa bb");
-        lineList2.storeLine("aa bb cc");
-        lineList1.storeLine("ab bb cc");
-        lineList2.storeLine("aa bc cd");
-        lineList1.storeLine("aa cc bb");
-        lineList2.storeLine("bb aa cc");
-        lineList1.storeLine("bb cc aa");
-        lineList2.storeLine("cc aa bb");
-        lineList1.storeLine("cc bb aa");
+        PageList lineList1 = new PageList();
+        PageList lineList2 = new PageList();
+        lineList1.appendPage(new WebPage("title", "http://example.com", "aa aa aa"));
+        lineList2.appendPage(new WebPage("title", "http://example.com", "bb aa cc"));
+        lineList1.appendPage(new WebPage("title", "http://example.com", "cc cc cc"));
+        lineList2.appendPage(new WebPage("title", "http://example.com", "aa"));
+        lineList1.appendPage(new WebPage("title", "http://example.com", "aa bb"));
+        lineList2.appendPage(new WebPage("title", "http://example.com", "aa bb cc"));
+        lineList1.appendPage(new WebPage("title", "http://example.com", "aa bb cc"));
+        lineList2.appendPage(new WebPage("title", "http://example.com", "aa bc cd"));
+        lineList1.appendPage(new WebPage("title", "http://example.com", "aa cc bb"));
+        lineList2.appendPage(new WebPage("title", "http://example.com", "ab bb cc"));
+        lineList1.appendPage(new WebPage("title", "http://example.com", "bb cc aa"));
+        lineList2.appendPage(new WebPage("title", "http://example.com", "bb bb bb"));
+        lineList1.appendPage(new WebPage("title", "http://example.com", "cc aa bb"));
+        lineList2.appendPage(new WebPage("title", "http://example.com", "cc bb aa"));
 
         Alphabetizer alpha1 = new Alphabetizer();
         alpha1.alphabetizeLines(lineList1);

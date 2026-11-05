@@ -12,6 +12,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.ArrayList;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.se6362.kwic.core.LineStorage;
+import com.se6362.kwic.core.PageList;
 import com.se6362.kwic.database.IndexDatabase;
 
 @RestController
@@ -58,16 +59,15 @@ public class SearchController
         {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Total query length must be at most 500 chars.");
         }
-        LineStorage input = new LineStorage();
-        input.storeLine(String.join(" ", request.query()));
-        if (input.getPageCount() == 0)
+        List<String> queryWords = request.query();
+        if (queryWords.size() == 0)
         {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Provide at least one searchable word");
         }
         Set<String> keywords = new LinkedHashSet<>();
-        for (int wordNo = 0; wordNo < input.getPage(0).getDescriptor().getLength(); wordNo++)
+        for (int wordNo = 0; wordNo < queryWords.size(); wordNo++)
         {
-            keywords.add(input.getPage(0).getDescriptor().getWord(wordNo).toLowerCase(Locale.ROOT));
+            keywords.add(queryWords.get(wordNo).toLowerCase(Locale.ROOT));
         }
         return database.search(List.copyOf(keywords)).stream()
                 .map(page -> new SearchResult(page.title(), page.url(), page.text()))

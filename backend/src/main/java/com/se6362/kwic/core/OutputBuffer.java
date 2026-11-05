@@ -8,33 +8,37 @@
 
 package com.se6362.kwic.core;
 
-import com.se6362.kwic.database.IndexDatabase;
-
 public class OutputBuffer
 {
-    private MergedLines outputStorage = new MergedLines();
+    private MergedLines indexList = new MergedLines();
+    private PageList webpageList = new PageList();
 
     // Adds new list to the output.
     // If the buffer already contains a list of lines, new lines are merged to
     // maintain alphabetization.
-    public synchronized void setOutputLines(Alphabetizer newList)
+    public synchronized void setOuput(Alphabetizer newIndexEntries, PageList newWebpages)
     {
         MergedLines temp = new MergedLines();
-        temp.mergeLines(outputStorage, newList);
-        outputStorage = temp;
+        temp.mergeLines(indexList, newIndexEntries);
+        indexList = temp;
+        for (WebPage webPage : newWebpages)
+        {
+            this.webpageList.appendPage(webPage);
+        }
     }
 
     // Writes all lines currently stored in the buffer to the database
-    public int writeToDatabase(IndexDatabase database)
+    public void writeToDatabase(DatabaseManager dbManager)
     {
-        return database.replaceIndex(getOutputLines());
+        dbManager.insertWebpages(webpageList);
+        dbManager.insertIndexEntries(indexList);
     }
 
     // Returns a LineList object containing all the output
-    public synchronized LineStorage getOutputLines()
+    public synchronized PageList getOutputLines()
     {
-        LineStorage copy = new LineStorage();
-        for (WebPage page : outputStorage)
+        PageList copy = new PageList();
+        for (WebPage page : indexList)
         {
             copy.appendPage(page);
         }
@@ -44,12 +48,12 @@ public class OutputBuffer
     // Removes all lines currently store in the output buffer
     public synchronized void clear()
     {
-        outputStorage.clear();
+        indexList.clear();
     }
 
     // Returns a string containing all lines separated by newline characters
     public String toString()
     {
-        return outputStorage.toString();
+        return indexList.toString();
     }
 }

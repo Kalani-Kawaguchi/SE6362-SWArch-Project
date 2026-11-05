@@ -2,19 +2,27 @@ package com.se6362.kwic.core;
 
 public class WebPage implements Comparable<WebPage>
 {
+    private String title;
     private WebUrl url;
     private Descriptor descriptor;
 
-    public WebPage(String url, String descriptor)
+    public WebPage(String title, String url, String descriptor)
     {
+        this.title = title;
         this.url = new WebUrl(url);
         this.descriptor = new Descriptor(descriptor);
     }
 
-    public WebPage(WebUrl url, Descriptor descriptor)
+    public WebPage(String title, WebUrl url, Descriptor descriptor)
     {
+        this.title = title;
         this.url = url;
         this.descriptor = descriptor;
+    }
+
+    public String getTitle()
+    {
+        return title;
     }
 
     public String getUrl()
@@ -32,7 +40,7 @@ public class WebPage implements Comparable<WebPage>
         WebPage[] shifts = new WebPage[descriptor.getLength()];
         for (int i = 0; i < descriptor.getLength(); i++)
         {
-            shifts[i] = new WebPage(url, new ShiftedDescriptor(descriptor, i));
+            shifts[i] = new WebPage(title, url, new ShiftedDescriptor(descriptor, i));
         }
         return shifts;
     }

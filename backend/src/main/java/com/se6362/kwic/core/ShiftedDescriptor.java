@@ -1,7 +1,5 @@
 package com.se6362.kwic.core;
 
-import java.util.StringJoiner;
-
 public class ShiftedDescriptor extends Descriptor
 {
     private int shiftAmount;
@@ -16,5 +14,10 @@ public class ShiftedDescriptor extends Descriptor
     public String getWord(int index)
     {
         return super.getWord((index + shiftAmount) % getLength());
+    }
+
+    public int getShiftAmount()
+    {
+        return shiftAmount;
     }
 }
