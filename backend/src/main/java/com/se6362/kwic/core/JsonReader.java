@@ -1,9 +1,7 @@
 package com.se6362.kwic.core;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.io.InputStream;
 import java.util.concurrent.BlockingQueue;
 
 import com.fasterxml.jackson.core.JsonParser;
@@ -14,18 +12,19 @@ public class JsonReader
 {
     private static final ObjectMapper MAPPER = new ObjectMapper();
     public static final WebPage END_OF_FILE = new WebPage("", "", "END_OF_FILE");
-    private BlockingQueue<WebPage> queue;
-    private Path filePath;
 
-    public JsonReader(Path filePath, BlockingQueue<WebPage> queue)
+    private BlockingQueue<WebPage> queue;
+    private InputStream inputStream;
+
+    public JsonReader(InputStream inputStream, BlockingQueue<WebPage> queue)
     {
-        this.filePath = filePath;
+        this.inputStream = inputStream;
         this.queue = queue;
     }
 
     public void readFile() throws IOException
     {
-        try (JsonParser parser = MAPPER.createParser(Files.newBufferedReader(filePath, StandardCharsets.UTF_8)))
+        try (JsonParser parser = MAPPER.createParser(inputStream))
         {
             JsonNode element;
 
@@ -34,7 +33,6 @@ public class JsonReader
                 WebPage input = parseInput(element);
 
                 queue.put(input);
-
             }
         }
         catch (InterruptedException exception)
@@ -58,7 +56,7 @@ public class JsonReader
     {
         if (!element.isObject())
         {
-            throw new IOException("Each JSON input record must contain a string text field.");
+            throw new IOException("Each JSON input record must contain a JSON object.");
         }
 
         String title = "";

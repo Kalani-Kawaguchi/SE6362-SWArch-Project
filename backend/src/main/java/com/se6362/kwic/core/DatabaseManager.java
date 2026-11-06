@@ -97,70 +97,21 @@ public class DatabaseManager
     public PageList getSearchResults(String searchQuery)
     {
         PageList pageList = new PageList();
+
         QueryTree tree = new QueryTree(searchQuery);
-        String sql = generateSearchSQL(tree);
-        for (WebPage page : database.query(sql, PAGE_MAPPER))
+
+        SqlGenerator sqlGenerator = new SqlGenerator();
+        String sql = sqlGenerator.getSearchSQL(tree);
+
+        for (WebPage page : database.query(
+                sql,
+                PAGE_MAPPER,
+                sqlGenerator.getKeywords().toArray()))
         {
             pageList.appendPage(page);
         }
+
         return pageList;
     }
 
-    private String generateSearchSQL(QueryTree tree)
-    {
-        StringBuilder sqlBuilder = new StringBuilder();
-        sqlBuilder.append("SELECT url, title, description ");
-        sqlBuilder.append("FROM WEB_DATA ");
-        sqlBuilder.append("WHERE id IN (").append(generateNodeSQL(tree.getRoot())).append(");");
-        return sqlBuilder.toString();
-    }
-
-    private String generateNodeSQL(QueryTree.QueryNode node)
-    {
-        if (node instanceof QueryTree.KeywordNode keywordNode)
-        {
-            return generateKeywordNodeSQL(keywordNode);
-        }
-        else if (node instanceof QueryTree.BinaryNode binaryNode)
-        {
-            return generateBinaryNodeSQL(binaryNode);
-        }
-        else if (node instanceof QueryTree.NotNode notNode)
-        {
-            return generateNotNodeSQL(notNode);
-        }
-        else
-        {
-            return "";
-        }
-    }
-
-    private String generateKeywordNodeSQL(QueryTree.KeywordNode node)
-    {
-        StringBuilder sqlBuilder = new StringBuilder();
-        sqlBuilder.append("SELECT page_id ");
-        sqlBuilder.append("FROM KWIC_INDEX ");
-        sqlBuilder.append("WHERE keyword = ").append(node.keyword()).append(';');
-        return sqlBuilder.toString();
-    }
-
-    private String generateBinaryNodeSQL(QueryTree.BinaryNode node)
-    {
-        StringBuilder sqlBuilder = new StringBuilder();
-        sqlBuilder.append("SELECT page_id ");
-        sqlBuilder.append("FROM KWIC_INDEX ");
-        sqlBuilder.append("WHERE page_id IN (").append(generateNodeSQL(node.left())).append(") ");
-        sqlBuilder.append(node.operator()).append(" page_id IN (").append(generateNodeSQL(node.right())).append(");");
-        return sqlBuilder.toString();
-    }
-
-    private String generateNotNodeSQL(QueryTree.NotNode node)
-    {
-        StringBuilder sqlBuilder = new StringBuilder();
-        sqlBuilder.append("SELECT page_id ");
-        sqlBuilder.append("FROM KWIC_INDEX ");
-        sqlBuilder.append("WHERE page_id NOT IN (").append(generateNodeSQL(node.operand())).append(");");
-
-        return sqlBuilder.toString();
-    }
 }

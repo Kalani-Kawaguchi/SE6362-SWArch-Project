@@ -13,20 +13,20 @@ import com.se6362.kwic.core.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.io.BufferedWriter;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.io.InputStream;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.http.MediaType;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
@@ -35,40 +35,31 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 @RequestMapping("/api")
 public class KwicController
 {
-    MasterControl masterControl = new MasterControl();
+    private final DatabaseManager database;
+
+    public KwicController(DatabaseManager database)
+    {
+        this.database = database;
+    }
+
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
     // Generate a KWIC index from user input and return the result as json file
-    @PostMapping("/kwic")
-    public synchronized String receiveInput(@RequestBody KwicRequest input) throws IOException
+    @PostMapping(value = "/kwic", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public synchronized String receiveInput(@RequestParam("file") MultipartFile file) throws IOException
     {
-        if (input.text() == null)
+        KwicIndexBuilder masterControl = new KwicIndexBuilder();
+        if (file.isEmpty())
         {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Text required");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "File required");
         }
 
-        System.out.println("KWIC Input Received: " + input.text());
+        System.out.println("KWIC Input Received: " + file.getOriginalFilename());
 
-        Path inputFile = Files.createTempFile("kwic-", ".jsonl");
-        try
+        try (InputStream inputStream = file.getInputStream())
         {
-            try (BufferedWriter writer = Files.newBufferedWriter(inputFile))
-            {
-                for (String line : input.text().split("\\R"))
-                {
-                    if (line.isBlank())
-                    {
-                        continue;
-                    }
-
-                    String jsonLine = MAPPER.writeValueAsString(new KwicRequest(line));
-                    System.out.println("KWIC Input Record: " + jsonLine);
-                    writer.write(jsonLine);
-                    writer.newLine();
-                }
-            }
-
-            masterControl.runIncremental(inputFile);
+            masterControl.buildIndex(inputStream);
+            masterControl.saveIndex(database);
 
             ObjectNode json = masterControl.toJsonElement();
             String sortedShifts = masterControl.getOutput();
@@ -78,10 +69,6 @@ public class KwicController
 
             return json.toString();
         }
-        finally
-        {
-            Files.deleteIfExists(inputFile);
-        }
     }
 
     // Delete current user generated KWIC index
@@ -89,7 +76,7 @@ public class KwicController
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public synchronized void clear()
     {
-        masterControl.clear();
+        // TO DO: delete database entries
     }
 
     public record KwicRequest(String text)

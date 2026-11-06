@@ -17,14 +17,16 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 
-public class MasterControl
+import java.io.InputStream;
+
+public class KwicIndexBuilder
 {
     private static final ObjectMapper JSON_MAPPER = new ObjectMapper();
     private final OutputBuffer outputBuffer = new OutputBuffer();
     ObjectNode jsonOutput;
     ArrayNode incrementalOutputArray;
 
-    public MasterControl()
+    public KwicIndexBuilder()
     {
         jsonOutput = JSON_MAPPER.createObjectNode();
         incrementalOutputArray = jsonOutput.putArray("incrementalOutput");
@@ -32,7 +34,7 @@ public class MasterControl
 
     // Runs the KWIC indexing system with "inputFile" as input. Uses incremental
     // processing
-    public void runIncremental(Path inputFile) throws IOException
+    public void buildIndex(InputStream inputStream) throws IOException
     {
         incrementalOutputArray.removeAll();
         int threadCount = Runtime.getRuntime().availableProcessors();
@@ -42,7 +44,7 @@ public class MasterControl
         // Instantiate the shared input component
         try (InputBuffer inputBuffer = new InputBuffer())
         {
-            inputBuffer.readIntoBuffer(inputFile);
+            inputBuffer.readIntoBuffer(inputStream);
 
             // Launch Multiple Threads to process the input lines
             for (int i = 0; i < threadCount; i++)
@@ -86,7 +88,7 @@ public class MasterControl
     }
 
     // Saves output stored in output buffer to a SQL database
-    public void saveOutput(DatabaseManager database)
+    public void saveIndex(DatabaseManager database)
     {
         outputBuffer.writeToDatabase(database);
     }

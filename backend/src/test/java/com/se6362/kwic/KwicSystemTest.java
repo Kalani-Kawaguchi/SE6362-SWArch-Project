@@ -17,7 +17,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.se6362.kwic.core.*;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Path;
+import java.nio.file.Files;
 
 @ExtendWith(MockitoExtension.class)
 public class KwicSystemTest
@@ -26,8 +28,11 @@ public class KwicSystemTest
     @Test
     void testKwicSystem() throws IOException
     {
-        MasterControl masterControl = new MasterControl();
-        masterControl.runIncremental(Path.of("testData.jsonl"));
+        KwicIndexBuilder masterControl = new KwicIndexBuilder();
+        try (InputStream inputStream = Files.newInputStream(Path.of("testData.jsonl")))
+        {
+            masterControl.buildIndex(inputStream);
+        }
         String output = masterControl.getOutput();
         String predictedOutput = "A search engine helps users find relevant information quickly\n" +
                 "brown fox jumps over the lazy dog The quick\n" +

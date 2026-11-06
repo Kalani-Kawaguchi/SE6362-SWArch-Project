@@ -9,7 +9,7 @@ import org.springframework.boot.WebApplicationType;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.se6362.kwic.BackendApplication;
-import com.se6362.kwic.core.MasterControl;
+import com.se6362.kwic.core.KwicIndexBuilder;
 import com.se6362.kwic.core.DatabaseManager;
 
 public final class BuildIndex

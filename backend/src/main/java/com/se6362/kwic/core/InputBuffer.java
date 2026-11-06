@@ -8,6 +8,7 @@
 
 package com.se6362.kwic.core;
 
+import java.io.InputStream;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.concurrent.BlockingQueue;
@@ -22,7 +23,7 @@ public class InputBuffer implements AutoCloseable
 
     // Reads in data from file in a separate thread. Use getInputLines to get a line
     // of input that was read.
-    public void readIntoBuffer(Path filePath) throws IOException
+    public void readIntoBuffer(InputStream inputStream) throws IOException
     {
         if (readerThread != null && readerThread.isAlive())
         {
@@ -31,7 +32,7 @@ public class InputBuffer implements AutoCloseable
 
         buffer.clear();
         readException = null;
-        JsonReader reader = new JsonReader(filePath, buffer);
+        JsonReader reader = new JsonReader(inputStream, buffer);
 
         // Creates new thread to read file.
         readerThread = new Thread(() ->
