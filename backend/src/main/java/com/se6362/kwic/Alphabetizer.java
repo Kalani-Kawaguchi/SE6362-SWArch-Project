@@ -6,7 +6,9 @@
     Description: Module to alphabetize all lines in a LineList object
  */
 
-package com.se6362.kwic.core;
+package com.se6362.kwic;
+
+import com.se6362.core.*;
 
 public class Alphabetizer extends PageList
 {

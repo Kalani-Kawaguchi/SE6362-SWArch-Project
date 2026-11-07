@@ -6,7 +6,7 @@
     Description: Controls sequence of KWIC processing steps all the way from input to output
  */
 
-package com.se6362.kwic.core;
+package com.se6362.kwic;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -14,10 +14,13 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.se6362.database.DatabaseManager;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 
 import java.io.InputStream;
+
+import com.se6362.core.*;
 
 public class KwicIndexBuilder
 {

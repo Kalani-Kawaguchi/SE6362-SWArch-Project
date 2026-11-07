@@ -6,9 +6,7 @@
     Description: REST controller mapping POST requests sent from the KWIC Index Builder
  */
 
-package com.se6362.kwic.controller;
-
-import com.se6362.kwic.core.*;
+package com.se6362.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -29,6 +27,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.http.MediaType;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.se6362.core.*;
+import com.se6362.database.DatabaseManager;
+import com.se6362.kwic.KwicIndexBuilder;
 
 @CrossOrigin(origins = "http://localhost:1234")
 @RestController
@@ -46,9 +47,9 @@ public class KwicController
 
     // Generate a KWIC index from user input and return the result as json file
     @PostMapping(value = "/kwic", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public synchronized String receiveInput(@RequestParam("file") MultipartFile file) throws IOException
+    public synchronized String addWebpages(@RequestParam("file") MultipartFile file) throws IOException
     {
-        KwicIndexBuilder masterControl = new KwicIndexBuilder();
+
         if (file.isEmpty())
         {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "File required");
@@ -58,11 +59,12 @@ public class KwicController
 
         try (InputStream inputStream = file.getInputStream())
         {
-            masterControl.buildIndex(inputStream);
-            masterControl.saveIndex(database);
+            KwicIndexBuilder indexBuilder = new KwicIndexBuilder();
+            indexBuilder.buildIndex(inputStream);
+            indexBuilder.saveIndex(database);
 
-            ObjectNode json = masterControl.toJsonElement();
-            String sortedShifts = masterControl.getOutput();
+            ObjectNode json = indexBuilder.toJsonElement();
+            String sortedShifts = indexBuilder.getOutput();
 
             System.out.println("KWIC JSON:\n" + json.toPrettyString());
             System.out.println("KWIC sorted output:\n" + sortedShifts);
@@ -78,10 +80,4 @@ public class KwicController
     {
         // TO DO: delete database entries
     }
-
-    public record KwicRequest(String text)
-    {
-    }
-
-    // public record KwicResponse(ObjectNode jsonObject) {}
 }

@@ -1,29 +1,9 @@
-package com.se6362.kwic.core;
+package com.se6362.search;
 
 import java.util.ArrayList;
 
 public class QueryTree
 {
-    public interface QueryNode
-    {
-
-    }
-
-    public record KeywordNode(String keyword) implements QueryNode
-    {
-
-    }
-
-    public record NotNode(QueryNode operand) implements QueryNode
-    {
-
-    }
-
-    public record BinaryNode(String operator, QueryNode left, QueryNode right) implements QueryNode
-    {
-
-    }
-
     private String queryString;
     private ArrayList<String> tokens;
     private QueryNode root;
@@ -171,6 +151,7 @@ public class QueryTree
                 return false;
             }
         }
+
         return true;
     }
 
@@ -178,13 +159,12 @@ public class QueryTree
     {
         int index = 0;
         ArrayList<String> tokens = new ArrayList<>();
+
         while (index < queryString.length())
         {
-            // ignore white space
             if (Character.isWhitespace(queryString.charAt(index)))
             {
                 index++;
-                continue;
             }
             else if (queryString.charAt(index) == '(')
             {
@@ -196,21 +176,26 @@ public class QueryTree
                 tokens.add(")");
                 index++;
             }
-            else if ((isKeywordCharacter(queryString.charAt(index))))
+            else if (isKeywordCharacter(queryString.charAt(index)))
             {
                 int endIndex = index + 1;
-                while ((endIndex < queryString.length()) && isKeywordCharacter(queryString.charAt(endIndex)))
+
+                while (endIndex < queryString.length() &&
+                        isKeywordCharacter(queryString.charAt(endIndex)))
                 {
                     endIndex++;
                 }
+
                 tokens.add(queryString.substring(index, endIndex));
                 index = endIndex;
             }
             else
             {
-                throw new IllegalArgumentException("Character \'" + queryString.charAt(index) + "\'' is illegal.");
+                throw new IllegalArgumentException("Character '" +
+                        queryString.charAt(index) + "' is illegal.");
             }
         }
+
         return tokens;
     }
 
@@ -220,5 +205,4 @@ public class QueryTree
                 (c >= 'A' && c <= 'Z') ||
                 (c >= '0' && c <= '9');
     }
-
 }

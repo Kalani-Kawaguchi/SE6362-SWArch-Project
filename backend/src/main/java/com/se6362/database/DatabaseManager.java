@@ -1,17 +1,21 @@
-package com.se6362.kwic.core;
+package com.se6362.database;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
-import java.lang.StringBuilder;
-
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.se6362.search.QueryTree;
+import com.se6362.search.SearchSortStrategy;
+import com.se6362.search.SqlGenerator;
+
+import com.se6362.core.*;
 
 @Repository
 public class DatabaseManager
@@ -75,10 +79,65 @@ public class DatabaseManager
         });
     }
 
-    @Transactional(readOnly = true)
-    public Map<String, Integer> getPageIds()
+    @Transactional
+    public void deleteWebpages(PageList pages)
     {
-        String sql = "SELECT id, url FROM WEB_DATA";
+        String sql = "DELETE FROM WEB_DATA WHERE url = ?";
+
+        database.batchUpdate(sql, new BatchPreparedStatementSetter()
+        {
+            @Override
+            public void setValues(PreparedStatement ps, int i) throws SQLException
+            {
+                ps.setString(1, pages.getPage(i).getUrl());
+            }
+
+            @Override
+            public int getBatchSize()
+            {
+                return pages.getPageCount();
+            }
+        });
+    }
+
+    @Transactional
+    public void addSponsorship(WebPage page, int level)
+    {
+        String sql = "UPDATE WEB_DATE SET sponsorship_level = ? WHERE url = ?";
+        database.update(sql, level, page.getUrl());
+    }
+
+    @Transactional
+    public void incrementAccessFrequency(WebPage page)
+    {
+        String sql = "UPDATE WEB_DATE SET access_frequency = access_frequency + 1 WHERE url = ?";
+        database.update(sql, page.getUrl());
+    }
+
+    @Transactional(readOnly = true)
+    public PageList getSearchResults(String searchQuery, SearchSortStrategy sortStrategy)
+    {
+        PageList pageList = new PageList();
+
+        QueryTree tree = new QueryTree(searchQuery);
+
+        SqlGenerator sqlGenerator = new SqlGenerator();
+        String sql = sqlGenerator.getSearchSQL(tree, sortStrategy);
+
+        for (WebPage page : database.query(
+                sql,
+                PAGE_MAPPER,
+                sqlGenerator.getKeywords().toArray()))
+        {
+            pageList.appendPage(page);
+        }
+
+        return pageList;
+    }
+
+    private Map<String, Integer> getPageIds()
+    {
+        String sql = "SELECT id, url FROM WEB_DATA WHERE ";
 
         return database.query(sql, rs ->
         {
@@ -92,26 +151,4 @@ public class DatabaseManager
             return pageIds;
         });
     }
-
-    @Transactional(readOnly = true)
-    public PageList getSearchResults(String searchQuery)
-    {
-        PageList pageList = new PageList();
-
-        QueryTree tree = new QueryTree(searchQuery);
-
-        SqlGenerator sqlGenerator = new SqlGenerator();
-        String sql = sqlGenerator.getSearchSQL(tree);
-
-        for (WebPage page : database.query(
-                sql,
-                PAGE_MAPPER,
-                sqlGenerator.getKeywords().toArray()))
-        {
-            pageList.appendPage(page);
-        }
-
-        return pageList;
-    }
-
 }

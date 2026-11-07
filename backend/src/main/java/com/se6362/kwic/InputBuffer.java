@@ -6,13 +6,13 @@
     Description: Reads JSON file containing lines of text and temporarily stores lines prior to KWIC index generation.
  */
 
-package com.se6362.kwic.core;
+package com.se6362.kwic;
 
 import java.io.InputStream;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import com.se6362.core.*;
 
 public class InputBuffer implements AutoCloseable
 {

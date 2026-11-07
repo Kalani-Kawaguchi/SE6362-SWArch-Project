@@ -6,7 +6,9 @@
     Description: Module to merge lines from two alphabetized LineLists into one LineList
  */
 
-package com.se6362.kwic.core;
+package com.se6362.kwic;
+
+import com.se6362.core.*;
 
 public class MergedLines extends PageList
 {

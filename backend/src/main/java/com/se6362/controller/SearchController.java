@@ -6,7 +6,7 @@
     Description: REST controller mapping POST requests sent from search engine
  */
 
-package com.se6362.kwic.controller;
+package com.se6362.controller;
 
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.se6362.kwic.core.DatabaseManager;
+import com.se6362.database.DatabaseManager;
 
 @RestController
 @RequestMapping("/api")

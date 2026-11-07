@@ -1,4 +1,4 @@
-package com.se6362.kwic.importer;
+package com.se6362.importer;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -8,9 +8,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.WebApplicationType;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.se6362.database.DatabaseManager;
 import com.se6362.kwic.BackendApplication;
-import com.se6362.kwic.core.KwicIndexBuilder;
-import com.se6362.kwic.core.DatabaseManager;
+import com.se6362.kwic.KwicIndexBuilder;
 
 public final class BuildIndex
 {

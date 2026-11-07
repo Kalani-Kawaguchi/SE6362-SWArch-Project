@@ -7,10 +7,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.se6362.kwic.core.QueryTree;
-import com.se6362.kwic.core.QueryTree.BinaryNode;
-import com.se6362.kwic.core.QueryTree.KeywordNode;
-import com.se6362.kwic.core.QueryTree.NotNode;
+import com.se6362.search.BinaryNode;
+import com.se6362.search.KeywordNode;
+import com.se6362.search.NotNode;
+import com.se6362.search.QueryTree;
 
 @ExtendWith(MockitoExtension.class)
 public class SearchQueryTest

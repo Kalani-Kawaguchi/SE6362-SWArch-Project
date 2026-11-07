@@ -1,4 +1,4 @@
-package com.se6362.kwic.core;
+package com.se6362.core;
 
 public class WebUrl
 {

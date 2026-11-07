@@ -1,4 +1,4 @@
-package com.se6362.kwic.core;
+package com.se6362.kwic;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -7,6 +7,8 @@ import java.util.concurrent.BlockingQueue;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import com.se6362.core.*;
 
 public class JsonReader
 {

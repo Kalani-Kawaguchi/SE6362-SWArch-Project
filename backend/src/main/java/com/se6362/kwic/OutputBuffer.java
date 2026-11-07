@@ -6,7 +6,11 @@
     Description: Stores processed lines until the system is ready to move them to the database
  */
 
-package com.se6362.kwic.core;
+package com.se6362.kwic;
+
+import com.se6362.core.*;
+
+import com.se6362.database.DatabaseManager;
 
 public class OutputBuffer
 {
