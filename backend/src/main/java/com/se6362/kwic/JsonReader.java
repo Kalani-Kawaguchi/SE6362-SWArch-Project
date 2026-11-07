@@ -2,59 +2,71 @@ package com.se6362.kwic;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.concurrent.BlockingQueue;
 
 import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.se6362.core.*;
 
-public class JsonReader
+public class JsonReader implements AutoCloseable
 {
     private static final ObjectMapper MAPPER = new ObjectMapper();
-    public static final WebPage END_OF_FILE = new WebPage("", "", "END_OF_FILE");
 
-    private BlockingQueue<WebPage> queue;
-    private InputStream inputStream;
+    private final JsonParser parser;
+    private JsonNode nextElement;
+    private boolean arrayFinished = false;
 
-    public JsonReader(InputStream inputStream, BlockingQueue<WebPage> queue)
+    public JsonReader(InputStream inputStream) throws IOException
     {
-        this.inputStream = inputStream;
-        this.queue = queue;
+        parser = MAPPER.createParser(inputStream);
+
+        // Verify that the input starts with a JSON array.
+        if (parser.nextToken() != JsonToken.START_ARRAY)
+        {
+            throw new IOException("JSON input must contain an array.");
+        }
+
     }
 
-    public void readFile() throws IOException
+    public boolean hasNext() throws IOException
     {
-        try (JsonParser parser = MAPPER.createParser(inputStream))
+        if (nextElement == null && !arrayFinished)
         {
-            JsonNode element;
+            JsonToken token = parser.nextToken();
 
-            while ((element = MAPPER.readTree(parser)) != null)
+            if (token == JsonToken.END_ARRAY || token == null)
             {
-                WebPage input = parseInput(element);
+                arrayFinished = true;
+            }
+            else if (token == JsonToken.START_OBJECT)
+            {
+                nextElement = MAPPER.readTree(parser);
+            }
+            else
+            {
+                throw new IOException("Each JSON array element must be an object.");
+            }
+        }
 
-                queue.put(input);
-            }
-        }
-        catch (InterruptedException exception)
-        {
-            Thread.currentThread().interrupt();
-        }
-        finally
-        {
-            try
-            {
-                queue.put(JsonReader.END_OF_FILE);
-            }
-            catch (InterruptedException exception)
-            {
-                Thread.currentThread().interrupt();
-            }
-        }
+        return nextElement != null;
     }
 
-    private static WebPage parseInput(JsonNode element) throws IOException
+    public WebPage readNext() throws IOException
+    {
+        if (!hasNext())
+        {
+            return null;
+        }
+
+        JsonNode element = nextElement;
+        nextElement = null;
+
+        return parseJsonWebpage(element);
+    }
+
+    public static WebPage parseJsonWebpage(JsonNode element) throws IOException
     {
         if (!element.isObject())
         {
@@ -69,10 +81,12 @@ public class JsonReader
         {
             title = element.get("title").asText();
         }
+
         if (element.get("url") != null)
         {
             url = element.get("url").asText();
         }
+
         if (element.get("description") != null)
         {
             description = element.get("description").asText();
@@ -86,5 +100,11 @@ public class JsonReader
         {
             throw new IOException("Invalid webpage record.", exception);
         }
+    }
+
+    @Override
+    public void close() throws IOException
+    {
+        parser.close();
     }
 }

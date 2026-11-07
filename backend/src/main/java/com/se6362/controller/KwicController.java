@@ -8,8 +8,6 @@
 
 package com.se6362.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
@@ -21,15 +19,21 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.http.MediaType;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.se6362.core.*;
 import com.se6362.database.DatabaseManager;
+import com.se6362.kwic.InputBuffer;
+import com.se6362.kwic.JsonReader;
 import com.se6362.kwic.KwicIndexBuilder;
+
+import jakarta.servlet.http.HttpServletRequest;
+
+import com.fasterxml.jackson.databind.JsonNode;
 
 @CrossOrigin(origins = "http://localhost:1234")
 @RestController
@@ -43,41 +47,75 @@ public class KwicController
         this.database = database;
     }
 
-    private static final ObjectMapper MAPPER = new ObjectMapper();
-
     // Generate a KWIC index from user input and return the result as json file
-    @PostMapping(value = "/kwic", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public synchronized String addWebpages(@RequestParam("file") MultipartFile file) throws IOException
+    @PostMapping(value = "/kwic/add", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public synchronized String addWebpages(HttpServletRequest request) throws IOException
     {
+        System.out.println("KWIC Input Received");
 
-        if (file.isEmpty())
+        KwicIndexBuilder indexBuilder = new KwicIndexBuilder();
+
+        indexBuilder.buildIndex(request.getInputStream());
+        indexBuilder.saveIndex(database);
+
+        ObjectNode json = indexBuilder.toJsonElement();
+        String sortedShifts = indexBuilder.getOutput();
+
+        System.out.println("KWIC JSON:\n" + json.toPrettyString());
+        System.out.println("KWIC sorted output:\n" + sortedShifts);
+
+        return json.toString();
+    }
+
+    @PostMapping(value = "/kwic/sponsor", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public String sponsorWebpages(@RequestBody JsonNode json) throws IOException
+    {
+        if (json == null || !json.isArray() || json.isEmpty())
         {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "File required");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Non-empty JSON array required");
         }
 
-        System.out.println("KWIC Input Received: " + file.getOriginalFilename());
-
-        try (InputStream inputStream = file.getInputStream())
+        for (JsonNode element : json)
         {
-            KwicIndexBuilder indexBuilder = new KwicIndexBuilder();
-            indexBuilder.buildIndex(inputStream);
-            indexBuilder.saveIndex(database);
+            if (!element.isObject() || element.get("sponsorship_level") == null)
+            {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid webpage object");
+            }
 
-            ObjectNode json = indexBuilder.toJsonElement();
-            String sortedShifts = indexBuilder.getOutput();
+            WebPage page = JsonReader.parseJsonWebpage(element);
+            int sponsorshipLevel = element.get("sponsorship_level").asInt();
 
-            System.out.println("KWIC JSON:\n" + json.toPrettyString());
-            System.out.println("KWIC sorted output:\n" + sortedShifts);
-
-            return json.toString();
+            database.addSponsorship(page, sponsorshipLevel);
         }
+
+        System.out.println("Sponsorships addeed.");
+        return "Successful";
     }
 
     // Delete current user generated KWIC index
-    @DeleteMapping("/kwic")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public synchronized void clear()
+    @DeleteMapping(value = "/kwic/delete", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public synchronized String deleteWebpage(@RequestBody JsonNode json) throws IOException
     {
-        // TO DO: delete database entries
+        if (json == null || !json.isArray() || json.isEmpty())
+        {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Non-empty JSON array required");
+        }
+
+        PageList pagesToDelete = new PageList();
+
+        for (JsonNode element : json)
+        {
+            if (!element.isObject())
+            {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid webpage object");
+            }
+
+            WebPage page = JsonReader.parseJsonWebpage(element);
+
+            pagesToDelete.appendPage(page);
+        }
+
+        System.out.println("Webpages deleted");
+        return "Successful";
     }
 }

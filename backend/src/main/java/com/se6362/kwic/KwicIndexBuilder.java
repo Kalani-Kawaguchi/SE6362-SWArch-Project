@@ -9,7 +9,6 @@
 package com.se6362.kwic;
 
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -25,6 +24,7 @@ import com.se6362.core.*;
 public class KwicIndexBuilder
 {
     private static final ObjectMapper JSON_MAPPER = new ObjectMapper();
+    private static final int BATCH_SIZE = 1;
     private final OutputBuffer outputBuffer = new OutputBuffer();
     ObjectNode jsonOutput;
     ArrayNode incrementalOutputArray;
@@ -40,17 +40,16 @@ public class KwicIndexBuilder
     public void buildIndex(InputStream inputStream) throws IOException
     {
         incrementalOutputArray.removeAll();
-        int threadCount = Runtime.getRuntime().availableProcessors();
+        int consumerThreadCount = Runtime.getRuntime().availableProcessors();
 
-        ExecutorService executor = Executors.newFixedThreadPool(threadCount);
+        ExecutorService executor = Executors.newFixedThreadPool(consumerThreadCount);
 
         // Instantiate the shared input component
-        try (InputBuffer inputBuffer = new InputBuffer())
+        try (InputBuffer inputBuffer = new InputBuffer(inputStream, consumerThreadCount))
         {
-            inputBuffer.readIntoBuffer(inputStream);
 
             // Launch Multiple Threads to process the input lines
-            for (int i = 0; i < threadCount; i++)
+            for (int i = 0; i < consumerThreadCount; i++)
             {
                 final int workerId = i;
                 executor.submit(() ->
@@ -61,15 +60,16 @@ public class KwicIndexBuilder
                         while (true)
                         {
                             // Consumers pull work directly from the independent component
-                            PageList storage = inputBuffer.getInput(1);
+                            PageList input = inputBuffer.getNextBatch(BATCH_SIZE);
 
-                            // Break out if the inputManager file component reports
-                            if (storage.getPageCount() == 0)
+                            // Break out if unable to read max number of pages, indicating end of input
+                            // stream
+                            if (input.getPageCount() < BATCH_SIZE)
                             {
                                 break;
                             }
 
-                            this.processLines(storage);
+                            this.processLines(input);
                         }
                     }
                     catch (Exception e)
@@ -102,12 +102,6 @@ public class KwicIndexBuilder
         return outputBuffer.toString();
     }
 
-    // Returns a LineList object containing the output lines.
-    public PageList getOutputLines()
-    {
-        return outputBuffer.getOutputLines();
-    }
-
     // Returns a json representation of both incremental and merged output
     public synchronized ObjectNode toJsonElement()
     {
@@ -137,13 +131,5 @@ public class KwicIndexBuilder
     private synchronized void appendIncrementalJson(ObjectNode incrementalOutput)
     {
         incrementalOutputArray.add(incrementalOutput);
-    }
-
-    // clears the current output in the buffer (does not clear the database entries)
-    public synchronized void clear()
-    {
-        outputBuffer.clear();
-        incrementalOutputArray.removeAll();
-        jsonOutput.put("output", "");
     }
 }

@@ -29,7 +29,7 @@ public class KwicSystemTest
     void testKwicSystem() throws IOException
     {
         KwicIndexBuilder masterControl = new KwicIndexBuilder();
-        try (InputStream inputStream = Files.newInputStream(Path.of("testData.jsonl")))
+        try (InputStream inputStream = Files.newInputStream(Path.of("testData.json")))
         {
             masterControl.buildIndex(inputStream);
         }

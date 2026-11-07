@@ -1,99 +1,107 @@
-/*
-    SE 6362.001
-    Course Project: KWIC Index System
-    Team Members: Jonathan Loper, Kalani Kawaguchi, Zhi Li, Mitchell Vu
-    File Name: InputBuffer.java
-    Description: Reads JSON file containing lines of text and temporarily stores lines prior to KWIC index generation.
- */
-
 package com.se6362.kwic;
 
 import java.io.InputStream;
 import java.io.IOException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+
 import com.se6362.core.*;
 
 public class InputBuffer implements AutoCloseable
 {
     private final BlockingQueue<WebPage> buffer = new LinkedBlockingQueue<>(1000);
 
-    private Thread readerThread;
-    private volatile IOException readException;
+    private static final WebPage END_OF_FILE = new WebPage("", "", "END_OF_FILE");
 
-    // Reads in data from file in a separate thread. Use getInputLines to get a line
-    // of input that was read.
-    public void readIntoBuffer(InputStream inputStream) throws IOException
+    private final Thread readerThread;
+    private volatile IOException readException = null;
+
+    public InputBuffer(InputStream inputStream, int consumerCount) throws IOException
     {
-        if (readerThread != null && readerThread.isAlive())
-        {
-            throw new IOException("A file is already being read.");
-        }
-
-        buffer.clear();
-        readException = null;
-        JsonReader reader = new JsonReader(inputStream, buffer);
-
-        // Creates new thread to read file.
         readerThread = new Thread(() ->
         {
-            try
+            try (JsonReader reader = new JsonReader(inputStream))
             {
-                reader.readFile();
+                while (reader.hasNext())
+                {
+                    buffer.put(reader.readNext());
+                }
             }
-            catch (IOException exception)
+            catch (IOException e)
             {
-                readException = exception;
+                readException = e;
+            }
+            catch (InterruptedException e)
+            {
+                Thread.currentThread().interrupt();
+                return;
+            }
+            finally
+            {
+                // One poison pill for each consumer.
+                for (int i = 0; i < consumerCount; i++)
+                {
+                    try
+                    {
+                        buffer.put(END_OF_FILE);
+                    }
+                    catch (InterruptedException e)
+                    {
+                        Thread.currentThread().interrupt();
+                        break;
+                    }
+                }
             }
         });
 
         readerThread.start();
     }
 
-    // Returns the next input lines in the input queue
-    public synchronized PageList getInput(int numberOfLines) throws IOException
+    public PageList getNextBatch(int batchSize) throws IOException
     {
         PageList pages = new PageList();
 
         try
         {
-            for (int i = 0; i < numberOfLines; i++)
+            for (int i = 0; i < batchSize; i++)
             {
                 WebPage next = buffer.take();
 
-                // if the end of file was reached, the put END_OF_FILE back into the queue so
-                // other threads can read it.
-                if (next == JsonReader.END_OF_FILE)
+                if (next == END_OF_FILE)
                 {
-                    buffer.put(JsonReader.END_OF_FILE);
-
                     if (readException != null)
                     {
                         throw readException;
                     }
+
                     break;
                 }
 
-                // Add the line(s) from next to storage.
                 pages.appendPage(next);
             }
-
-            return pages;
         }
-        catch (InterruptedException exception)
+        catch (InterruptedException e)
         {
             Thread.currentThread().interrupt();
-            throw new IOException("Thread interrupted while waiting for input.", exception);
+            throw new IOException("Input processing interrupted.", e);
         }
+
+        return pages;
     }
 
-    // closes the file once reading is complete
     @Override
     public void close() throws IOException
     {
-        if (readerThread != null && readerThread.isAlive())
+        readerThread.interrupt();
+
+        try
         {
-            readerThread.interrupt();
+            readerThread.join();
+        }
+        catch (InterruptedException e)
+        {
+            Thread.currentThread().interrupt();
+            throw new IOException("Interrupted while closing InputBuffer.", e);
         }
     }
 }

@@ -6,7 +6,7 @@ import java.nio.file.Path;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.WebApplicationType;
 
-import com.se6362.kwic.BackendApplication;
+import com.se6362.BackendApplication;
 
 public final class ImportWebPages
 {
