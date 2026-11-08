@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import com.se6362.core.*;
+import com.se6362.webpage.*;
 
 public class InputBuffer implements AutoCloseable
 {
@@ -77,7 +77,7 @@ public class InputBuffer implements AutoCloseable
                     break;
                 }
 
-                pages.appendPage(next);
+                pages.append(next);
             }
         }
         catch (InterruptedException e)

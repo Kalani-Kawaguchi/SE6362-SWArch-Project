@@ -8,33 +8,32 @@
 
 package com.se6362.kwic;
 
-import com.se6362.core.*;
+import com.se6362.webpage.*;
 
-public class Alphabetizer extends PageList
+public class Alphabetizer implements KwicProcessingStep
 {
-    // Takes a LineList objects and stores all lines in alphabetical order
-    public void alphabetizeLines(PageList pageList)
+    private PageList inputPages;
+
+    public Alphabetizer(PageList pages)
     {
-        clear();
-
-        for (WebPage page : pageList)
-        {
-            appendPage(page);
-        }
-
-        aplphabetize();
+        this.inputPages = pages;
     }
 
-    // Sorts lines in alphabetical order
-    private void aplphabetize()
+    // Takes a LineList objects and stores all circular shifts of every line
+    public PageList getOutput()
     {
-        super.sortPages();
-        for (int i = 1; i < this.getPageCount(); i++)
+        PageList outputPages = new PageList();
+        outputPages.append(inputPages);
+        outputPages.sortPages();
+
+        // loop through and remove duplicates
+        for (int i = 1; i < outputPages.getPageCount(); i++)
         {
-            if (this.getPage(i - 1).compareTo(this.getPage(i)) == 0)
+            if (outputPages.getPage(i - 1).compareTo(outputPages.getPage(i)) == 0)
             {
-                this.deletePage(i); // because i is a duplicate
+                outputPages.deletePage(i); // because i is a duplicate
             }
         }
+        return outputPages;
     }
 }

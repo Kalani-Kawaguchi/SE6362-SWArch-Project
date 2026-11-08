@@ -1,4 +1,4 @@
-package com.se6362.core;
+package com.se6362.webpage;
 
 public class ShiftedDescriptor extends Descriptor
 {

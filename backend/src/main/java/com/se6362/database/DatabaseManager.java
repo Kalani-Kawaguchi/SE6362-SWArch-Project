@@ -14,8 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.se6362.search.QueryTree;
 import com.se6362.search.SearchSortStrategy;
 import com.se6362.search.SqlGenerator;
-
-import com.se6362.core.*;
+import com.se6362.webpage.*;
 
 @Repository
 public class DatabaseManager
@@ -129,7 +128,7 @@ public class DatabaseManager
                 PAGE_MAPPER,
                 sqlGenerator.getKeywords().toArray()))
         {
-            pageList.appendPage(page);
+            pageList.append(page);
         }
 
         return pageList;

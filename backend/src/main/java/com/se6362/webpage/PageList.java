@@ -1,4 +1,4 @@
-package com.se6362.core;
+package com.se6362.webpage;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -16,9 +16,17 @@ public class PageList implements Iterable<WebPage>
         return pages.iterator();
     }
 
-    public void appendPage(WebPage page)
+    public void append(WebPage page)
     {
         pages.add(page);
+    }
+
+    public void append(PageList pages)
+    {
+        for (WebPage page : pages)
+        {
+            append(page);
+        }
     }
 
     public WebPage getPage(int index)

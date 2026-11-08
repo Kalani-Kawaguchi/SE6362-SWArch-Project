@@ -14,8 +14,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.se6362.core.PageList;
-import com.se6362.core.WebPage;
+import com.se6362.webpage.PageList;
+import com.se6362.webpage.WebPage;
 
 @ExtendWith(MockitoExtension.class)
 public class LineListTest
@@ -25,8 +25,8 @@ public class LineListTest
     void testStorageLineList()
     {
         PageList lineList = new PageList();
-        lineList.appendPage(new WebPage("", "", "I am testing this method"));
-        lineList.appendPage(new WebPage("", "", "Here is a second line to look at"));
+        lineList.append(new WebPage("", "", "I am testing this method"));
+        lineList.append(new WebPage("", "", "Here is a second line to look at"));
 
         // Assert Junit style: (Expected, Actual)
         assertEquals(lineList.getPageCount(), 2);
@@ -53,10 +53,10 @@ public class LineListTest
     void testCircShiftedLineList()
     {
         PageList lineList = new PageList();
-        lineList.appendPage(new WebPage("title", "http://example1.com", "a b c d e"));
-        lineList.appendPage(new WebPage("title", "http://example2.com", "aa bb cc dd ee ff"));
-        CircularShift circularShifts = new CircularShift();
-        circularShifts.circularShiftLines(lineList);
+        lineList.append(new WebPage("title", "http://example1.com", "a b c d e"));
+        lineList.append(new WebPage("title", "http://example2.com", "aa bb cc dd ee ff"));
+        CircularShifter circularShifter = new CircularShifter(lineList);
+        PageList circularShifts = circularShifter.getOutput();
 
         assertEquals(circularShifts.getPageCount(), 11);
 
@@ -159,23 +159,23 @@ public class LineListTest
     void testAlphabetizedLineList()
     {
         PageList lineList = new PageList();
-        lineList.appendPage(new WebPage("title", "http://example.com", "aa aa aa"));
-        lineList.appendPage(new WebPage("title", "http://example.com", "bb aa cc"));
-        lineList.appendPage(new WebPage("title", "http://example.com", "cc cc cc"));
-        lineList.appendPage(new WebPage("title", "http://example.com", "aa"));
-        lineList.appendPage(new WebPage("title", "http://example.com", "aa bb"));
-        lineList.appendPage(new WebPage("title", "http://example.com", "aa bb cc"));
-        lineList.appendPage(new WebPage("title", "http://example.com", "aa bb cc"));
-        lineList.appendPage(new WebPage("title", "http://example.com", "aa bc cd"));
-        lineList.appendPage(new WebPage("title", "http://example.com", "aa cc bb"));
-        lineList.appendPage(new WebPage("title", "http://example.com", "ab bb cc"));
-        lineList.appendPage(new WebPage("title", "http://example.com", "bb cc aa"));
-        lineList.appendPage(new WebPage("title", "http://example.com", "bb bb bb"));
-        lineList.appendPage(new WebPage("title", "http://example.com", "cc aa bb"));
-        lineList.appendPage(new WebPage("title", "http://example.com", "cc bb aa"));
+        lineList.append(new WebPage("title", "http://example.com", "aa aa aa"));
+        lineList.append(new WebPage("title", "http://example.com", "bb aa cc"));
+        lineList.append(new WebPage("title", "http://example.com", "cc cc cc"));
+        lineList.append(new WebPage("title", "http://example.com", "aa"));
+        lineList.append(new WebPage("title", "http://example.com", "aa bb"));
+        lineList.append(new WebPage("title", "http://example.com", "aa bb cc"));
+        lineList.append(new WebPage("title", "http://example.com", "aa bb cc"));
+        lineList.append(new WebPage("title", "http://example.com", "aa bc cd"));
+        lineList.append(new WebPage("title", "http://example.com", "aa cc bb"));
+        lineList.append(new WebPage("title", "http://example.com", "ab bb cc"));
+        lineList.append(new WebPage("title", "http://example.com", "bb cc aa"));
+        lineList.append(new WebPage("title", "http://example.com", "bb bb bb"));
+        lineList.append(new WebPage("title", "http://example.com", "cc aa bb"));
+        lineList.append(new WebPage("title", "http://example.com", "cc bb aa"));
 
-        Alphabetizer alphabetizedLineList = new Alphabetizer();
-        alphabetizedLineList.alphabetizeLines(lineList);
+        Alphabetizer alphabetizer = new Alphabetizer(lineList);
+        PageList alphabetizedLineList = alphabetizer.getOutput();
 
         // 0: "aa"
         assertEquals("aa", alphabetizedLineList.getPage(0).getDescriptor().getWord(0));
@@ -246,27 +246,27 @@ public class LineListTest
 
         PageList lineList1 = new PageList();
         PageList lineList2 = new PageList();
-        lineList1.appendPage(new WebPage("title", "http://example.com", "aa aa aa"));
-        lineList2.appendPage(new WebPage("title", "http://example.com", "bb aa cc"));
-        lineList1.appendPage(new WebPage("title", "http://example.com", "cc cc cc"));
-        lineList2.appendPage(new WebPage("title", "http://example.com", "aa"));
-        lineList1.appendPage(new WebPage("title", "http://example.com", "aa bb"));
-        lineList2.appendPage(new WebPage("title", "http://example.com", "aa bb cc"));
-        lineList1.appendPage(new WebPage("title", "http://example.com", "aa bb cc"));
-        lineList2.appendPage(new WebPage("title", "http://example.com", "aa bc cd"));
-        lineList1.appendPage(new WebPage("title", "http://example.com", "aa cc bb"));
-        lineList2.appendPage(new WebPage("title", "http://example.com", "ab bb cc"));
-        lineList1.appendPage(new WebPage("title", "http://example.com", "bb cc aa"));
-        lineList2.appendPage(new WebPage("title", "http://example.com", "bb bb bb"));
-        lineList1.appendPage(new WebPage("title", "http://example.com", "cc aa bb"));
-        lineList2.appendPage(new WebPage("title", "http://example.com", "cc bb aa"));
+        lineList1.append(new WebPage("title", "http://example.com", "aa aa aa"));
+        lineList2.append(new WebPage("title", "http://example.com", "bb aa cc"));
+        lineList1.append(new WebPage("title", "http://example.com", "cc cc cc"));
+        lineList2.append(new WebPage("title", "http://example.com", "aa"));
+        lineList1.append(new WebPage("title", "http://example.com", "aa bb"));
+        lineList2.append(new WebPage("title", "http://example.com", "aa bb cc"));
+        lineList1.append(new WebPage("title", "http://example.com", "aa bb cc"));
+        lineList2.append(new WebPage("title", "http://example.com", "aa bc cd"));
+        lineList1.append(new WebPage("title", "http://example.com", "aa cc bb"));
+        lineList2.append(new WebPage("title", "http://example.com", "ab bb cc"));
+        lineList1.append(new WebPage("title", "http://example.com", "bb cc aa"));
+        lineList2.append(new WebPage("title", "http://example.com", "bb bb bb"));
+        lineList1.append(new WebPage("title", "http://example.com", "cc aa bb"));
+        lineList2.append(new WebPage("title", "http://example.com", "cc bb aa"));
 
-        Alphabetizer alpha1 = new Alphabetizer();
-        alpha1.alphabetizeLines(lineList1);
-        Alphabetizer alpha2 = new Alphabetizer();
-        alpha2.alphabetizeLines(lineList2);
-        MergedLines merge = new MergedLines();
-        merge.mergeLines(alpha1, alpha2);
+        Alphabetizer alpha1 = new Alphabetizer(lineList1);
+
+        Alphabetizer alpha2 = new Alphabetizer(lineList2);
+
+        Merger merger = new Merger(alpha1.getOutput(), alpha2.getOutput());
+        PageList merge = merger.getOutput();
 
         // 0: "aa"
         assertEquals("aa", merge.getPage(0).getDescriptor().getWord(0));

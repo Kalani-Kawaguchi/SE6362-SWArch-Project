@@ -1,4 +1,4 @@
-package com.se6362.core;
+package com.se6362.webpage;
 
 public class WebPage implements Comparable<WebPage>
 {
@@ -35,12 +35,12 @@ public class WebPage implements Comparable<WebPage>
         return descriptor;
     }
 
-    public WebPage[] getShifts()
+    public PageList getShifts()
     {
-        WebPage[] shifts = new WebPage[descriptor.getLength()];
+        PageList shifts = new PageList();
         for (int i = 0; i < descriptor.getLength(); i++)
         {
-            shifts[i] = new WebPage(title, url, new ShiftedDescriptor(descriptor, i));
+            shifts.append(new WebPage(title, url, new ShiftedDescriptor(descriptor, i)));
         }
         return shifts;
     }

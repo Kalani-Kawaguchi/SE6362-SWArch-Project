@@ -7,8 +7,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import com.se6362.core.*;
+import com.se6362.webpage.*;
 
 public class JsonReader implements AutoCloseable
 {

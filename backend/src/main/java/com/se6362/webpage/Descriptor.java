@@ -1,4 +1,4 @@
-package com.se6362.core;
+package com.se6362.webpage;
 
 import java.util.StringJoiner;
 

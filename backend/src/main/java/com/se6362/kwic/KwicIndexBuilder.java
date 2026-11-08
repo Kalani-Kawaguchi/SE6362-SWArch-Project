@@ -14,18 +14,18 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.se6362.database.DatabaseManager;
+import com.se6362.webpage.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 
 import java.io.InputStream;
 
-import com.se6362.core.*;
-
 public class KwicIndexBuilder
 {
     private static final ObjectMapper JSON_MAPPER = new ObjectMapper();
     private static final int BATCH_SIZE = 1;
-    private final OutputBuffer outputBuffer = new OutputBuffer();
+    private PageList input = new PageList();
+    private PageList output = new PageList();
     ObjectNode jsonOutput;
     ArrayNode incrementalOutputArray;
 
@@ -64,12 +64,13 @@ public class KwicIndexBuilder
 
                             // Break out if unable to read max number of pages, indicating end of input
                             // stream
+
+                            this.processLines(input);
+
                             if (input.getPageCount() < BATCH_SIZE)
                             {
                                 break;
                             }
-
-                            this.processLines(input);
                         }
                     }
                     catch (Exception e)
@@ -93,13 +94,14 @@ public class KwicIndexBuilder
     // Saves output stored in output buffer to a SQL database
     public void saveIndex(DatabaseManager database)
     {
-        outputBuffer.writeToDatabase(database);
+        database.insertWebpages(input);
+        database.insertIndexEntries(output);
     }
 
     // Returns all output lines. Used to display output back to user.
     public String getOutput()
     {
-        return outputBuffer.toString();
+        return output.toString();
     }
 
     // Returns a json representation of both incremental and merged output
@@ -112,19 +114,31 @@ public class KwicIndexBuilder
     // Processes Lines in a LineList object by perfroming the circular shifting,
     // alphabetization, and merging
     // This is where must of the work happens to build the KWIC index.
-    private void processLines(PageList pageList)
+    private void processLines(PageList inputPages)
     {
-        CircularShift circularShift = new CircularShift();
-        circularShift.circularShiftLines(pageList);
-        Alphabetizer alphabetizer = new Alphabetizer();
-        alphabetizer.alphabetizeLines(circularShift);
-        outputBuffer.setOuput(alphabetizer, pageList);
+        updateInput(inputPages);
+        CircularShifter circularShift = new CircularShifter(inputPages);
+        PageList shiftedPages = circularShift.getOutput();
+        Alphabetizer alphabetizer = new Alphabetizer(shiftedPages);
+        PageList alphabetizedPages = alphabetizer.getOutput();
+        updateOutput(alphabetizedPages);
 
         ObjectNode incrementalOutput = JSON_MAPPER.createObjectNode();
-        incrementalOutput.put("inputLines", pageList.toString());
-        incrementalOutput.put("shiftedLines", circularShift.toString());
-        incrementalOutput.put("alphabetizedLines", alphabetizer.toString());
+        incrementalOutput.put("inputLines", inputPages.toString());
+        incrementalOutput.put("shiftedLines", shiftedPages.toString());
+        incrementalOutput.put("alphabetizedLines", alphabetizedPages.toString());
         appendIncrementalJson(incrementalOutput);
+    }
+
+    private synchronized void updateOutput(PageList newOutput)
+    {
+        Merger merger = new Merger(output, newOutput);
+        this.output = merger.getOutput();
+    }
+
+    private synchronized void updateInput(PageList newInput)
+    {
+        input.append(newInput);
     }
 
     // Appends a new json element to the existing json array of incremental output

@@ -25,11 +25,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.http.MediaType;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.se6362.core.*;
 import com.se6362.database.DatabaseManager;
 import com.se6362.kwic.InputBuffer;
 import com.se6362.kwic.JsonReader;
 import com.se6362.kwic.KwicIndexBuilder;
+import com.se6362.webpage.*;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -112,7 +112,7 @@ public class KwicController
 
             WebPage page = JsonReader.parseJsonWebpage(element);
 
-            pagesToDelete.appendPage(page);
+            pagesToDelete.append(page);
         }
 
         System.out.println("Webpages deleted");
