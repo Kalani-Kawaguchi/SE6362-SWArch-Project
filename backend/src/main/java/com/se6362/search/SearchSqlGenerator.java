@@ -2,9 +2,15 @@ package com.se6362.search;
 
 import java.util.ArrayList;
 
-public class SqlGenerator implements QueryVisitor
+public class SearchSqlGenerator implements QueryVisitor
 {
     private final ArrayList<String> keywords = new ArrayList<>();
+    private boolean isCaseSensitive;
+
+    public SearchSqlGenerator(boolean isCaseSensitive)
+    {
+        this.isCaseSensitive = isCaseSensitive;
+    }
 
     public ArrayList<String> getKeywords()
     {
@@ -20,7 +26,7 @@ public class SqlGenerator implements QueryVisitor
                 "WHERE id IN (" + tree.getRoot().accept(this) + ");";
     }
 
-    public String getSearchSQL(QueryTree tree, SearchSortStrategy sortStrategy)
+    public String getSearchSQL(QueryTree tree, PageRankStrategy sortStrategy)
     {
         keywords.clear();
 
@@ -37,7 +43,7 @@ public class SqlGenerator implements QueryVisitor
 
         return "SELECT page_id " +
                 "FROM KWIC_INDEX " +
-                "WHERE keyword = ?";
+                "WHERE " + (isCaseSensitive ? "BINARY" : "") + "keyword = ?";
     }
 
     @Override

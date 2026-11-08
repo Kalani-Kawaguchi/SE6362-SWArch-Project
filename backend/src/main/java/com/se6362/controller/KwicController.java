@@ -9,11 +9,9 @@
 package com.se6362.controller;
 
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
-import java.io.InputStream;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -21,12 +19,9 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.http.MediaType;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.se6362.database.DatabaseManager;
-import com.se6362.kwic.InputBuffer;
 import com.se6362.kwic.JsonReader;
 import com.se6362.kwic.KwicIndexBuilder;
 import com.se6362.webpage.*;
@@ -58,13 +53,7 @@ public class KwicController
         indexBuilder.buildIndex(request.getInputStream());
         indexBuilder.saveIndex(database);
 
-        ObjectNode json = indexBuilder.toJsonElement();
-        String sortedShifts = indexBuilder.getOutput();
-
-        System.out.println("KWIC JSON:\n" + json.toPrettyString());
-        System.out.println("KWIC sorted output:\n" + sortedShifts);
-
-        return json.toString();
+        return "successful";
     }
 
     @PostMapping(value = "/kwic/sponsor", consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -82,7 +71,7 @@ public class KwicController
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid webpage object");
             }
 
-            WebPage page = JsonReader.parseJsonWebpage(element);
+            WebPage page = JsonReader.parseJson(element);
             int sponsorshipLevel = element.get("sponsorship_level").asInt();
 
             database.addSponsorship(page, sponsorshipLevel);
@@ -110,7 +99,7 @@ public class KwicController
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid webpage object");
             }
 
-            WebPage page = JsonReader.parseJsonWebpage(element);
+            WebPage page = JsonReader.parseJson(element);
 
             pagesToDelete.append(page);
         }

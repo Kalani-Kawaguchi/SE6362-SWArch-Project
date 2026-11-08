@@ -26,20 +26,11 @@ public class KwicIndexBuilder
     private static final int BATCH_SIZE = 1;
     private PageList input = new PageList();
     private PageList output = new PageList();
-    ObjectNode jsonOutput;
-    ArrayNode incrementalOutputArray;
 
-    public KwicIndexBuilder()
-    {
-        jsonOutput = JSON_MAPPER.createObjectNode();
-        incrementalOutputArray = jsonOutput.putArray("incrementalOutput");
-    }
-
-    // Runs the KWIC indexing system with "inputFile" as input. Uses incremental
+    // Runs the KWIC indexing. Uses incremental
     // processing
     public void buildIndex(InputStream inputStream) throws IOException
     {
-        incrementalOutputArray.removeAll();
         int consumerThreadCount = Runtime.getRuntime().availableProcessors();
 
         ExecutorService executor = Executors.newFixedThreadPool(consumerThreadCount);
@@ -104,46 +95,27 @@ public class KwicIndexBuilder
         return output.toString();
     }
 
-    // Returns a json representation of both incremental and merged output
-    public synchronized ObjectNode toJsonElement()
-    {
-        jsonOutput.put("mergedOutput", getOutput());
-        return jsonOutput;
-    }
-
     // Processes Lines in a LineList object by perfroming the circular shifting,
     // alphabetization, and merging
-    // This is where must of the work happens to build the KWIC index.
+    // This is where most of the work happens to build the KWIC index.
     private void processLines(PageList inputPages)
     {
         updateInput(inputPages);
-        CircularShifter circularShift = new CircularShifter(inputPages);
+        KwicProcessingStep circularShift = new CircularShifter(inputPages);
         PageList shiftedPages = circularShift.getOutput();
-        Alphabetizer alphabetizer = new Alphabetizer(shiftedPages);
+        KwicProcessingStep alphabetizer = new Alphabetizer(shiftedPages);
         PageList alphabetizedPages = alphabetizer.getOutput();
         updateOutput(alphabetizedPages);
-
-        ObjectNode incrementalOutput = JSON_MAPPER.createObjectNode();
-        incrementalOutput.put("inputLines", inputPages.toString());
-        incrementalOutput.put("shiftedLines", shiftedPages.toString());
-        incrementalOutput.put("alphabetizedLines", alphabetizedPages.toString());
-        appendIncrementalJson(incrementalOutput);
     }
 
     private synchronized void updateOutput(PageList newOutput)
     {
-        Merger merger = new Merger(output, newOutput);
+        KwicProcessingStep merger = new Merger(output, newOutput);
         this.output = merger.getOutput();
     }
 
     private synchronized void updateInput(PageList newInput)
     {
         input.append(newInput);
-    }
-
-    // Appends a new json element to the existing json array of incremental output
-    private synchronized void appendIncrementalJson(ObjectNode incrementalOutput)
-    {
-        incrementalOutputArray.add(incrementalOutput);
     }
 }

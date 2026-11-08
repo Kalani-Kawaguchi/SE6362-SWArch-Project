@@ -5,6 +5,9 @@ import java.util.Iterator;
 import java.util.Collections;
 import java.util.StringJoiner;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+
 public class PageList implements Iterable<WebPage>
 {
     private ArrayList<WebPage> pages = new ArrayList<>();
@@ -62,5 +65,17 @@ public class PageList implements Iterable<WebPage>
             stringJoiner.add(webPage.getDescriptor().toString());
         }
         return stringJoiner.toString();
+    }
+
+    public ArrayNode toJsonArray()
+    {
+        ArrayNode jsonArray = JsonNodeFactory.instance.arrayNode();
+
+        for (WebPage page : pages)
+        {
+            jsonArray.add(page.toJsonNode());
+        }
+
+        return jsonArray;
     }
 }

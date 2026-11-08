@@ -1,6 +1,6 @@
 package com.se6362.search;
 
-public interface SearchSortStrategy
+public interface PageRankStrategy
 {
     String generateOrderBy();
 }

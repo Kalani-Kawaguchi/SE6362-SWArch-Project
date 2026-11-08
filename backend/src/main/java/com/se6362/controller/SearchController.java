@@ -8,19 +8,26 @@
 
 package com.se6362.controller;
 
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
+import java.io.IOException;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.http.MediaType;
 
 import com.se6362.database.DatabaseManager;
+import com.se6362.kwic.JsonReader;
+import com.se6362.search.PageRankStrategy;
+import com.se6362.search.RankByAccessFrequency;
+import com.se6362.search.RankByTitle;
+import com.se6362.webpage.PageList;
+import com.se6362.webpage.WebPage;
+import com.fasterxml.jackson.databind.JsonNode;
 
 @RestController
 @RequestMapping("/api")
@@ -35,48 +42,40 @@ public class SearchController
     }
 
     // Takes keywords from user and returns search results that match
-    @PostMapping("/search")
-    public List<SearchResult> search(@RequestBody SearchRequest request)
+    @GetMapping("/search")
+    public JsonNode getSearchResults(
+            @RequestParam String query,
+            @RequestParam(defaultValue = "false") boolean isCaseSensitive,
+            @RequestParam(defaultValue = "title") String rankingStrategy)
     {
-        if (request == null || request.query() == null || request.query().isEmpty()
-                || request.query().size() > MAX_QUERY_LENGTH)
+        PageRankStrategy pageRankStrategy;
+        if (rankingStrategy.equals("title"))
         {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Provide an nonempty query");
+            pageRankStrategy = new RankByTitle();
         }
-        int length = request.query().size() - 1;
-        for (String term : request.query())
+        else if (rankingStrategy.equals("access_frequency"))
         {
-            if (term == null || term.length() > MAX_QUERY_LENGTH)
-            {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                        "Each query term must be a string of at most 500 chars.");
-            }
-            length += term.length();
+            pageRankStrategy = new RankByAccessFrequency();
         }
-        if (length > MAX_QUERY_LENGTH)
+        else
         {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Total query length must be at most 500 chars.");
+            throw new IllegalArgumentException("The given page rank strategy is unavailable");
         }
-        List<String> queryWords = request.query();
-        if (queryWords.size() == 0)
-        {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Provide at least one searchable word");
-        }
-        Set<String> keywords = new LinkedHashSet<>();
-        for (int wordNo = 0; wordNo < queryWords.size(); wordNo++)
-        {
-            keywords.add(queryWords.get(wordNo).toLowerCase(Locale.ROOT));
-        }
-        return null; // TO DO: configure search to work with new database manager class
-        // return database.search(List.copyOf(keywords)).stream().map(page -> new
-        // SearchResult(page.title(), page.url(), page.text())).toList();
+
+        PageList results = database.getSearchResults(query, pageRankStrategy, isCaseSensitive);
+        return results.toJsonArray();
     }
 
-    public record SearchRequest(List<String> query)
+    @PostMapping(value = "/search", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public void updatePageAccessFrequency(@RequestBody JsonNode element) throws IOException
     {
-    }
+        if (!element.isObject() || element.get("access_frequency") == null)
+        {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid webpage object");
+        }
 
-    public record SearchResult(String title, String url, String description)
-    {
+        WebPage page = JsonReader.parseJson(element);
+
+        database.incrementAccessFrequency(page);
     }
 }

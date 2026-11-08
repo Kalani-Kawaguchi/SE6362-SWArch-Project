@@ -10,17 +10,17 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.se6362.search.QueryTree;
-import com.se6362.search.SqlGenerator;
+import com.se6362.search.SearchSqlGenerator;
 
 @ExtendWith(MockitoExtension.class)
 public class SqlGeneratorTest
 {
-        private SqlGenerator sqlGenerator;
+        private SearchSqlGenerator sqlGenerator;
 
         @BeforeEach
         void setUp()
         {
-                sqlGenerator = new SqlGenerator();
+                sqlGenerator = new SearchSqlGenerator(false);
         }
 
         // A single keyword should generate one placeholder and one keyword parameter.

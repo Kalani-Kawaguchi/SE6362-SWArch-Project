@@ -1,10 +1,15 @@
 package com.se6362.webpage;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 public class WebPage implements Comparable<WebPage>
 {
     private String title;
     private WebUrl url;
     private Descriptor descriptor;
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     public WebPage(String title, String url, String descriptor)
     {
@@ -57,5 +62,16 @@ public class WebPage implements Comparable<WebPage>
         {
             return url.toString().compareToIgnoreCase(other.url.toString());
         }
+    }
+
+    public JsonNode toJsonNode()
+    {
+        ObjectNode json = MAPPER.createObjectNode();
+
+        json.put("title", title);
+        json.put("url", url.toString());
+        json.put("description", descriptor.toString());
+
+        return json;
     }
 }

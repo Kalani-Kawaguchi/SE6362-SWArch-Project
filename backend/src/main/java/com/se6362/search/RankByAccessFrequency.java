@@ -1,6 +1,6 @@
 package com.se6362.search;
 
-public class SortByAccessFrequency implements SearchSortStrategy
+public class RankByAccessFrequency implements PageRankStrategy
 {
     @Override
     public String generateOrderBy()

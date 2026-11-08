@@ -12,8 +12,8 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.se6362.search.QueryTree;
-import com.se6362.search.SearchSortStrategy;
-import com.se6362.search.SqlGenerator;
+import com.se6362.search.PageRankStrategy;
+import com.se6362.search.SearchSqlGenerator;
 import com.se6362.webpage.*;
 
 @Repository
@@ -114,13 +114,13 @@ public class DatabaseManager
     }
 
     @Transactional(readOnly = true)
-    public PageList getSearchResults(String searchQuery, SearchSortStrategy sortStrategy)
+    public PageList getSearchResults(String searchQuery, PageRankStrategy sortStrategy, boolean isCaseSensitive)
     {
         PageList pageList = new PageList();
 
         QueryTree tree = new QueryTree(searchQuery);
 
-        SqlGenerator sqlGenerator = new SqlGenerator();
+        SearchSqlGenerator sqlGenerator = new SearchSqlGenerator(isCaseSensitive);
         String sql = sqlGenerator.getSearchSQL(tree, sortStrategy);
 
         for (WebPage page : database.query(

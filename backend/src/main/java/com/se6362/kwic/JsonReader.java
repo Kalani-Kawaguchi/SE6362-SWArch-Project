@@ -15,7 +15,7 @@ public class JsonReader implements AutoCloseable
 
     private final JsonParser parser;
     private JsonNode nextElement;
-    private boolean arrayFinished = false;
+    private boolean arrayIsFinished = false;
 
     public JsonReader(InputStream inputStream) throws IOException
     {
@@ -31,13 +31,13 @@ public class JsonReader implements AutoCloseable
 
     public boolean hasNext() throws IOException
     {
-        if (nextElement == null && !arrayFinished)
+        if (nextElement == null && !arrayIsFinished)
         {
             JsonToken token = parser.nextToken();
 
             if (token == JsonToken.END_ARRAY || token == null)
             {
-                arrayFinished = true;
+                arrayIsFinished = true;
             }
             else if (token == JsonToken.START_OBJECT)
             {
@@ -62,10 +62,10 @@ public class JsonReader implements AutoCloseable
         JsonNode element = nextElement;
         nextElement = null;
 
-        return parseJsonWebpage(element);
+        return parseJson(element);
     }
 
-    public static WebPage parseJsonWebpage(JsonNode element) throws IOException
+    public static WebPage parseJson(JsonNode element) throws IOException
     {
         if (!element.isObject())
         {
