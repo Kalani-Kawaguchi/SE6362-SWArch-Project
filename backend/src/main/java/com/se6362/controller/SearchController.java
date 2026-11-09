@@ -27,28 +27,33 @@ import com.se6362.search.RankByAccessFrequency;
 import com.se6362.search.RankByTitle;
 import com.se6362.webpage.PageList;
 import com.se6362.webpage.WebPage;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RestController
 @RequestMapping("/api")
 public class SearchController
 {
-    private static final int MAX_QUERY_LENGTH = 500;
     private final DatabaseManager database;
+    private final ObjectMapper objectMapper;
 
     public SearchController(DatabaseManager database)
     {
         this.database = database;
+        this.objectMapper = new ObjectMapper();
     }
 
-    // Takes keywords from user and returns search results that match
-    @GetMapping("/search")
-    public JsonNode getSearchResults(
+    @GetMapping(value = "/search", produces = MediaType.APPLICATION_JSON_VALUE)
+    public String getSearchResults(
             @RequestParam String query,
             @RequestParam(defaultValue = "false") boolean isCaseSensitive,
             @RequestParam(defaultValue = "title") String rankingStrategy)
+            throws JsonProcessingException
     {
         PageRankStrategy pageRankStrategy;
+
         if (rankingStrategy.equals("title"))
         {
             pageRankStrategy = new RankByTitle();
@@ -62,8 +67,12 @@ public class SearchController
             throw new IllegalArgumentException("The given page rank strategy is unavailable");
         }
 
-        PageList results = database.getSearchResults(query, pageRankStrategy, isCaseSensitive);
-        return results.toJsonArray();
+        PageList results = database.getSearchResults(
+                query,
+                pageRankStrategy,
+                isCaseSensitive);
+
+        return objectMapper.writeValueAsString(results.toJsonArray());
     }
 
     @PostMapping(value = "/search", consumes = MediaType.APPLICATION_JSON_VALUE)

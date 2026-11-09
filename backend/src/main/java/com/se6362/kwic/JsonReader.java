@@ -97,7 +97,7 @@ public class JsonReader implements AutoCloseable
         }
         catch (IllegalArgumentException exception)
         {
-            throw new IOException("Invalid webpage record.", exception);
+            throw new IOException("Invalid webpage record. " + exception.getMessage(), exception);
         }
     }
 

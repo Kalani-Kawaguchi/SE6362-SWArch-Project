@@ -5,6 +5,6 @@ public class RankByAccessFrequency implements PageRankStrategy
     @Override
     public String generateOrderBy()
     {
-        return "ORDER BY sponsorship_level DEC, access_frequency DEC;";
+        return " ORDER BY sponsorship_level DESC, access_frequency DESC;";
     }
 }

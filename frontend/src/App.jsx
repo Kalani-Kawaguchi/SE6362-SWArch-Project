@@ -8,7 +8,7 @@
 
 import { HashRouter, Routes, Route, NavLink, Link } from "react-router-dom";
 import Home from "./pages/Home.jsx";
-import KWIC from "./pages/KWIC.jsx";
+import Admin from "./pages/Admin.jsx";
 import Search from "./pages/Search.jsx";
 import { useEffect, useState } from "react";
 import ProjPlan from "./documents/PreliminaryProjectPlan.pdf";
@@ -73,7 +73,7 @@ export default function App() {
 
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/kwic" element={<KWIC />} />
+          <Route path="/kwic" element={<Admin />} />
           <Route path="/search" element={<Search />} />
         </Routes>
       </HashRouter>

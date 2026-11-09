@@ -20,6 +20,7 @@ public class Alphabetizer implements KwicProcessingStep
     }
 
     // Takes a LineList objects and stores all circular shifts of every line
+    @Override
     public PageList getOutput()
     {
         PageList outputPages = new PageList();

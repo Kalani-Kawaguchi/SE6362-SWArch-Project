@@ -1,36 +1,39 @@
 package com.se6362.webpage;
 
+import java.net.URI;
+import java.net.URL;
+
 public class WebUrl
 {
     private String url;
 
     public WebUrl(String url)
     {
-        this.url = url;
-        if (!isCorrectSyntax())
+
+        if (!isValidWebPageUrl(url))
         {
-            throw new IllegalArgumentException("url format incorrect");
+            throw new IllegalArgumentException("url format incorrect: " + url);
         }
+        this.url = url;
     }
 
-    private boolean isCorrectSyntax()
+    public static boolean isValidWebPageUrl(String urlString)
     {
-
-        String identifier = "[a-zA-Z0-9]+";
-
-        String protocol = "https?";
-
-        String domain = "(www\\.)?" + identifier + "\\." +
-                "(com|edu|org|net|gov|mil|us)";
-
-        String pathSegment = identifier + "[a-zA-Z0-9._-]*";
-
-        String path = "(/" + pathSegment + "(/" + pathSegment + ")*/?)?";
-
-        String regex = protocol + "://" + domain + path;
-
-        return (url != null && url.matches(regex)) || url.equals("");
-
+        if (urlString.isBlank())
+        {
+            return true;
+        }
+        try
+        {
+            URI uri = new URI(urlString);
+            URL url = uri.toURL();
+            String protocol = url.getProtocol();
+            return "http".equals(protocol) || "https".equals(protocol);
+        }
+        catch (Exception e)
+        {
+            return false;
+        }
     }
 
     public String toString()

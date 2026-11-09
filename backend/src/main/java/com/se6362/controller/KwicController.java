@@ -51,6 +51,7 @@ public class KwicController
         KwicIndexBuilder indexBuilder = new KwicIndexBuilder();
 
         indexBuilder.buildIndex(request.getInputStream());
+        System.out.println("Index has been built.");
         indexBuilder.saveIndex(database);
 
         return "successful";

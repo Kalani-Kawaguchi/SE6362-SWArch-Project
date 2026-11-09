@@ -34,8 +34,7 @@ public class KwicSystemTest
             masterControl.buildIndex(inputStream);
         }
         String output = masterControl.getOutput();
-        String predictedOutput = "A search engine helps users find relevant information quickly\n" +
-                "brown fox jumps over the lazy dog The quick\n" +
+        String predictedOutput = "brown fox jumps over the lazy dog The quick\n" +
                 "designing reliable software systems Software engineering is the process of\n" +
                 "dog The quick brown fox jumps over the lazy\n" +
                 "engine helps users find relevant information quickly A search\n" +
@@ -44,11 +43,10 @@ public class KwicSystemTest
                 "fox jumps over the lazy dog The quick brown\n" +
                 "helps users find relevant information quickly A search engine\n" +
                 "information quickly A search engine helps users find relevant\n" +
-                "is the process of designing reliable software systems Software engineering\n" +
+
                 "jumps over the lazy dog The quick brown fox\n" +
                 "lazy dog The quick brown fox jumps over the\n" +
-                "of designing reliable software systems Software engineering is the process\n" +
-                "over the lazy dog The quick brown fox jumps\n" +
+
                 "process of designing reliable software systems Software engineering is the\n" +
                 "quick brown fox jumps over the lazy dog The\n" +
                 "quickly A search engine helps users find relevant information\n" +
@@ -58,9 +56,7 @@ public class KwicSystemTest
                 "Software engineering is the process of designing reliable software systems\n" +
                 "software systems Software engineering is the process of designing reliable\n" +
                 "systems Software engineering is the process of designing reliable software\n" +
-                "the lazy dog The quick brown fox jumps over\n" +
-                "the process of designing reliable software systems Software engineering is\n" +
-                "The quick brown fox jumps over the lazy dog\n" +
+
                 "users find relevant information quickly A search engine helps";
         assertEquals(predictedOutput, output);
     }

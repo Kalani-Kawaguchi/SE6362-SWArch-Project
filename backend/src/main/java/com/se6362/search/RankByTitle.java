@@ -5,6 +5,6 @@ public class RankByTitle implements PageRankStrategy
     @Override
     public String generateOrderBy()
     {
-        return "ORDER BY sponsorship_level DEC, title ASC;";
+        return " ORDER BY sponsorship_level DESC, title ASC;";
     }
 }

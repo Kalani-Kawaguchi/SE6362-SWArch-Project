@@ -22,6 +22,7 @@ public class Merger implements KwicProcessingStep
     }
 
     // Merges Lines from oldList and newList into single list
+    @Override
     public PageList getOutput()
     {
         PageList outputList = new PageList();

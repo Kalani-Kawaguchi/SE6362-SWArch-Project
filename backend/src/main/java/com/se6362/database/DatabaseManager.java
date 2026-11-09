@@ -32,7 +32,7 @@ public class DatabaseManager
     @Transactional
     public void insertWebpages(PageList pages)
     {
-        String sql = "INSERT INTO WEB_DATA (title, url, description) VALUES (?, ?, ?);";
+        String sql = "INSERT IGNORE INTO WEB_DATA (title, url, description) VALUES (?, ?, ?);";
         database.batchUpdate(sql, new BatchPreparedStatementSetter()
         {
 
@@ -55,9 +55,10 @@ public class DatabaseManager
     @Transactional
     public void insertIndexEntries(PageList pages)
     {
-        String sql = "INSERT INTO KWIC_INDEX (page_id, keyword, shift_amount) VALUES (?, ?, ?)";
-
+        String sql = "INSERT IGNORE INTO KWIC_INDEX (page_id, keyword, shift_amount) VALUES (?, ?, ?)";
+        System.out.println("Retrieving page IDs...");
         Map<String, Integer> pageIds = getPageIds();
+        System.out.println("Page ids have been retrieved.");
 
         database.batchUpdate(sql, new BatchPreparedStatementSetter()
         {
@@ -136,7 +137,7 @@ public class DatabaseManager
 
     private Map<String, Integer> getPageIds()
     {
-        String sql = "SELECT id, url FROM WEB_DATA WHERE ";
+        String sql = "SELECT id, url FROM WEB_DATA";
 
         return database.query(sql, rs ->
         {

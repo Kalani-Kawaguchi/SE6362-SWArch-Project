@@ -43,7 +43,7 @@ public class SearchSqlGenerator implements QueryVisitor
 
         return "SELECT page_id " +
                 "FROM KWIC_INDEX " +
-                "WHERE " + (isCaseSensitive ? "BINARY" : "") + "keyword = ?";
+                "WHERE " + (isCaseSensitive ? "BINARY " : "") + "keyword = ?";
     }
 
     @Override

@@ -12,18 +12,14 @@ import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.se6362.database.DatabaseManager;
 import com.se6362.webpage.*;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 
 import java.io.InputStream;
 
 public class KwicIndexBuilder
 {
-    private static final ObjectMapper JSON_MAPPER = new ObjectMapper();
-    private static final int BATCH_SIZE = 1;
+    private static final int BATCH_SIZE = 10;
     private PageList input = new PageList();
     private PageList output = new PageList();
 
@@ -45,6 +41,7 @@ public class KwicIndexBuilder
                 final int workerId = i;
                 executor.submit(() ->
                 {
+                    int count = 1;
                     try
                     {
                         // Continue to read and process lines until all lines have been processed
@@ -57,6 +54,8 @@ public class KwicIndexBuilder
                             // stream
 
                             this.processLines(input);
+                            System.out.println("Worker " + workerId + " processed batch " + count + ".");
+                            count++;
 
                             if (input.getPageCount() < BATCH_SIZE)
                             {
@@ -103,7 +102,9 @@ public class KwicIndexBuilder
         updateInput(inputPages);
         KwicProcessingStep circularShift = new CircularShifter(inputPages);
         PageList shiftedPages = circularShift.getOutput();
-        KwicProcessingStep alphabetizer = new Alphabetizer(shiftedPages);
+        KwicProcessingStep noiseWorkRemover = new NoiseWorkRemover(shiftedPages);
+        PageList noiseWordlessPages = noiseWorkRemover.getOutput();
+        KwicProcessingStep alphabetizer = new Alphabetizer(noiseWordlessPages);
         PageList alphabetizedPages = alphabetizer.getOutput();
         updateOutput(alphabetizedPages);
     }
