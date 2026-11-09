@@ -31,7 +31,14 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.util.Map;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 
+@CrossOrigin(origins = "http://localhost:1234")
 @RestController
 @RequestMapping("/api")
 public class SearchController
@@ -76,15 +83,23 @@ public class SearchController
     }
 
     @PostMapping(value = "/search", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public void updatePageAccessFrequency(@RequestBody JsonNode element) throws IOException
+    public String updatePageAccessFrequency(@RequestBody Map<String, Object> payload) throws IOException
     {
-        if (!element.isObject() || element.get("access_frequency") == null)
+        // 1. Validate that the payload has the required keys
+        if (payload == null
+                || payload.get("title") == null
+                || payload.get("url") == null
+                || payload.get("description") == null)
         {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid webpage object");
         }
 
-        WebPage page = JsonReader.parseJson(element);
+        // 2. Safely bridge back to JsonNode for your existing JsonReader logic
+        JsonNode element = objectMapper.valueToTree(payload);
 
+        WebPage page = JsonReader.parseJson(element);
         database.incrementAccessFrequency(page);
+        return "successful";
     }
+
 }

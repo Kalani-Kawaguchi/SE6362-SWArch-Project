@@ -110,7 +110,7 @@ public class DatabaseManager
     @Transactional
     public void incrementAccessFrequency(WebPage page)
     {
-        String sql = "UPDATE WEB_DATE SET access_frequency = access_frequency + 1 WHERE url = ?";
+        String sql = "UPDATE WEB_DATA SET access_frequency = access_frequency + 1 WHERE url = ?";
         database.update(sql, page.getUrl());
     }
 
