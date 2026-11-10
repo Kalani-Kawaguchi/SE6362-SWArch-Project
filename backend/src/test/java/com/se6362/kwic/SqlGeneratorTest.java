@@ -32,7 +32,7 @@ public class SqlGeneratorTest
                 String sql = sqlGenerator.getSearchSQL(tree);
 
                 assertEquals(
-                                "SELECT url, title, description " +
+                                "SELECT url, title, description, sponsorship_level " +
                                                 "FROM WEB_DATA " +
                                                 "WHERE id IN (SELECT page_id FROM KWIC_INDEX WHERE keyword = ?);",
                                 sql);
@@ -49,7 +49,7 @@ public class SqlGeneratorTest
                 String sql = sqlGenerator.getSearchSQL(tree);
 
                 assertEquals(
-                                "SELECT url, title, description " +
+                                "SELECT url, title, description, sponsorship_level " +
                                                 "FROM WEB_DATA " +
                                                 "WHERE id IN (SELECT page_id FROM KWIC_INDEX " +
                                                 "WHERE page_id IN (SELECT page_id FROM KWIC_INDEX WHERE keyword = ?) " +
@@ -68,7 +68,7 @@ public class SqlGeneratorTest
                 String sql = sqlGenerator.getSearchSQL(tree);
 
                 assertEquals(
-                                "SELECT url, title, description " +
+                                "SELECT url, title, description, sponsorship_level " +
                                                 "FROM WEB_DATA " +
                                                 "WHERE id IN (SELECT page_id FROM KWIC_INDEX " +
                                                 "WHERE page_id IN (SELECT page_id FROM KWIC_INDEX WHERE keyword = ?) " +
@@ -87,7 +87,7 @@ public class SqlGeneratorTest
                 String sql = sqlGenerator.getSearchSQL(tree);
 
                 assertEquals(
-                                "SELECT url, title, description " +
+                                "SELECT url, title, description, sponsorship_level " +
                                                 "FROM WEB_DATA " +
                                                 "WHERE id IN (SELECT page_id FROM KWIC_INDEX " +
                                                 "WHERE page_id NOT IN (SELECT page_id FROM KWIC_INDEX WHERE keyword = ?));",
@@ -105,7 +105,7 @@ public class SqlGeneratorTest
                 String sql = sqlGenerator.getSearchSQL(tree);
 
                 assertEquals(
-                                "SELECT url, title, description " +
+                                "SELECT url, title, description, sponsorship_level " +
                                                 "FROM WEB_DATA " +
                                                 "WHERE id IN (SELECT page_id FROM KWIC_INDEX " +
                                                 "WHERE page_id IN (SELECT page_id FROM KWIC_INDEX WHERE keyword = ?) "
@@ -126,7 +126,7 @@ public class SqlGeneratorTest
                 String sql = sqlGenerator.getSearchSQL(tree);
 
                 assertEquals(
-                                "SELECT url, title, description " +
+                                "SELECT url, title, description, sponsorship_level " +
                                                 "FROM WEB_DATA " +
                                                 "WHERE id IN (SELECT page_id FROM KWIC_INDEX " +
                                                 "WHERE page_id IN (SELECT page_id FROM KWIC_INDEX WHERE keyword = ?) "
@@ -151,7 +151,7 @@ public class SqlGeneratorTest
                 String secondSql = sqlGenerator.getSearchSQL(secondTree);
 
                 assertEquals(
-                                "SELECT url, title, description " +
+                                "SELECT url, title, description, sponsorship_level " +
                                                 "FROM WEB_DATA " +
                                                 "WHERE id IN (SELECT page_id FROM KWIC_INDEX WHERE keyword = ?);",
                                 secondSql);

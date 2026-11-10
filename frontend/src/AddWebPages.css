@@ -10,7 +10,7 @@
 .page-input-fields textarea {
     width: 100%;
     padding: 15px 17px;
-    margin: 20px 0 20px 0;
+    margin: 10px 0 10px 0;
     border: 1px solid #d5e1d5;
     border-radius: 12px;
     background: #f5f8f2;
@@ -29,13 +29,6 @@
     min-height: 54px;
 }
 
-/* Description */
-
-.page-input-fields textarea {
-    min-height: 160px;
-    resize: vertical;
-    line-height: 1.7;
-}
 
 /* Placeholder */
 
@@ -185,4 +178,135 @@
     .add-pages-actions .primary-button {
         flex: 1;
     }
+}
+
+
+/* Add Webpages button positioning */
+
+.admin-top-bar {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.admin-add-button {
+    padding: 11px 20px;
+    border: none;
+    border-radius: 8px;
+    background: #067965;
+    color: white;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.admin-add-button:hover {
+    background: #055f51;
+    transform: translateY(-1px);
+}
+
+/* Modal background */
+
+.add-pages-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: 24px;
+
+    background: rgba(15, 30, 28, 0.65);
+    backdrop-filter: blur(4px);
+}
+
+/* Modal container */
+
+
+/* Description */
+
+.page-input-fields textarea {
+    min-height: 150px;
+    resize: vertical;
+    line-height: 1.7;
+}
+
+/* Modal container */
+
+.add-pages-modal {
+    position: relative;
+
+    width: 100%;
+    max-width: 900px;
+    max-height: 90vh;
+
+    overflow-y: auto;
+
+    background: #edf1eb;
+    border-radius: 16px;
+    padding: 32px;
+
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+
+    animation: addPagesAppear 0.2s ease-out;
+}
+
+
+/* Close button */
+
+.add-pages-close {
+    position: absolute;
+    top: 14px;
+    right: 18px;
+
+    width: 36px;
+    height: 36px;
+
+    border: none;
+    border-radius: 50%;
+
+    background: transparent;
+    color: #213c39;
+
+    font-size: 28px;
+    line-height: 1;
+
+    cursor: pointer;
+    z-index: 2;
+}
+
+.add-pages-close:hover {
+    background: rgba(6, 121, 101, 0.1);
+}
+
+@keyframes addPagesAppear {
+    from {
+        opacity: 0;
+        transform: translateY(12px) scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@media (max-width: 600px) {
+    .add-pages-overlay {
+        padding: 12px;
+    }
+
+    .add-pages-modal {
+        padding: 24px 18px;
+        max-height: 95vh;
+    }
+}
+
+.add-pages-modal .add-pages {
+    width: 100%;
+    margin: 0;
 }

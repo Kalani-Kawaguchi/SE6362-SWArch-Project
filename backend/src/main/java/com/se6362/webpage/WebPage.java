@@ -9,6 +9,7 @@ public class WebPage implements Comparable<WebPage>
     private String title;
     private WebUrl url;
     private Descriptor descriptor;
+    private int sponsorshipLevel;
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
     public WebPage(String title, String url, String descriptor)
@@ -16,6 +17,15 @@ public class WebPage implements Comparable<WebPage>
         this.title = title;
         this.url = new WebUrl(url);
         this.descriptor = new Descriptor(descriptor);
+        this.sponsorshipLevel = 0;
+    }
+
+    public WebPage(String title, String url, String descriptor, int sponsorshipLevel)
+    {
+        this.title = title;
+        this.url = new WebUrl(url);
+        this.descriptor = new Descriptor(descriptor);
+        this.sponsorshipLevel = sponsorshipLevel;
     }
 
     public WebPage(String title, WebUrl url, Descriptor descriptor)
@@ -23,6 +33,7 @@ public class WebPage implements Comparable<WebPage>
         this.title = title;
         this.url = url;
         this.descriptor = descriptor;
+        this.sponsorshipLevel = 0;
     }
 
     public String getTitle()
@@ -71,6 +82,7 @@ public class WebPage implements Comparable<WebPage>
         json.put("title", title);
         json.put("url", url.toString());
         json.put("description", descriptor.toString());
+        json.put("sponsorship_level", this.sponsorshipLevel);
 
         return json;
     }

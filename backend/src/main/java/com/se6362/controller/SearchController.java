@@ -9,6 +9,7 @@
 package com.se6362.controller;
 
 import java.io.IOException;
+import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,18 +30,12 @@ import com.se6362.webpage.PageList;
 import com.se6362.webpage.WebPage;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import java.util.Map;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 
 @CrossOrigin(origins = "http://localhost:1234")
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/search")
 public class SearchController
 {
     private final DatabaseManager database;
@@ -52,7 +47,7 @@ public class SearchController
         this.objectMapper = new ObjectMapper();
     }
 
-    @GetMapping(value = "/search", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public String getSearchResults(
             @RequestParam String query,
             @RequestParam(defaultValue = "false") boolean isCaseSensitive,
@@ -82,7 +77,7 @@ public class SearchController
         return objectMapper.writeValueAsString(results.toJsonArray());
     }
 
-    @PostMapping(value = "/search", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public String updatePageAccessFrequency(@RequestBody Map<String, Object> payload) throws IOException
     {
         // 1. Validate that the payload has the required keys

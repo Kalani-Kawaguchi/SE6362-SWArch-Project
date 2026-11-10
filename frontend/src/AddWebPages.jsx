@@ -7,7 +7,7 @@ const API_BASE_URL = (
     process.env.API_BASE_URL || "http://localhost:8080"
 ).replace(/\/$/, "");
 
-function AddWebPages() {
+function AddWebPages({ onSuccess }) {
     const [title, setTitle] = useState("");
     const [url, setUrl] = useState("");
     const [description, setDescription] = useState("");
@@ -120,6 +120,7 @@ function AddWebPages() {
             const result = await submitWebpages(pages);
 
             setSuccess(result || "Webpages submitted successfully.");
+            onSuccess?.();
         }
         catch (err) {
             console.error("Webpage submission failed:", err);
@@ -131,11 +132,10 @@ function AddWebPages() {
     }
 
     return (
-        <section className="add-pages panel">
+        <>
 
             <div className="panel-heading">
-                <h2>Add Web Pages</h2>
-                <span className="tag">INPUT</span>
+                <h2 id="add-pages-title">Add Web Pages</h2>
             </div>
 
             <form onSubmit={handleSubmit}>
@@ -215,7 +215,7 @@ function AddWebPages() {
 
             </form>
 
-        </section>
+        </>
     );
 }
 

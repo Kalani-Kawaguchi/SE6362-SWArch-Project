@@ -21,7 +21,7 @@ public class SearchSqlGenerator implements QueryVisitor
     {
         keywords.clear();
 
-        return "SELECT url, title, description " +
+        return "SELECT url, title, description, sponsorship_level " +
                 "FROM WEB_DATA " +
                 "WHERE id IN (" + tree.getRoot().accept(this) + ");";
     }
@@ -30,7 +30,7 @@ public class SearchSqlGenerator implements QueryVisitor
     {
         keywords.clear();
 
-        return "SELECT url, title, description " +
+        return "SELECT url, title, description, sponsorship_level " +
                 "FROM WEB_DATA " +
                 "WHERE id IN (" + tree.getRoot().accept(this) + ")" +
                 sortStrategy.generateOrderBy();

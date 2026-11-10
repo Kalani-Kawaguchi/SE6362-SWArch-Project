@@ -1,101 +1,205 @@
-/*
-    SE 6362.001
-    Course Project: KWIC Index System
-    Team Members: Jonathan Loper, Kalani Kawaguchi, Zhi Li, Mitchell Vu
-    File Name: Search.jsx
-    Description: React component for search engine
- */
 
 import { useState } from "react";
-import SearchResult from "../SearchResult";
+import SearchInterface from "../shared/SearchInterface.jsx";
+import ModifiableSearchResult from "../ModifiableSearchResult.jsx";
+import AddWebPages from "../AddWebPages.jsx";
 import "../styles.css";
-import AddWebPages from "../AddWebPages";
 
 const API_BASE_URL = (
     process.env.API_BASE_URL || "http://localhost:8080"
 ).replace(/\/+$/, "");
 
-const MAX_QUERY_LENGTH = 500;
+function createInitialSettings(results) {
+    return Object.fromEntries(
+        results.map((result) => {
+            const sponsorshipLevel = result.sponsorship_level ?? 0;
+
+            return [
+                result.url,
+                {
+                    isDelete: false,
+                    isSponsor: sponsorshipLevel > 0,
+                    sponsorshipLevel
+                }
+            ];
+        })
+    );
+}
+
+function haveSettingsChanged(current, original) {
+    const urls = Object.keys(original);
+
+    return urls.some((url) => {
+        const currentSetting = current[url];
+        const originalSetting = original[url];
+
+        return (
+            !currentSetting ||
+            currentSetting.isDelete !== originalSetting.isDelete ||
+            currentSetting.isSponsor !== originalSetting.isSponsor ||
+            currentSetting.sponsorshipLevel !== originalSetting.sponsorshipLevel
+        );
+    });
+}
 
 export default function Admin() {
-    const [text, setText] = useState("");
-    const [results, setResults] = useState([]);
-    const [error, setError] = useState("");
-    const [isSearching, setIsSearching] = useState(false);
-    const [hasSearched, setHasSearched] = useState(false);
+    const [originalSettings, setOriginalSettings] = useState({});
+    const [settings, setSettings] = useState({});
+    const [searchResults, setSearchResults] = useState([]);
+    const [refreshTrigger, setRefreshTrigger] = useState(0);
 
-    // Get results of keyword search by calling backend API
-    async function getSearchResults(event) {
-        event.preventDefault();
+    const hasChanges = haveSettingsChanged(settings, originalSettings);
 
-        if (isSearching) {
-            return;
-        }
+    const handleResultsLoaded = (results) => {
+        const initialSettings = createInitialSettings(results);
 
-        const query = text.trim().split(/\s+/);
+        setSearchResults(results);
+        setOriginalSettings(initialSettings);
+        setSettings(initialSettings);
+    };
 
-        if (!query) {
-            setError("Enter a search query.");
-            return;
-        }
+    const handleSearchStarted = () => {
+        setSearchResults([]);
+        setOriginalSettings({});
+        setSettings({});
+    };
 
-        if (query.length > MAX_QUERY_LENGTH) {
-            setError(
-                `Search queries must be at most ${MAX_QUERY_LENGTH} characters.`
-            );
-            return;
-        }
+    const handleCancel = () => {
+        setSettings({ ...originalSettings });
+    };
 
-        setResults([]);
-        setError("");
-        setHasSearched(false);
-        setIsSearching(true);
+    const updateSetting = (url, setting, value) => {
+        setSettings((previousSettings) => ({
+            ...previousSettings,
+            [url]: {
+                ...previousSettings[url],
+                [setting]: value
+            }
+        }));
+    };
+
+    const handleSave = async () => {
+        const deletionPayload = searchResults
+            .filter((result) => settings[result.url]?.isDelete)
+            .map((result) => ({
+                title: result.title,
+                url: result.url,
+                description: result.description
+            }));
+
+        const sponsorshipPayload = searchResults
+            .filter((result) => {
+                const current = settings[result.url];
+                const original = originalSettings[result.url];
+
+                return (
+                    current.sponsorshipLevel !== original.sponsorshipLevel
+                );
+            })
+            .map((result) => ({
+                title: result.title,
+                url: result.url,
+                description: result.description,
+                sponsorship_level: settings[result.url].sponsorshipLevel
+            }));
 
         try {
-            const response = await fetch(
-                `${API_BASE_URL}/api/search`,
-                {
-                    method: "POST",
-                    headers:
+            if (deletionPayload.length > 0) {
+                const response = await fetch(
+                    `${API_BASE_URL}/api/kwic/delete`,
                     {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({ query })
+                        method: "DELETE",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify(deletionPayload)
+                    }
+                );
+
+                if (!response.ok) {
+                    throw new Error("Failed to delete webpages.");
                 }
-            );
-
-            if (!response.ok) {
-                throw new Error(
-                    `Backend returned HTTP ${response.status}`
-                );
             }
 
-            const data = await response.json();
-
-            if (!Array.isArray(data)) {
-                throw new Error(
-                    "The backend returned an unexpected response format."
+            if (sponsorshipPayload.length > 0) {
+                const response = await fetch(
+                    `${API_BASE_URL}/api/kwic/sponsor`,
+                    {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify(sponsorshipPayload)
+                    }
                 );
+
+                if (!response.ok) {
+                    throw new Error("Failed to update webpage sponsorships.");
+                }
             }
 
-            setResults(data);
-            setHasSearched(true);
-        }
-        catch (err) {
-            console.error("Unable to search:", err);
+            const updatedSettings = { ...settings };
 
-            setError(
-                "Couldn't retrieve search results. Check the backend connection and try again."
-            );
+            setOriginalSettings(updatedSettings);
+            setRefreshTrigger((previous) => previous + 1);
+
+            alert("Changes saved successfully.");
         }
-        finally {
-            setIsSearching(false);
+        catch (error) {
+            console.error("Error saving admin changes:", error);
+            alert(error.message);
         }
-    }
+    };
+
+    const getResultProps = (result) => {
+        const resultSettings = settings[result.url] ?? {
+            isDelete: false,
+            isSponsor: false,
+            sponsorshipLevel: 0
+        };
+
+        return {
+            ...resultSettings,
+
+            onDeleteChange: (value) =>
+                updateSetting(result.url, "isDelete", value),
+
+            onSponsorChange: (value) =>
+                updateSetting(result.url, "isSponsor", value),
+
+            onSponsorshipLevelChange: (value) =>
+                updateSetting(result.url, "sponsorshipLevel", value)
+        };
+    };
 
     return (
-        <main id="main">
-            <AddWebPages></AddWebPages>
-        </main>
+        <div className="admin-page">
+            <SearchInterface
+                ResultComponent={ModifiableSearchResult}
+                getResultProps={getResultProps}
+                onResultsLoaded={handleResultsLoaded}
+                onSearchStarted={handleSearchStarted}
+                refreshTrigger={refreshTrigger}
+            />
+
+            <div className={`admin-action-bar ${hasChanges ? "is-visible" : ""}`}>
+                <button
+                    type="button"
+                    className="admin-cancel-button"
+                    onClick={handleCancel}
+                >
+                    Cancel Changes
+                </button>
+
+                <button
+                    type="button"
+                    className="admin-save-button"
+                    onClick={handleSave}
+                >
+                    Save Changes
+                </button>
+            </div>
+
+        </div>
     );
 }

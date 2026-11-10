@@ -21,6 +21,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.http.MediaType;
 
+import java.util.List;
+import java.util.Map;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import com.se6362.database.DatabaseManager;
 import com.se6362.kwic.JsonReader;
 import com.se6362.kwic.KwicIndexBuilder;
@@ -32,18 +37,20 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 @CrossOrigin(origins = "http://localhost:1234")
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/kwic")
 public class KwicController
 {
     private final DatabaseManager database;
+    private final ObjectMapper objectMapper;
 
     public KwicController(DatabaseManager database)
     {
         this.database = database;
+        this.objectMapper = new ObjectMapper();
     }
 
     // Generate a KWIC index from user input and return the result as json file
-    @PostMapping(value = "/kwic/add", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/add", consumes = MediaType.APPLICATION_JSON_VALUE)
     public synchronized String addWebpages(HttpServletRequest request) throws IOException
     {
         System.out.println("KWIC Input Received");
@@ -57,53 +64,65 @@ public class KwicController
         return "successful";
     }
 
-    @PostMapping(value = "/kwic/sponsor", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public String sponsorWebpages(@RequestBody JsonNode json) throws IOException
+    @PostMapping(value = "/sponsor", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public String sponsorWebpages(@RequestBody List<Map<String, Object>> payload) throws IOException
     {
-        if (json == null || !json.isArray() || json.isEmpty())
+        if (payload == null || payload.isEmpty())
         {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Non-empty JSON array required");
         }
 
-        for (JsonNode element : json)
+        for (Map<String, Object> element : payload)
         {
-            if (!element.isObject() || element.get("sponsorship_level") == null)
+            if (element == null || element.get("sponsorship_level") == null
+                    || element.get("title") == null
+                    || element.get("url") == null
+                    || element.get("description") == null)
             {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid webpage object");
             }
 
-            WebPage page = JsonReader.parseJson(element);
-            int sponsorshipLevel = element.get("sponsorship_level").asInt();
+            JsonNode json = objectMapper.valueToTree(element);
+
+            WebPage page = JsonReader.parseJson(json);
+            int sponsorshipLevel = ((Number) element.get("sponsorship_level")).intValue();
 
             database.addSponsorship(page, sponsorshipLevel);
         }
 
-        System.out.println("Sponsorships addeed.");
+        System.out.println("Sponsorships added.");
         return "Successful";
     }
 
     // Delete current user generated KWIC index
-    @DeleteMapping(value = "/kwic/delete", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public synchronized String deleteWebpage(@RequestBody JsonNode json) throws IOException
+    @DeleteMapping(value = "/delete", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public synchronized String deleteWebpage(@RequestBody List<Map<String, Object>> payload) throws IOException
     {
-        if (json == null || !json.isArray() || json.isEmpty())
+        if (payload == null || payload.isEmpty())
         {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Non-empty JSON array required");
         }
 
         PageList pagesToDelete = new PageList();
 
-        for (JsonNode element : json)
+        for (Map<String, Object> element : payload)
         {
-            if (!element.isObject())
+            if (element == null
+                    || element.get("title") == null
+                    || element.get("url") == null
+                    || element.get("description") == null)
             {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid webpage object");
             }
 
-            WebPage page = JsonReader.parseJson(element);
+            JsonNode json = objectMapper.valueToTree(element);
+
+            WebPage page = JsonReader.parseJson(json);
 
             pagesToDelete.append(page);
         }
+
+        database.deleteWebpages(pagesToDelete);
 
         System.out.println("Webpages deleted");
         return "Successful";

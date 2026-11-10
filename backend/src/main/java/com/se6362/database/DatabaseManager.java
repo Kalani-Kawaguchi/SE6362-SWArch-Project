@@ -20,7 +20,7 @@ import com.se6362.webpage.*;
 public class DatabaseManager
 {
     private static final RowMapper<WebPage> PAGE_MAPPER = (row, rowNo) -> new WebPage(row.getString("Title"),
-            row.getString("Url"), row.getString("Description"));
+            row.getString("Url"), row.getString("Description"), row.getInt("sponsorship_level"));
 
     private final JdbcTemplate database;
 
@@ -103,7 +103,7 @@ public class DatabaseManager
     @Transactional
     public void addSponsorship(WebPage page, int level)
     {
-        String sql = "UPDATE WEB_DATE SET sponsorship_level = ? WHERE url = ?";
+        String sql = "UPDATE WEB_DATA SET sponsorship_level = ? WHERE url = ?";
         database.update(sql, level, page.getUrl());
     }
 

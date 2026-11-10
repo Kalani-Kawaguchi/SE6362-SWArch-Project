@@ -17,6 +17,7 @@ export default function SearchResult({
     title,
     url,
     description,
+    children
 }) {
     const handleClick = async () => {
         const element = {
@@ -46,33 +47,47 @@ export default function SearchResult({
 
     return (
         <li className="search-result">
-            <div className="search-result-url">
-                <a
-                    href={url}
-                    className="search-result-favicon"
-                    aria-hidden="true"
-                    onClick={handleClick}
-                >
-                    ↗
-                </a>
 
-                <p>{url}</p>
+            {/* Left side: webpage information */}
+            <div className="search-result-content">
+
+                <div className="search-result-url">
+                    <a
+                        href={url}
+                        className="search-result-favicon"
+                        aria-hidden="true"
+                        onClick={handleClick}
+                    >
+                        ↗
+                    </a>
+
+                    <p>{url}</p>
+                </div>
+
+                <h3 className="search-result-title">
+                    <a
+                        href={url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={handleClick}
+                    >
+                        {title}
+                    </a>
+                </h3>
+
+                <p className="search-result-description">
+                    {description}
+                </p>
+
             </div>
 
-            <h3 className="search-result-title">
-                <a
-                    href={url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={handleClick}
-                >
-                    {title}
-                </a>
-            </h3>
+            {/* Right side: optional form elements */}
+            {children && (
+                <div className="search-result-inputs">
+                    {children}
+                </div>
+            )}
 
-            <p className="search-result-description">
-                {description}
-            </p>
         </li>
     );
 }
