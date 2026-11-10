@@ -9,29 +9,85 @@
 import "./styles.css";
 import "./searchResultStyles.css";
 
+const API_BASE_URL = (
+    process.env.API_BASE_URL || "http://localhost:8080"
+).replace(/\/+$/, "");
+
 export default function SearchResult({
     title,
     url,
     description,
+    children
 }) {
+    const handleClick = async () => {
+        const element = {
+            title: title,
+            url: url,
+            description: description
+        };
+
+        try {
+            const response = await fetch(`${API_BASE_URL}/api/search`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(element),
+                keepalive: true
+            });
+
+            if (!response.ok) {
+                console.error("Failed to update webpage access frequency.");
+            }
+        }
+        catch (error) {
+            console.error("Error updating webpage access frequency:", error);
+        }
+    };
+
     return (
         <li className="search-result">
-            <div className="search-result-url">
-                <a href={url} className="search-result-favicon" aria-hidden="true">
-                    ↗
-                </a>
-                <p>{url}</p>
+
+            {/* Left side: webpage information */}
+            <div className="search-result-content">
+
+                <div className="search-result-url">
+                    <a
+                        href={url}
+                        className="search-result-favicon"
+                        aria-hidden="true"
+                        onClick={handleClick}
+                    >
+                        ↗
+                    </a>
+
+                    <p>{url}</p>
+                </div>
+
+                <h3 className="search-result-title">
+                    <a
+                        href={url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={handleClick}
+                    >
+                        {title}
+                    </a>
+                </h3>
+
+                <p className="search-result-description">
+                    {description}
+                </p>
+
             </div>
 
-            <h3 className="search-result-title">
-                <a href={url} target="_blank" rel="noopener noreferrer">
-                    {title}
-                </a>
-            </h3>
+            {/* Right side: optional form elements */}
+            {children && (
+                <div className="search-result-inputs">
+                    {children}
+                </div>
+            )}
 
-            <p className="search-result-description">
-                {description}
-            </p>
         </li>
     );
 }

@@ -186,6 +186,7 @@ set "SPRING_DATASOURCE_URL=jdbc:mysql://altaria.proxy.rlwy.net:10497/railway"
 set "SPRING_DATASOURCE_USERNAME=root"
 set "SPRING_DATASOURCE_PASSWORD=xhgpPYgBtXLRPGgjaWwuNXVCBHXUAZwf"
 .\mvnw.cmd spring-boot:run
+or .\mvnw spring-boot:run "-Dspring-boot.run.profiles=local" to run locally
 
 In PowerShell:
 cd frontend

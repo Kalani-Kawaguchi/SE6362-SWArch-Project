@@ -8,8 +8,9 @@
 
 import { HashRouter, Routes, Route, NavLink, Link } from "react-router-dom";
 import Home from "./pages/Home.jsx";
-import KWIC from "./pages/KWIC.jsx";
+import Admin from "./pages/Admin.jsx";
 import Search from "./pages/Search.jsx";
+import AddWebPages from "./AddWebPages.jsx";
 import { useEffect, useState } from "react";
 import ProjPlan from "./documents/PreliminaryProjectPlan.pdf";
 import ProjDev1 from "./documents/SoftwareArchitectureProject1.pdf";
@@ -17,9 +18,15 @@ import ProjDev1 from "./documents/SoftwareArchitectureProject1.pdf";
 const API_BASE_URL = process.env.API_BASE_URL;
 
 export default function App() {
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [backendStatus, setBackendStatus] = useState(
     "Checking backend status...",
   );
+
+  const handlePagesAdded = () => {
+    // Refresh the current search after adding webpages.
+    setIsAddModalOpen(false);
+  };
 
   // Check whether the backend is reachable.
   useEffect(() => {
@@ -58,22 +65,23 @@ export default function App() {
 
           <nav>
             <NavLink to="/">Home</NavLink>
-            <NavLink to="/kwic">Index</NavLink>
-            <NavLink to="/search">Search</NavLink>
+            <NavLink to="/search">User View</NavLink>
+            <NavLink to="/kwic">Admin View</NavLink>
+
           </nav>
 
-          <span
-            className={`connection ${backendStatus === "Backend connected" ? "connected" : ""
-              }`}
+          <button
+            type="button"
+            className="admin-add-button"
+            onClick={() => setIsAddModalOpen(true)}
           >
-            <span className="status-dot" aria-hidden="true" />
-            {backendStatus}
-          </span>
+            + Add Webpages
+          </button>
         </header>
 
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/kwic" element={<KWIC />} />
+          <Route path="/kwic" element={<Admin />} />
           <Route path="/search" element={<Search />} />
         </Routes>
       </HashRouter>
@@ -100,6 +108,36 @@ export default function App() {
 
       </footer>
 
+
+      {isAddModalOpen && (
+        <div
+          className="add-pages-overlay"
+          onClick={() => setIsAddModalOpen(false)}
+        >
+          <div
+            className="add-pages-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="add-pages-title"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <button
+              type="button"
+              className="add-pages-close"
+              aria-label="Close"
+              onClick={() => setIsAddModalOpen(false)}
+            >
+              &times;
+            </button>
+
+            <AddWebPages
+              onSuccess={handlePagesAdded}
+            />
+          </div>
+        </div>
+      )}
     </div>
+
+
   );
 }
