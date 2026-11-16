@@ -26,7 +26,7 @@ export default function BrokenLinkCleanup({
             }
         );
 
-        if (!reponse.ok) {
+        if (!response.ok) {
             throw new Error(
                 response.status === 409
                     ? "A link check is already running. Try again shortly."
