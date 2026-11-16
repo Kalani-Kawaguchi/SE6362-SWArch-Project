@@ -7,6 +7,8 @@ const API_BASE_URL = (
 
 const MAX_QUERY_LENGTH = 500;
 
+const RESULTS_PER_PAGE_OPTIONS = [5, 10, 20, 50, 100];
+
 export default function SearchInterface({
     ResultComponent,
     getResultProps,
@@ -22,6 +24,9 @@ export default function SearchInterface({
 
     const [isCaseSensitive, setIsCaseSensitive] = useState(false);
     const [rankingStrategy, setRankingStrategy] = useState("title");
+
+    const [resultsPerPage, setResultsPerPage] = useState(10);
+    const [currentPage, setCurrentPage] = useState(1);
 
     const getSearchResults = async (event) => {
         event?.preventDefault();
@@ -80,7 +85,11 @@ export default function SearchInterface({
             console.log(data);
 
             setResults(data);
+            if (event) {
+                setCurrentPage(1);
+            }
             onResultsLoaded?.(data);
+
             setHasSearched(true);
         }
         catch (err) {
@@ -95,6 +104,16 @@ export default function SearchInterface({
             setIsSearching(false);
         }
     }
+    
+    const totalPages = Math.max(1, Math.ceil(results.length / resultsPerPage));
+    const page = Math.min(currentPage, totalPages);
+    const startIndex = (page - 1) * resultsPerPage;
+    const pageResults = results.slice(startIndex, startIndex + resultsPerPage);
+
+    const goToPage = (newPage) => {
+        setCurrentPage(newPage);
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    };
 
     useEffect(() => {
         if (refreshTrigger > 0) {
@@ -175,6 +194,27 @@ export default function SearchInterface({
                             </option>
                         </select>
                     </div>
+
+                    <div className="ranking-option">
+                        <label htmlFor="results-per-page">
+                            Results per page
+                        </label>
+
+                        <select
+                            id="results-per-page"
+                            value={resultsPerPage}
+                            onChange={(event) => {
+                                setResultsPerPage(Number(event.target.value));
+                                setCurrentPage(1);
+                            }}
+                        >
+                            {RESULTS_PER_PAGE_OPTIONS.map((option) => (
+                                <option key={option} value={option}>
+                                    {option}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
                 </div>
             </form>
 
@@ -197,7 +237,7 @@ export default function SearchInterface({
             )}
 
             <ul className="search-results-list">
-                {results.map((result) => (
+                {pageResults.map((result) => (
                     <ResultComponent
                         key={result.url}
                         title={result.title}
@@ -206,7 +246,35 @@ export default function SearchInterface({
                         {...(getResultProps?.(result) ?? {})}
                     />
                 ))}
-            </ul>
+                        </ul>
+
+            {results.length > 0 && !isSearching && (
+                <nav className="pagination" aria-label="Search results pages">
+                    <button
+                        type="button"
+                        className="pagination-button"
+                        onClick={() => goToPage(page - 1)}
+                        disabled={page <= 1}
+                        aria-label="Previous page"
+                    >
+                        &larr;
+                    </button>
+
+                    <span className="pagination-info">
+                        Page {page} of {totalPages}
+                    </span>
+
+                    <button
+                        type="button"
+                        className="pagination-button"
+                        onClick={() => goToPage(page + 1)}
+                        disabled={page >= totalPages}
+                        aria-label="Next page"
+                    >
+                        &rarr;
+                    </button>
+                </nav>
+            )}
         </main>
     );
 }
