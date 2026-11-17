@@ -4,6 +4,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
 
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -148,5 +149,40 @@ public class DatabaseManager
 
             return pageIds;
         });
+    }
+
+    public record PageLink(long id, String url) {}
+
+    public List<PageLink> getPageLinks() {
+        return database.query(
+                "SELECT id, url FROM WEB_DATA ORDER BY id",
+                (row, number) -> new PageLink(row.getLong("id"), row.getString("url")));
+    }
+
+    @Transactional 
+    public int deleteBrokenLinks(List<PageLink> confirmedLinks) {
+        int deleted = 0;
+
+        for (PageLink link : confirmedLinks) {
+            List<Long> matchingIds = database.queryForList(
+                    "SELECT id from WEB_DATA WHERE id = ? AND url = ? FOR UPDATE",
+                    Long.class,
+                    link.id(),
+                    link.url());
+            
+            if (matchingIds.isEmpty()) {
+                continue;
+            }
+
+            database.update(
+                    "DELETE FROM KWIC_INDEX WHERE page_id = ?",
+                    link.id());
+            
+            deleted += database.update(
+                    "DELETE FROM WEB_DATA WHERE id = ?",
+                    link.id());
+        }
+
+        return deleted;
     }
 }

@@ -3,6 +3,7 @@ import { useState } from "react";
 import SearchInterface from "../shared/SearchInterface.jsx";
 import ModifiableSearchResult from "../ModifiableSearchResult.jsx";
 import AddWebPages from "../AddWebPages.jsx";
+import BrokenLinkCleanup from "../BrokenLinkCleanup.jsx";
 import "../styles.css";
 
 const API_BASE_URL = (
@@ -174,6 +175,13 @@ export default function Admin() {
 
     return (
         <div className="admin-page">
+            <BrokenLinkCleanup
+                apiBaseUrl={API_BASE_URL}
+                disabled={hasChanges}
+                onDeleted={() => {if (searchResults.length >0) {
+                    setRefreshTrigger((previous) => previous + 1);
+                }}}
+            />
             <SearchInterface
                 ResultComponent={ModifiableSearchResult}
                 getResultProps={getResultProps}
