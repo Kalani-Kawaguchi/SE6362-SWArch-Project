@@ -23,7 +23,7 @@ public class SqlGeneratorTest
                 sqlGenerator = new SearchSqlGenerator(false);
         }
 
-        // A single keyword should generate one placeholder and one keyword parameter.
+        // A single keyword should generate one EXISTS clause and one keyword parameter.
         @Test
         void testSingleKeyword()
         {
@@ -32,15 +32,15 @@ public class SqlGeneratorTest
                 String sql = sqlGenerator.getSearchSQL(tree);
 
                 assertEquals(
-                                "SELECT url, title, description, sponsorship_level " +
-                                                "FROM WEB_DATA " +
-                                                "WHERE id IN (SELECT page_id FROM KWIC_INDEX WHERE keyword = ?);",
+                                "SELECT w.url, w.title, w.description, w.sponsorship_level " +
+                                                "FROM WEB_DATA w " +
+                                                "WHERE EXISTS (SELECT 1 FROM KWIC_INDEX k WHERE k.page_id = w.id AND k.keyword = ?);",
                                 sql);
 
                 assertEquals(List.of("apple"), sqlGenerator.getKeywords());
         }
 
-        // AND should generate two subqueries joined by AND.
+        // AND should generate two EXISTS predicates joined by AND inside parentheses.
         @Test
         void testAndExpression()
         {
@@ -49,17 +49,17 @@ public class SqlGeneratorTest
                 String sql = sqlGenerator.getSearchSQL(tree);
 
                 assertEquals(
-                                "SELECT url, title, description, sponsorship_level " +
-                                                "FROM WEB_DATA " +
-                                                "WHERE id IN (SELECT page_id FROM KWIC_INDEX " +
-                                                "WHERE page_id IN (SELECT page_id FROM KWIC_INDEX WHERE keyword = ?) " +
-                                                "AND page_id IN (SELECT page_id FROM KWIC_INDEX WHERE keyword = ?));",
+                                "SELECT w.url, w.title, w.description, w.sponsorship_level " +
+                                                "FROM WEB_DATA w " +
+                                                "WHERE (EXISTS (SELECT 1 FROM KWIC_INDEX k WHERE k.page_id = w.id AND k.keyword = ?) "
+                                                +
+                                                "AND EXISTS (SELECT 1 FROM KWIC_INDEX k WHERE k.page_id = w.id AND k.keyword = ?));",
                                 sql);
 
                 assertEquals(List.of("apple", "banana"), sqlGenerator.getKeywords());
         }
 
-        // OR should generate two subqueries joined by OR.
+        // OR should generate two EXISTS predicates joined by OR inside parentheses.
         @Test
         void testOrExpression()
         {
@@ -68,17 +68,17 @@ public class SqlGeneratorTest
                 String sql = sqlGenerator.getSearchSQL(tree);
 
                 assertEquals(
-                                "SELECT url, title, description, sponsorship_level " +
-                                                "FROM WEB_DATA " +
-                                                "WHERE id IN (SELECT page_id FROM KWIC_INDEX " +
-                                                "WHERE page_id IN (SELECT page_id FROM KWIC_INDEX WHERE keyword = ?) " +
-                                                "OR page_id IN (SELECT page_id FROM KWIC_INDEX WHERE keyword = ?));",
+                                "SELECT w.url, w.title, w.description, w.sponsorship_level " +
+                                                "FROM WEB_DATA w " +
+                                                "WHERE (EXISTS (SELECT 1 FROM KWIC_INDEX k WHERE k.page_id = w.id AND k.keyword = ?) "
+                                                +
+                                                "OR EXISTS (SELECT 1 FROM KWIC_INDEX k WHERE k.page_id = w.id AND k.keyword = ?));",
                                 sql);
 
                 assertEquals(List.of("apple", "banana"), sqlGenerator.getKeywords());
         }
 
-        // NOT should generate a NOT IN subquery.
+        // NOT should wrap the inner predicate in NOT (...).
         @Test
         void testNotExpression()
         {
@@ -87,16 +87,15 @@ public class SqlGeneratorTest
                 String sql = sqlGenerator.getSearchSQL(tree);
 
                 assertEquals(
-                                "SELECT url, title, description, sponsorship_level " +
-                                                "FROM WEB_DATA " +
-                                                "WHERE id IN (SELECT page_id FROM KWIC_INDEX " +
-                                                "WHERE page_id NOT IN (SELECT page_id FROM KWIC_INDEX WHERE keyword = ?));",
+                                "SELECT w.url, w.title, w.description, w.sponsorship_level " +
+                                                "FROM WEB_DATA w " +
+                                                "WHERE NOT (EXISTS (SELECT 1 FROM KWIC_INDEX k WHERE k.page_id = w.id AND k.keyword = ?));",
                                 sql);
 
                 assertEquals(List.of("apple"), sqlGenerator.getKeywords());
         }
 
-        // NOT should work as an operand of a binary expression.
+        // NOT should work cleanly as an operand of a binary expression.
         @Test
         void testNotWithAnd()
         {
@@ -105,19 +104,17 @@ public class SqlGeneratorTest
                 String sql = sqlGenerator.getSearchSQL(tree);
 
                 assertEquals(
-                                "SELECT url, title, description, sponsorship_level " +
-                                                "FROM WEB_DATA " +
-                                                "WHERE id IN (SELECT page_id FROM KWIC_INDEX " +
-                                                "WHERE page_id IN (SELECT page_id FROM KWIC_INDEX WHERE keyword = ?) "
+                                "SELECT w.url, w.title, w.description, w.sponsorship_level " +
+                                                "FROM WEB_DATA w " +
+                                                "WHERE (EXISTS (SELECT 1 FROM KWIC_INDEX k WHERE k.page_id = w.id AND k.keyword = ?) "
                                                 +
-                                                "AND page_id IN (SELECT page_id FROM KWIC_INDEX " +
-                                                "WHERE page_id NOT IN (SELECT page_id FROM KWIC_INDEX WHERE keyword = ?)));",
+                                                "AND NOT (EXISTS (SELECT 1 FROM KWIC_INDEX k WHERE k.page_id = w.id AND k.keyword = ?)));",
                                 sql);
 
                 assertEquals(List.of("apple", "banana"), sqlGenerator.getKeywords());
         }
 
-        // Nested expressions should preserve tree structure and parameter order.
+        // Nested expressions should preserve tree grouping and parameter order.
         @Test
         void testNestedExpression()
         {
@@ -126,15 +123,13 @@ public class SqlGeneratorTest
                 String sql = sqlGenerator.getSearchSQL(tree);
 
                 assertEquals(
-                                "SELECT url, title, description, sponsorship_level " +
-                                                "FROM WEB_DATA " +
-                                                "WHERE id IN (SELECT page_id FROM KWIC_INDEX " +
-                                                "WHERE page_id IN (SELECT page_id FROM KWIC_INDEX WHERE keyword = ?) "
+                                "SELECT w.url, w.title, w.description, w.sponsorship_level " +
+                                                "FROM WEB_DATA w " +
+                                                "WHERE (EXISTS (SELECT 1 FROM KWIC_INDEX k WHERE k.page_id = w.id AND k.keyword = ?) "
                                                 +
-                                                "AND page_id IN (SELECT page_id FROM KWIC_INDEX " +
-                                                "WHERE page_id IN (SELECT page_id FROM KWIC_INDEX WHERE keyword = ?) "
+                                                "AND (EXISTS (SELECT 1 FROM KWIC_INDEX k WHERE k.page_id = w.id AND k.keyword = ?) "
                                                 +
-                                                "OR page_id IN (SELECT page_id FROM KWIC_INDEX WHERE keyword = ?)));",
+                                                "OR EXISTS (SELECT 1 FROM KWIC_INDEX k WHERE k.page_id = w.id AND k.keyword = ?)));",
                                 sql);
 
                 assertEquals(List.of("apple", "banana", "cherry"), sqlGenerator.getKeywords());
@@ -151,9 +146,9 @@ public class SqlGeneratorTest
                 String secondSql = sqlGenerator.getSearchSQL(secondTree);
 
                 assertEquals(
-                                "SELECT url, title, description, sponsorship_level " +
-                                                "FROM WEB_DATA " +
-                                                "WHERE id IN (SELECT page_id FROM KWIC_INDEX WHERE keyword = ?);",
+                                "SELECT w.url, w.title, w.description, w.sponsorship_level " +
+                                                "FROM WEB_DATA w " +
+                                                "WHERE EXISTS (SELECT 1 FROM KWIC_INDEX k WHERE k.page_id = w.id AND k.keyword = ?);",
                                 secondSql);
 
                 assertEquals(List.of("cherry"), sqlGenerator.getKeywords());
@@ -168,5 +163,24 @@ public class SqlGeneratorTest
                 sqlGenerator.getSearchSQL(tree);
 
                 assertEquals(List.of("apple", "apple"), sqlGenerator.getKeywords());
+        }
+
+        // Case-sensitive mode should apply BINARY to the parameter placeholder and
+        // preserve casing.
+        @Test
+        void testCaseSensitiveKeyword()
+        {
+                SearchSqlGenerator caseSensitiveGenerator = new SearchSqlGenerator(true);
+                QueryTree tree = new QueryTree("Apple");
+
+                String sql = caseSensitiveGenerator.getSearchSQL(tree);
+
+                assertEquals(
+                                "SELECT w.url, w.title, w.description, w.sponsorship_level " +
+                                                "FROM WEB_DATA w " +
+                                                "WHERE EXISTS (SELECT 1 FROM KWIC_INDEX k WHERE k.page_id = w.id AND k.keyword = BINARY ?);",
+                                sql);
+
+                assertEquals(List.of("Apple"), caseSensitiveGenerator.getKeywords());
         }
 }

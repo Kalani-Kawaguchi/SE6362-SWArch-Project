@@ -115,14 +115,12 @@ public class DatabaseManager
     }
 
     @Transactional(readOnly = true)
-    public PageList getSearchResults(String searchQuery, PageRankStrategy sortStrategy, boolean isCaseSensitive)
+    public PageList getSearchResults(QueryTree queryTree, PageRankStrategy sortStrategy, boolean isCaseSensitive)
     {
         PageList pageList = new PageList();
 
-        QueryTree tree = new QueryTree(searchQuery);
-
         SearchSqlGenerator sqlGenerator = new SearchSqlGenerator(isCaseSensitive);
-        String sql = sqlGenerator.getSearchSQL(tree, sortStrategy);
+        String sql = sqlGenerator.getSearchSQL(queryTree, sortStrategy);
 
         for (WebPage page : database.query(
                 sql,

@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public class SearchSqlGenerator implements QueryVisitor
 {
     private final ArrayList<String> keywords = new ArrayList<>();
-    private boolean isCaseSensitive;
+    private final boolean isCaseSensitive;
 
     public SearchSqlGenerator(boolean isCaseSensitive)
     {
@@ -19,48 +19,47 @@ public class SearchSqlGenerator implements QueryVisitor
 
     public String getSearchSQL(QueryTree tree)
     {
-        keywords.clear();
-
-        return "SELECT url, title, description, sponsorship_level " +
-                "FROM WEB_DATA " +
-                "WHERE id IN (" + tree.getRoot().accept(this) + ");";
+        return getSearchSQL(tree, null);
     }
 
     public String getSearchSQL(QueryTree tree, PageRankStrategy sortStrategy)
     {
         keywords.clear();
 
-        return "SELECT url, title, description, sponsorship_level " +
-                "FROM WEB_DATA " +
-                "WHERE id IN (" + tree.getRoot().accept(this) + ")" +
-                sortStrategy.generateOrderBy();
+        String orderBy = (sortStrategy != null) ? " " + sortStrategy.generateOrderBy().trim() : "";
+
+        return "SELECT w.url, w.title, w.description, w.sponsorship_level " +
+                "FROM WEB_DATA w " +
+                "WHERE " + tree.getRoot().accept(this) +
+                orderBy + ";";
     }
 
     @Override
     public String visitKeyword(KeywordNode node)
     {
-        keywords.add(node.keyword());
+        String term = isCaseSensitive ? node.keyword() : node.keyword().toLowerCase();
+        keywords.add(term);
 
-        return "SELECT page_id " +
-                "FROM KWIC_INDEX " +
-                "WHERE " + (isCaseSensitive ? "BINARY " : "") + "keyword = ?";
+        // Apply collation/binary to the parameter (?), NOT the column (k.keyword), to
+        // preserve index seeks
+        String comparison = isCaseSensitive ? "k.keyword = BINARY ?" : "k.keyword = ?";
+
+        return "EXISTS (" +
+                "SELECT 1 FROM KWIC_INDEX k " +
+                "WHERE k.page_id = w.id AND " + comparison +
+                ")";
     }
 
     @Override
     public String visitBinary(BinaryNode node)
     {
-        return "SELECT page_id " +
-                "FROM KWIC_INDEX " +
-                "WHERE page_id IN (" + node.left().accept(this) + ") " +
-                node.operator() +
-                " page_id IN (" + node.right().accept(this) + ")";
+        return "(" + node.left().accept(this) + " " + node.operator() + " " + node.right().accept(this) + ")";
     }
 
     @Override
     public String visitNot(NotNode node)
     {
-        return "SELECT page_id " +
-                "FROM KWIC_INDEX " +
-                "WHERE page_id NOT IN (" + node.operand().accept(this) + ")";
+        // Note: Matches pages in WEB_DATA that do not contain the sub-expression
+        return "NOT (" + node.operand().accept(this) + ")";
     }
 }
