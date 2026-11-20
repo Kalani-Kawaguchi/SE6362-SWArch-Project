@@ -81,7 +81,7 @@ public class DatabaseManager
     }
 
     @Transactional
-    public void deleteWebpages(PageList pages)
+    public void deleteWebpages(List<String> urls)
     {
         String sql = "DELETE FROM WEB_DATA WHERE url = ?";
 
@@ -90,13 +90,13 @@ public class DatabaseManager
             @Override
             public void setValues(PreparedStatement ps, int i) throws SQLException
             {
-                ps.setString(1, pages.getPage(i).getUrl());
+                ps.setString(1, urls.get(i));
             }
 
             @Override
             public int getBatchSize()
             {
-                return pages.getPageCount();
+                return urls.size();
             }
         });
     }
@@ -151,38 +151,11 @@ public class DatabaseManager
         });
     }
 
-    public record PageLink(long id, String url) {}
-
-    public List<PageLink> getPageLinks() {
+    public List<String> getAllUrls()
+    {
         return database.query(
-                "SELECT id, url FROM WEB_DATA ORDER BY id",
-                (row, number) -> new PageLink(row.getLong("id"), row.getString("url")));
+                "SELECT url FROM WEB_DATA ORDER BY id",
+                (row, number) -> row.getString("url"));
     }
 
-    @Transactional 
-    public int deleteBrokenLinks(List<PageLink> confirmedLinks) {
-        int deleted = 0;
-
-        for (PageLink link : confirmedLinks) {
-            List<Long> matchingIds = database.queryForList(
-                    "SELECT id from WEB_DATA WHERE id = ? AND url = ? FOR UPDATE",
-                    Long.class,
-                    link.id(),
-                    link.url());
-            
-            if (matchingIds.isEmpty()) {
-                continue;
-            }
-
-            database.update(
-                    "DELETE FROM KWIC_INDEX WHERE page_id = ?",
-                    link.id());
-            
-            deleted += database.update(
-                    "DELETE FROM WEB_DATA WHERE id = ?",
-                    link.id());
-        }
-
-        return deleted;
-    }
 }

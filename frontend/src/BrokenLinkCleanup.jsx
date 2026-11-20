@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 
 export default function BrokenLinkCleanup({
@@ -14,29 +15,6 @@ export default function BrokenLinkCleanup({
 
     const unknown = (results ?? []).filter((result) => result.status === "UNKNOWN");
 
-    const request = async (action, ids) => {
-        const response = await fetch(
-            `${apiBaseUrl}/api/kwic/broken-links/${action}`,
-            {
-                method: "POST",
-                ...(ids ? {
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(ids)
-                } : {})
-            }
-        );
-
-        if (!response.ok) {
-            throw new Error(
-                response.status === 409
-                    ? "A link check is already running. Try again shortly."
-                    : `The request failed (HTTP ${response.status}).`
-            );
-        }
-
-        return response.json();
-    };
-
     const scan = async () => {
         setBusy(true);
         setError("");
@@ -44,7 +22,22 @@ export default function BrokenLinkCleanup({
         setResults(null);
 
         try {
-            const data = await request("scan");
+            const response = await fetch(
+                `${apiBaseUrl}/api/kwic/scan`,
+                {
+                    method: "POST"
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error(
+                    response.status === 409
+                        ? "A link check is already running. Try again shortly."
+                        : `The request failed (HTTP ${response.status}).`
+                );
+            }
+
+            const data = await response.json();
 
             if (!Array.isArray(data)) {
                 throw new Error("Unexpected scan response.");
@@ -60,7 +53,7 @@ export default function BrokenLinkCleanup({
 
     const deleteBroken = async () => {
         if (!window.confirm(
-            `Recheck and delete all ${broken.length} broken links? This cannot be undone.`
+            `Delete all ${broken.length} broken links? This cannot be undone.`
         )) {
             return;
         }
@@ -70,9 +63,25 @@ export default function BrokenLinkCleanup({
         setMessage("");
 
         try {
-            const data = await request("delete", broken.map((result) => result.id));
+            const response = await fetch(
+                `${apiBaseUrl}/api/kwic/delete`,
+                {
+                    method: "DELETE",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(broken.map((result) => result.url))
+                }
+            );
 
-            setMessage(`Deleted ${data.deleted} broken links. Kept ${data.kept} entries after rechecking.`);
+            if (!response.ok) {
+                throw new Error(
+                    response.status === 409
+                        ? "A link check is already running. Try again shortly."
+                        : `The request failed (HTTP ${response.status}).`
+                );
+            }
+
+
+            setMessage("Broken links have been deleted.");
 
             onDeleted();
         } catch (error) {
@@ -88,10 +97,10 @@ export default function BrokenLinkCleanup({
             <h2 id="broken-links-heading">Broken Links</h2>
 
             <button type="button"
-                    onClick={scan}
-                    disabled={disabled || busy}
+                onClick={scan}
+                disabled={disabled || busy}
             >
-                    {busy ? "Checking links..." : "Check for broken links"}
+                {busy ? "Checking links..." : "Check for broken links"}
             </button>
 
             {disabled && (
@@ -110,7 +119,7 @@ export default function BrokenLinkCleanup({
                         <>
                             <ul>
                                 {broken.map((result) => (
-                                    <li key={result.id}>
+                                    <li key={result.url}>
                                         {result.url} - {result.reason}
                                     </li>
                                 ))}
@@ -131,7 +140,7 @@ export default function BrokenLinkCleanup({
                             <summary>Links kept for manual review</summary>
                             <ul>
                                 {unknown.map((result) => (
-                                    <li key={result.id}>
+                                    <li key={result.url}>
                                         {result.url} - {result.reason}
                                     </li>
                                 ))}

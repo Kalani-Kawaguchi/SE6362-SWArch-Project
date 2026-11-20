@@ -23,12 +23,15 @@ import org.springframework.http.MediaType;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Semaphore;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.se6362.database.DatabaseManager;
+import com.se6362.kwic.BrokenLinkService;
 import com.se6362.kwic.JsonReader;
 import com.se6362.kwic.KwicIndexBuilder;
+import com.se6362.kwic.BrokenLinkService.LinkResult;
 import com.se6362.webpage.*;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -42,6 +45,7 @@ public class KwicController
 {
     private final DatabaseManager database;
     private final ObjectMapper objectMapper;
+    private final Semaphore scanOperation = new Semaphore(1);
 
     public KwicController(DatabaseManager database)
     {
@@ -94,35 +98,40 @@ public class KwicController
         return "Successful";
     }
 
+    @PostMapping("/scan")
+    public List<LinkResult> scanForBrokenLinks()
+    {
+
+        if (!scanOperation.tryAcquire())
+        {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Operation in progress");
+        }
+        BrokenLinkService service = new BrokenLinkService(database);
+        try
+        {
+            return service.scan();
+        }
+        catch (InterruptedException exception)
+        {
+            Thread.currentThread().interrupt();
+            throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE, "Scan interrupted");
+        }
+        finally
+        {
+            scanOperation.release();
+        }
+    }
+
     // Delete current user generated KWIC index
     @DeleteMapping(value = "/delete", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public synchronized String deleteWebpage(@RequestBody List<Map<String, Object>> payload) throws IOException
+    public synchronized String deleteWebpage(@RequestBody List<String> urlsToDelete) throws IOException
     {
-        if (payload == null || payload.isEmpty())
+        if (urlsToDelete == null || urlsToDelete.isEmpty())
         {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Non-empty JSON array required");
         }
 
-        PageList pagesToDelete = new PageList();
-
-        for (Map<String, Object> element : payload)
-        {
-            if (element == null
-                    || element.get("title") == null
-                    || element.get("url") == null
-                    || element.get("description") == null)
-            {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid webpage object");
-            }
-
-            JsonNode json = objectMapper.valueToTree(element);
-
-            WebPage page = JsonReader.parseJson(json);
-
-            pagesToDelete.append(page);
-        }
-
-        database.deleteWebpages(pagesToDelete);
+        database.deleteWebpages(urlsToDelete);
 
         System.out.println("Webpages deleted");
         return "Successful";

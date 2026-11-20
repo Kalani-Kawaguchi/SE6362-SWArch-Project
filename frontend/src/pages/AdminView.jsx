@@ -82,11 +82,7 @@ export default function Admin() {
     const handleSave = async () => {
         const deletionPayload = searchResults
             .filter((result) => settings[result.url]?.isDelete)
-            .map((result) => ({
-                title: result.title,
-                url: result.url,
-                description: result.description
-            }));
+            .map((result) => result.url);
 
         const sponsorshipPayload = searchResults
             .filter((result) => {
@@ -178,9 +174,11 @@ export default function Admin() {
             <BrokenLinkCleanup
                 apiBaseUrl={API_BASE_URL}
                 disabled={hasChanges}
-                onDeleted={() => {if (searchResults.length >0) {
-                    setRefreshTrigger((previous) => previous + 1);
-                }}}
+                onDeleted={() => {
+                    if (searchResults.length > 0) {
+                        setRefreshTrigger((previous) => previous + 1);
+                    }
+                }}
             />
             <SearchInterface
                 ResultComponent={ModifiableSearchResult}
