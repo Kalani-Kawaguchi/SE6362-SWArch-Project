@@ -763,8 +763,9 @@ nav a.active:hover {
 /* Overall search layout */
 .search-layout {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 24px;
+  gap: 16px 24px;
   width: 100%;
   max-width: none;
   margin: 28px 0 24px;
@@ -775,9 +776,8 @@ nav a.active:hover {
   display: flex;
   align-items: stretch;
   gap: 10px;
-  flex: 1;
+  flex: 1 1 100%;
   min-width: 0;
-  width: 100%;
   max-width: none;
   margin: 0;
   padding: 6px;
