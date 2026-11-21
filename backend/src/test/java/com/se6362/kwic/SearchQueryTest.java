@@ -10,7 +10,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.se6362.search.BinaryNode;
 import com.se6362.search.KeywordNode;
 import com.se6362.search.NotNode;
-import com.se6362.search.QueryTree;
+import com.se6362.search.QueryParser;
 
 @ExtendWith(MockitoExtension.class)
 public class SearchQueryTest
@@ -19,55 +19,55 @@ public class SearchQueryTest
         @Test
         void testSingleKeyword()
         {
-                QueryTree query = new QueryTree("apple");
+                QueryParser query = new QueryParser("apple");
 
-                assertEquals(new KeywordNode("apple"), query.getRoot());
+                assertEquals(new KeywordNode("apple"), query.getParseTreeRoot());
         }
 
         // Adjacent keywords should be combined using implicit OR.
         @Test
         void testImplicitOr()
         {
-                QueryTree query = new QueryTree("apple banana");
+                QueryParser query = new QueryParser("apple banana");
 
                 assertEquals(
                                 new BinaryNode("OR",
                                                 new KeywordNode("apple"),
                                                 new KeywordNode("banana")),
-                                query.getRoot());
+                                query.getParseTreeRoot());
         }
 
         // An explicit OR should produce the same tree as implicit OR.
         @Test
         void testExplicitOr()
         {
-                QueryTree query = new QueryTree("apple OR banana");
+                QueryParser query = new QueryParser("apple OR banana");
 
                 assertEquals(
                                 new BinaryNode("OR",
                                                 new KeywordNode("apple"),
                                                 new KeywordNode("banana")),
-                                query.getRoot());
+                                query.getParseTreeRoot());
         }
 
         // AND should combine two keywords.
         @Test
         void testAnd()
         {
-                QueryTree query = new QueryTree("apple AND banana");
+                QueryParser query = new QueryParser("apple AND banana");
 
                 assertEquals(
                                 new BinaryNode("AND",
                                                 new KeywordNode("apple"),
                                                 new KeywordNode("banana")),
-                                query.getRoot());
+                                query.getParseTreeRoot());
         }
 
         // AND should have higher precedence than implicit OR.
         @Test
         void testAndPrecedenceWithImplicitOr()
         {
-                QueryTree query = new QueryTree("apple banana AND cherry");
+                QueryParser query = new QueryParser("apple banana AND cherry");
 
                 assertEquals(
                                 new BinaryNode("OR",
@@ -75,14 +75,14 @@ public class SearchQueryTest
                                                 new BinaryNode("AND",
                                                                 new KeywordNode("banana"),
                                                                 new KeywordNode("cherry"))),
-                                query.getRoot());
+                                query.getParseTreeRoot());
         }
 
         // AND should have higher precedence than explicit OR.
         @Test
         void testAndPrecedenceWithExplicitOr()
         {
-                QueryTree query = new QueryTree("apple OR banana AND cherry");
+                QueryParser query = new QueryParser("apple OR banana AND cherry");
 
                 assertEquals(
                                 new BinaryNode("OR",
@@ -90,14 +90,14 @@ public class SearchQueryTest
                                                 new BinaryNode("AND",
                                                                 new KeywordNode("banana"),
                                                                 new KeywordNode("cherry"))),
-                                query.getRoot());
+                                query.getParseTreeRoot());
         }
 
         // Implicit OR should be evaluated after an AND expression.
         @Test
         void testImplicitOrAfterAnd()
         {
-                QueryTree query = new QueryTree("apple AND banana cherry");
+                QueryParser query = new QueryParser("apple AND banana cherry");
 
                 assertEquals(
                                 new BinaryNode("OR",
@@ -105,14 +105,14 @@ public class SearchQueryTest
                                                                 new KeywordNode("apple"),
                                                                 new KeywordNode("banana")),
                                                 new KeywordNode("cherry")),
-                                query.getRoot());
+                                query.getParseTreeRoot());
         }
 
         // Parentheses should override the default operator precedence.
         @Test
         void testParenthesesOverridePrecedence()
         {
-                QueryTree query = new QueryTree("(apple OR banana) AND cherry");
+                QueryParser query = new QueryParser("(apple OR banana) AND cherry");
 
                 assertEquals(
                                 new BinaryNode("AND",
@@ -120,14 +120,14 @@ public class SearchQueryTest
                                                                 new KeywordNode("apple"),
                                                                 new KeywordNode("banana")),
                                                 new KeywordNode("cherry")),
-                                query.getRoot());
+                                query.getParseTreeRoot());
         }
 
         // Nested parentheses should be parsed correctly.
         @Test
         void testNestedParentheses()
         {
-                QueryTree query = new QueryTree("apple AND (banana OR (cherry AND date))");
+                QueryParser query = new QueryParser("apple AND (banana OR (cherry AND date))");
 
                 assertEquals(
                                 new BinaryNode("AND",
@@ -137,45 +137,45 @@ public class SearchQueryTest
                                                                 new BinaryNode("AND",
                                                                                 new KeywordNode("cherry"),
                                                                                 new KeywordNode("date")))),
-                                query.getRoot());
+                                query.getParseTreeRoot());
         }
 
         // NOT should apply to the following keyword.
         @Test
         void testNotKeyword()
         {
-                QueryTree query = new QueryTree("NOT apple");
+                QueryParser query = new QueryParser("NOT apple");
 
                 assertEquals(
                                 new NotNode(new KeywordNode("apple")),
-                                query.getRoot());
+                                query.getParseTreeRoot());
         }
 
         // NOT should apply to a parenthesized expression.
         @Test
         void testNotParenthesizedExpression()
         {
-                QueryTree query = new QueryTree("NOT (apple OR banana)");
+                QueryParser query = new QueryParser("NOT (apple OR banana)");
 
                 assertEquals(
                                 new NotNode(
                                                 new BinaryNode("OR",
                                                                 new KeywordNode("apple"),
                                                                 new KeywordNode("banana"))),
-                                query.getRoot());
+                                query.getParseTreeRoot());
         }
 
         // NOT should be supported after an operator.
         @Test
         void testNotAfterAnd()
         {
-                QueryTree query = new QueryTree("apple AND NOT banana");
+                QueryParser query = new QueryParser("apple AND NOT banana");
 
                 assertEquals(
                                 new BinaryNode("AND",
                                                 new KeywordNode("apple"),
                                                 new NotNode(new KeywordNode("banana"))),
-                                query.getRoot());
+                                query.getParseTreeRoot());
         }
 
         // Multiple operators should be grouped from left to right at the same
@@ -183,7 +183,7 @@ public class SearchQueryTest
         @Test
         void testLeftAssociativity()
         {
-                QueryTree query = new QueryTree("apple AND banana AND cherry");
+                QueryParser query = new QueryParser("apple AND banana AND cherry");
 
                 assertEquals(
                                 new BinaryNode("AND",
@@ -191,33 +191,33 @@ public class SearchQueryTest
                                                                 new KeywordNode("apple"),
                                                                 new KeywordNode("banana")),
                                                 new KeywordNode("cherry")),
-                                query.getRoot());
+                                query.getParseTreeRoot());
         }
 
         // Keywords may contain letters and digits.
         @Test
         void testKeywordWithDigits()
         {
-                QueryTree query = new QueryTree("apple123 AND banana2");
+                QueryParser query = new QueryParser("apple123 AND banana2");
 
                 assertEquals(
                                 new BinaryNode("AND",
                                                 new KeywordNode("apple123"),
                                                 new KeywordNode("banana2")),
-                                query.getRoot());
+                                query.getParseTreeRoot());
         }
 
         // Whitespace between tokens should be ignored.
         @Test
         void testExtraWhitespace()
         {
-                QueryTree query = new QueryTree("  apple   AND \n banana  ");
+                QueryParser query = new QueryParser("  apple   AND \n banana  ");
 
                 assertEquals(
                                 new BinaryNode("AND",
                                                 new KeywordNode("apple"),
                                                 new KeywordNode("banana")),
-                                query.getRoot());
+                                query.getParseTreeRoot());
         }
 
         // A null query should be rejected.
@@ -225,7 +225,7 @@ public class SearchQueryTest
         void testNullQuery()
         {
                 assertThrows(IllegalArgumentException.class,
-                                () -> new QueryTree(null));
+                                () -> new QueryParser(null));
         }
 
         // An empty or whitespace-only query should be rejected.
@@ -233,10 +233,10 @@ public class SearchQueryTest
         void testEmptyQuery()
         {
                 assertThrows(IllegalArgumentException.class,
-                                () -> new QueryTree(""));
+                                () -> new QueryParser(""));
 
                 assertThrows(IllegalArgumentException.class,
-                                () -> new QueryTree("   \n\t"));
+                                () -> new QueryParser("   \n\t"));
         }
 
         // An operator without a required operand should be rejected.
@@ -244,13 +244,13 @@ public class SearchQueryTest
         void testMissingOperand()
         {
                 assertThrows(IllegalArgumentException.class,
-                                () -> new QueryTree("apple AND"));
+                                () -> new QueryParser("apple AND"));
 
                 assertThrows(IllegalArgumentException.class,
-                                () -> new QueryTree("OR apple"));
+                                () -> new QueryParser("OR apple"));
 
                 assertThrows(IllegalArgumentException.class,
-                                () -> new QueryTree("apple OR"));
+                                () -> new QueryParser("apple OR"));
         }
 
         // A missing closing parenthesis should be rejected.
@@ -258,7 +258,7 @@ public class SearchQueryTest
         void testMissingClosingParenthesis()
         {
                 assertThrows(IllegalArgumentException.class,
-                                () -> new QueryTree("(apple OR banana"));
+                                () -> new QueryParser("(apple OR banana"));
         }
 
         // An unmatched closing parenthesis should be rejected.
@@ -266,7 +266,7 @@ public class SearchQueryTest
         void testUnmatchedClosingParenthesis()
         {
                 assertThrows(IllegalArgumentException.class,
-                                () -> new QueryTree("apple OR banana)"));
+                                () -> new QueryParser("apple OR banana)"));
         }
 
         // Empty parentheses should be rejected.
@@ -274,7 +274,7 @@ public class SearchQueryTest
         void testEmptyParentheses()
         {
                 assertThrows(IllegalArgumentException.class,
-                                () -> new QueryTree("()"));
+                                () -> new QueryParser("()"));
         }
 
         // Consecutive explicit operators should be rejected.
@@ -282,10 +282,10 @@ public class SearchQueryTest
         void testConsecutiveOperators()
         {
                 assertThrows(IllegalArgumentException.class,
-                                () -> new QueryTree("apple OR OR banana"));
+                                () -> new QueryParser("apple OR OR banana"));
 
                 assertThrows(IllegalArgumentException.class,
-                                () -> new QueryTree("apple AND OR banana"));
+                                () -> new QueryParser("apple AND OR banana"));
         }
 
         // Characters outside the allowed keyword character set should be rejected.
@@ -293,9 +293,9 @@ public class SearchQueryTest
         void testIllegalCharacter()
         {
                 assertThrows(IllegalArgumentException.class,
-                                () -> new QueryTree("apple-banana"));
+                                () -> new QueryParser("apple-banana"));
 
                 assertThrows(IllegalArgumentException.class,
-                                () -> new QueryTree("apple&banana"));
+                                () -> new QueryParser("apple&banana"));
         }
 }

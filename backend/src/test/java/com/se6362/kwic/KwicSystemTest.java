@@ -31,7 +31,7 @@ public class KwicSystemTest
         {
             masterControl.buildIndex(inputStream);
         }
-        String output = masterControl.getOutput();
+        String output = masterControl.getKwicIndex().toString();
         String predictedOutput = "brown fox jumps over the lazy dog The quick\n" +
                 "designing reliable software systems Software engineering is the process of\n" +
                 "dog The quick brown fox jumps over the lazy\n" +

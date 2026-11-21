@@ -2,20 +2,20 @@ package com.se6362.search;
 
 import java.util.ArrayList;
 
-public class QueryTree
+public class QueryParser
 {
     private String queryString;
     private ArrayList<String> tokens;
     private QueryNode root;
     int tokenIndex;
 
-    public QueryTree(String queryString)
+    public QueryParser(String queryString)
     {
         this.queryString = queryString;
         parseQueryString();
     }
 
-    public QueryNode getRoot()
+    public QueryNode getParseTreeRoot()
     {
         return root;
     }

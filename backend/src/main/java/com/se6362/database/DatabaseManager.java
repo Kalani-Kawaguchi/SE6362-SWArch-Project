@@ -12,8 +12,8 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.se6362.search.QueryTree;
 import com.se6362.search.PageRankStrategy;
+import com.se6362.search.QueryNode;
 import com.se6362.search.SearchSqlGenerator;
 import com.se6362.webpage.*;
 
@@ -31,53 +31,10 @@ public class DatabaseManager
     }
 
     @Transactional
-    public void insertWebpages(PageList pages)
+    public void addWebpages(PageList webpages, PageList indexEntries)
     {
-        String sql = "INSERT IGNORE INTO WEB_DATA (title, url, description) VALUES (?, ?, ?);";
-        database.batchUpdate(sql, new BatchPreparedStatementSetter()
-        {
-
-            @Override
-            public void setValues(PreparedStatement ps, int i) throws SQLException
-            {
-                ps.setString(1, pages.getPage(i).getTitle());
-                ps.setString(2, pages.getPage(i).getUrl());
-                ps.setString(3, pages.getPage(i).getDescriptor().toString());
-            }
-
-            @Override
-            public int getBatchSize()
-            {
-                return pages.getPageCount();
-            }
-        });
-    }
-
-    @Transactional
-    public void insertIndexEntries(PageList pages)
-    {
-        String sql = "INSERT IGNORE INTO KWIC_INDEX (page_id, keyword, shift_amount) VALUES (?, ?, ?)";
-        System.out.println("Retrieving page IDs...");
-        Map<String, Integer> pageIds = getPageIds();
-        System.out.println("Page ids have been retrieved.");
-
-        database.batchUpdate(sql, new BatchPreparedStatementSetter()
-        {
-
-            @Override
-            public void setValues(PreparedStatement ps, int i) throws SQLException
-            {
-                ps.setInt(1, pageIds.get(pages.getPage(i).getUrl()).intValue());
-                ps.setString(2, pages.getPage(i).getDescriptor().getFilteredWord(0));
-                ps.setInt(3, ((ShiftedDescriptor) pages.getPage(i).getDescriptor()).getShiftAmount());
-            }
-
-            @Override
-            public int getBatchSize()
-            {
-                return pages.getPageCount();
-            }
-        });
+        this.insertWebpages(webpages);
+        this.insertIndexEntries(indexEntries);
     }
 
     @Transactional
@@ -116,12 +73,12 @@ public class DatabaseManager
     }
 
     @Transactional(readOnly = true)
-    public PageList getSearchResults(QueryTree queryTree, PageRankStrategy sortStrategy, boolean isCaseSensitive)
+    public PageList getSearchResults(QueryNode rootNode, PageRankStrategy sortStrategy, boolean isCaseSensitive)
     {
         PageList pageList = new PageList();
 
         SearchSqlGenerator sqlGenerator = new SearchSqlGenerator(isCaseSensitive);
-        String sql = sqlGenerator.getSearchSQL(queryTree, sortStrategy);
+        String sql = sqlGenerator.getSearchSQL(rootNode, sortStrategy);
 
         for (WebPage page : database.query(
                 sql,
@@ -132,6 +89,13 @@ public class DatabaseManager
         }
 
         return pageList;
+    }
+
+    public List<String> getAllUrls()
+    {
+        return database.query(
+                "SELECT url FROM WEB_DATA ORDER BY id",
+                (row, number) -> row.getString("url"));
     }
 
     private Map<String, Integer> getPageIds()
@@ -151,11 +115,52 @@ public class DatabaseManager
         });
     }
 
-    public List<String> getAllUrls()
+    private void insertWebpages(PageList pages)
     {
-        return database.query(
-                "SELECT url FROM WEB_DATA ORDER BY id",
-                (row, number) -> row.getString("url"));
+        String sql = "INSERT IGNORE INTO WEB_DATA (title, url, description) VALUES (?, ?, ?);";
+        database.batchUpdate(sql, new BatchPreparedStatementSetter()
+        {
+
+            @Override
+            public void setValues(PreparedStatement ps, int i) throws SQLException
+            {
+                ps.setString(1, pages.getPage(i).getTitle());
+                ps.setString(2, pages.getPage(i).getUrl());
+                ps.setString(3, pages.getPage(i).getDescriptor().toString());
+            }
+
+            @Override
+            public int getBatchSize()
+            {
+                return pages.getPageCount();
+            }
+        });
+    }
+
+    private void insertIndexEntries(PageList pages)
+    {
+        String sql = "INSERT IGNORE INTO KWIC_INDEX (page_id, keyword, shift_amount) VALUES (?, ?, ?)";
+        System.out.println("Retrieving page IDs...");
+        Map<String, Integer> pageIds = getPageIds();
+        System.out.println("Page ids have been retrieved.");
+
+        database.batchUpdate(sql, new BatchPreparedStatementSetter()
+        {
+
+            @Override
+            public void setValues(PreparedStatement ps, int i) throws SQLException
+            {
+                ps.setInt(1, pageIds.get(pages.getPage(i).getUrl()).intValue());
+                ps.setString(2, pages.getPage(i).getDescriptor().getFilteredWord(0));
+                ps.setInt(3, ((ShiftedDescriptor) pages.getPage(i).getDescriptor()).getShiftAmount());
+            }
+
+            @Override
+            public int getBatchSize()
+            {
+                return pages.getPageCount();
+            }
+        });
     }
 
 }

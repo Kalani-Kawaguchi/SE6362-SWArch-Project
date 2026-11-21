@@ -63,7 +63,7 @@ public class KwicController
 
         indexBuilder.buildIndex(request.getInputStream());
         System.out.println("Index has been built.");
-        indexBuilder.saveIndex(database);
+        database.addWebpages(indexBuilder.getInputWebpages(), indexBuilder.getKwicIndex());
 
         return "successful";
     }
@@ -99,7 +99,7 @@ public class KwicController
     }
 
     @PostMapping("/scan")
-    public List<LinkResult> scanForBrokenLinks()
+    public List<LinkResult> getBrokenLinks()
     {
 
         if (!scanOperation.tryAcquire())

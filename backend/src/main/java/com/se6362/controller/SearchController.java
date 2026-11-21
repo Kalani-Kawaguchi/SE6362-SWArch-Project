@@ -25,7 +25,7 @@ import com.se6362.database.DatabaseManager;
 import com.se6362.kwic.JsonReader;
 import com.se6362.search.PageRankStrategy;
 import com.se6362.search.RankByAccessFrequency;
-import com.se6362.search.QueryTree;
+import com.se6362.search.QueryParser;
 import com.se6362.search.RankByTitle;
 import com.se6362.webpage.PageList;
 import com.se6362.webpage.WebPage;
@@ -70,10 +70,10 @@ public class SearchController
             throw new IllegalArgumentException("The given page rank strategy is unavailable");
         }
 
-        QueryTree queryTree = new QueryTree(query);
+        QueryParser queryParser = new QueryParser(query);
 
         PageList results = database.getSearchResults(
-                queryTree,
+                queryParser.getParseTreeRoot(),
                 pageRankStrategy,
                 isCaseSensitive);
 

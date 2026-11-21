@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import com.se6362.database.DatabaseManager;
 import com.se6362.webpage.*;
 
 import java.io.InputStream;
@@ -20,8 +19,18 @@ import java.io.InputStream;
 public class KwicIndexBuilder
 {
     private static final int BATCH_SIZE = 10;
-    private PageList input = new PageList();
-    private PageList output = new PageList();
+    private PageList inputWebpages = new PageList();
+    private PageList KwicIndex = new PageList();
+
+    public PageList getKwicIndex()
+    {
+        return KwicIndex;
+    }
+
+    public PageList getInputWebpages()
+    {
+        return inputWebpages;
+    }
 
     // Runs the KWIC indexing. Uses incremental
     // processing
@@ -81,19 +90,6 @@ public class KwicIndexBuilder
         }
     }
 
-    // Saves output stored in output buffer to a SQL database
-    public void saveIndex(DatabaseManager database)
-    {
-        database.insertWebpages(input);
-        database.insertIndexEntries(output);
-    }
-
-    // Returns all output lines. Used to display output back to user.
-    public String getOutput()
-    {
-        return output.toString();
-    }
-
     // Processes Lines in a LineList object by perfroming the circular shifting,
     // alphabetization, and merging
     // This is where most of the work happens to build the KWIC index.
@@ -111,12 +107,12 @@ public class KwicIndexBuilder
 
     private synchronized void updateOutput(PageList newOutput)
     {
-        KwicProcessingStep merger = new Merger(output, newOutput);
-        this.output = merger.getOutput();
+        KwicProcessingStep merger = new Merger(KwicIndex, newOutput);
+        this.KwicIndex = merger.getOutput();
     }
 
     private synchronized void updateInput(PageList newInput)
     {
-        input.append(newInput);
+        inputWebpages.append(newInput);
     }
 }

@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.se6362.search.QueryTree;
+import com.se6362.search.QueryParser;
 import com.se6362.search.SearchSqlGenerator;
 
 @ExtendWith(MockitoExtension.class)
@@ -27,9 +27,9 @@ public class SqlGeneratorTest
         @Test
         void testSingleKeyword()
         {
-                QueryTree tree = new QueryTree("apple");
+                QueryParser tree = new QueryParser("apple");
 
-                String sql = sqlGenerator.getSearchSQL(tree);
+                String sql = sqlGenerator.getSearchSQL(tree.getParseTreeRoot());
 
                 assertEquals(
                                 "SELECT w.url, w.title, w.description, w.sponsorship_level " +
@@ -44,9 +44,9 @@ public class SqlGeneratorTest
         @Test
         void testAndExpression()
         {
-                QueryTree tree = new QueryTree("apple AND banana");
+                QueryParser tree = new QueryParser("apple AND banana");
 
-                String sql = sqlGenerator.getSearchSQL(tree);
+                String sql = sqlGenerator.getSearchSQL(tree.getParseTreeRoot());
 
                 assertEquals(
                                 "SELECT w.url, w.title, w.description, w.sponsorship_level " +
@@ -63,9 +63,9 @@ public class SqlGeneratorTest
         @Test
         void testOrExpression()
         {
-                QueryTree tree = new QueryTree("apple OR banana");
+                QueryParser tree = new QueryParser("apple OR banana");
 
-                String sql = sqlGenerator.getSearchSQL(tree);
+                String sql = sqlGenerator.getSearchSQL(tree.getParseTreeRoot());
 
                 assertEquals(
                                 "SELECT w.url, w.title, w.description, w.sponsorship_level " +
@@ -82,9 +82,9 @@ public class SqlGeneratorTest
         @Test
         void testNotExpression()
         {
-                QueryTree tree = new QueryTree("NOT apple");
+                QueryParser tree = new QueryParser("NOT apple");
 
-                String sql = sqlGenerator.getSearchSQL(tree);
+                String sql = sqlGenerator.getSearchSQL(tree.getParseTreeRoot());
 
                 assertEquals(
                                 "SELECT w.url, w.title, w.description, w.sponsorship_level " +
@@ -99,9 +99,9 @@ public class SqlGeneratorTest
         @Test
         void testNotWithAnd()
         {
-                QueryTree tree = new QueryTree("apple AND NOT banana");
+                QueryParser tree = new QueryParser("apple AND NOT banana");
 
-                String sql = sqlGenerator.getSearchSQL(tree);
+                String sql = sqlGenerator.getSearchSQL(tree.getParseTreeRoot());
 
                 assertEquals(
                                 "SELECT w.url, w.title, w.description, w.sponsorship_level " +
@@ -118,9 +118,9 @@ public class SqlGeneratorTest
         @Test
         void testNestedExpression()
         {
-                QueryTree tree = new QueryTree("apple AND (banana OR cherry)");
+                QueryParser tree = new QueryParser("apple AND (banana OR cherry)");
 
-                String sql = sqlGenerator.getSearchSQL(tree);
+                String sql = sqlGenerator.getSearchSQL(tree.getParseTreeRoot());
 
                 assertEquals(
                                 "SELECT w.url, w.title, w.description, w.sponsorship_level " +
@@ -139,11 +139,11 @@ public class SqlGeneratorTest
         @Test
         void testKeywordsAreClearedBetweenQueries()
         {
-                QueryTree firstTree = new QueryTree("apple AND banana");
-                QueryTree secondTree = new QueryTree("cherry");
+                QueryParser firstTree = new QueryParser("apple AND banana");
+                QueryParser secondTree = new QueryParser("cherry");
 
-                sqlGenerator.getSearchSQL(firstTree);
-                String secondSql = sqlGenerator.getSearchSQL(secondTree);
+                sqlGenerator.getSearchSQL(firstTree.getParseTreeRoot());
+                String secondSql = sqlGenerator.getSearchSQL(secondTree.getParseTreeRoot());
 
                 assertEquals(
                                 "SELECT w.url, w.title, w.description, w.sponsorship_level " +
@@ -158,9 +158,9 @@ public class SqlGeneratorTest
         @Test
         void testRepeatedKeyword()
         {
-                QueryTree tree = new QueryTree("apple OR apple");
+                QueryParser tree = new QueryParser("apple OR apple");
 
-                sqlGenerator.getSearchSQL(tree);
+                sqlGenerator.getSearchSQL(tree.getParseTreeRoot());
 
                 assertEquals(List.of("apple", "apple"), sqlGenerator.getKeywords());
         }
@@ -171,9 +171,9 @@ public class SqlGeneratorTest
         void testCaseSensitiveKeyword()
         {
                 SearchSqlGenerator caseSensitiveGenerator = new SearchSqlGenerator(true);
-                QueryTree tree = new QueryTree("Apple");
+                QueryParser tree = new QueryParser("Apple");
 
-                String sql = caseSensitiveGenerator.getSearchSQL(tree);
+                String sql = caseSensitiveGenerator.getSearchSQL(tree.getParseTreeRoot());
 
                 assertEquals(
                                 "SELECT w.url, w.title, w.description, w.sponsorship_level " +
