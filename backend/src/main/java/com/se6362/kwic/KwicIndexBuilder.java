@@ -102,7 +102,7 @@ public class KwicIndexBuilder
         updateInput(inputPages);
         KwicProcessingStep circularShift = new CircularShifter(inputPages);
         PageList shiftedPages = circularShift.getOutput();
-        KwicProcessingStep noiseWorkRemover = new NoiseWorkRemover(shiftedPages);
+        KwicProcessingStep noiseWorkRemover = new NoiseWordRemover(shiftedPages);
         PageList noiseWordlessPages = noiseWorkRemover.getOutput();
         KwicProcessingStep alphabetizer = new Alphabetizer(noiseWordlessPages);
         PageList alphabetizedPages = alphabetizer.getOutput();

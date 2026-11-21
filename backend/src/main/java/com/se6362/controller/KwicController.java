@@ -106,10 +106,10 @@ public class KwicController
         {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Operation in progress");
         }
-        BrokenLinkService service = new BrokenLinkService(database);
+        BrokenLinkService service = new BrokenLinkService();
         try
         {
-            return service.scan();
+            return service.scanUrls(database.getAllUrls());
         }
         catch (InterruptedException exception)
         {

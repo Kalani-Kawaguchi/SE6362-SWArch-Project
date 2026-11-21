@@ -18,16 +18,12 @@ import java.util.concurrent.TimeUnit;
 
 import org.springframework.stereotype.Service;
 
-import com.se6362.database.DatabaseManager;
-
 @Service
 public class BrokenLinkService
 {
     public record LinkResult(String url, String status, String reason)
     {
     }
-
-    private final DatabaseManager database;
 
     private final Semaphore concurrencyLimiter = new Semaphore(25);
 
@@ -40,17 +36,7 @@ public class BrokenLinkService
             .followRedirects(HttpClient.Redirect.NEVER)
             .build();
 
-    public BrokenLinkService(DatabaseManager database)
-    {
-        this.database = database;
-    }
-
-    public List<LinkResult> scan() throws InterruptedException
-    {
-        return checkAll(database.getAllUrls());
-    }
-
-    private List<LinkResult> checkAll(List<String> urls) throws InterruptedException
+    public List<LinkResult> scanUrls(List<String> urls) throws InterruptedException
     {
         if (urls.isEmpty())
         {
@@ -59,23 +45,22 @@ public class BrokenLinkService
 
         try (var executor = Executors.newVirtualThreadPerTaskExecutor())
         {
-            List<Callable<Map.Entry<String, StatusOutcome>>> tasks = urls
-                    .stream().<Callable<Map.Entry<String, StatusOutcome>>>map(url -> () ->
-                    {
-                        concurrencyLimiter.acquire();
-                        try
-                        {
-                            return Map.entry(url, checkUrl(url));
-                        }
-                        finally
-                        {
-                            concurrencyLimiter.release();
-                        }
-                    })
-                    .toList();
+            List<Callable<StatusOutcome>> tasks = urls.stream().<Callable<StatusOutcome>>map(url -> () ->
+            {
+                concurrencyLimiter.acquire();
+                try
+                {
+                    return checkUrl(url);
+                }
+                finally
+                {
+                    concurrencyLimiter.release();
+                }
+            }).toList();
 
             var futures = executor.invokeAll(tasks, 45, TimeUnit.SECONDS);
-            Map<String, StatusOutcome> outcomesByUrl = new ConcurrentHashMap<>();
+
+            List<LinkResult> results = new java.util.ArrayList<>();
 
             for (int i = 0; i < futures.size(); i++)
             {
@@ -84,30 +69,27 @@ public class BrokenLinkService
 
                 if (future.isCancelled())
                 {
-                    outcomesByUrl.put(url, new StatusOutcome("UNKNOWN", "Scan time limit reached; kept"));
+                    results.add(new LinkResult(
+                            url, "UNKNOWN", "Scan time limit reached; kept"));
                     continue;
                 }
 
                 try
                 {
-                    var entry = future.get();
-                    outcomesByUrl.put(entry.getKey(), entry.getValue());
+                    StatusOutcome outcome = future.get();
+
+                    results.add(new LinkResult(
+                            url, outcome.status(), outcome.reason()));
                 }
                 catch (ExecutionException exception)
                 {
-                    throw new IllegalStateException("Unable to complete the link scan", exception.getCause());
+                    throw new IllegalStateException(
+                            "Unable to complete the link scan",
+                            exception.getCause());
                 }
             }
 
-            return urls.stream()
-                    .map(url ->
-                    {
-                        StatusOutcome outcome = outcomesByUrl.getOrDefault(
-                                url,
-                                new StatusOutcome("UNKNOWN", "Unable to verify; kept"));
-                        return new LinkResult(url, outcome.status(), outcome.reason());
-                    })
-                    .toList();
+            return results;
         }
     }
 

@@ -3,7 +3,7 @@ package com.se6362.kwic;
 import com.se6362.webpage.*;
 import java.util.Set;
 
-public class NoiseWorkRemover implements KwicProcessingStep
+public class NoiseWordRemover implements KwicProcessingStep
 {
     private PageList inputPages;
 
@@ -42,7 +42,7 @@ public class NoiseWorkRemover implements KwicProcessingStep
             "you", "you'd", "you'll", "you're", "you've", "your", "yours",
             "yourself", "yourselves");
 
-    public NoiseWorkRemover(PageList pages)
+    public NoiseWordRemover(PageList pages)
     {
         this.inputPages = pages;
     }
