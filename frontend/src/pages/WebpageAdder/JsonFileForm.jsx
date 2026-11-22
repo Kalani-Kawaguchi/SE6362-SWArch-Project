@@ -1,6 +1,6 @@
 
 import React, { useState } from "react";
-import "./AddWebPages.css";
+import "../../styles/AddWebPages.css";
 
 function JsonFileForm({ onJsonLoaded }) {
     const [file, setFile] = useState(null);

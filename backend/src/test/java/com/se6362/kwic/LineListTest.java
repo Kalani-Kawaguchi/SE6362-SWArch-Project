@@ -14,8 +14,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.se6362.webpage.PageList;
-import com.se6362.webpage.WebPage;
+import com.se6362.index.Alphabetizer;
+import com.se6362.index.CircularShifter;
+import com.se6362.index.Merger;
+import com.se6362.web.PageList;
+import com.se6362.web.WebPage;
 
 @ExtendWith(MockitoExtension.class)
 public class LineListTest

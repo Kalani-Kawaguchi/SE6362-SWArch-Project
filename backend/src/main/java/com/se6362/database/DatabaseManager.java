@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.se6362.search.PageRankStrategy;
 import com.se6362.search.QueryNode;
 import com.se6362.search.SearchSqlGenerator;
-import com.se6362.webpage.*;
+import com.se6362.web.*;
 
 @Repository
 public class DatabaseManager

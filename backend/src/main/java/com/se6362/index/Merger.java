@@ -6,9 +6,9 @@
     Description: Module to merge lines from two alphabetized LineLists into one LineList
  */
 
-package com.se6362.kwic;
+package com.se6362.index;
 
-import com.se6362.webpage.*;
+import com.se6362.web.*;
 
 public class Merger implements KwicProcessingStep
 {

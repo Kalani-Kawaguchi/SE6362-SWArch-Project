@@ -1,4 +1,4 @@
-package com.se6362.controller;
+package com.se6362;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.GetMapping;

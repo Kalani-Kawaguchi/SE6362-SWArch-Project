@@ -6,7 +6,7 @@
     Description: REST controller mapping POST requests sent from search engine
  */
 
-package com.se6362.controller;
+package com.se6362.search;
 
 import java.io.IOException;
 import java.util.Map;
@@ -22,13 +22,9 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.http.MediaType;
 
 import com.se6362.database.DatabaseManager;
-import com.se6362.kwic.JsonReader;
-import com.se6362.search.PageRankStrategy;
-import com.se6362.search.RankByAccessFrequency;
-import com.se6362.search.QueryParser;
-import com.se6362.search.RankByTitle;
-import com.se6362.webpage.PageList;
-import com.se6362.webpage.WebPage;
+import com.se6362.index.JsonReader;
+import com.se6362.web.PageList;
+import com.se6362.web.WebPage;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;

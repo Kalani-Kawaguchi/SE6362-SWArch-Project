@@ -6,13 +6,14 @@
     Description: Controls sequence of KWIC processing steps all the way from input to output
  */
 
-package com.se6362.kwic;
+package com.se6362.index;
 
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import com.se6362.webpage.*;
+
+import com.se6362.web.*;
 
 import java.io.InputStream;
 

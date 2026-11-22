@@ -1,4 +1,4 @@
-package com.se6362.kwic;
+package com.se6362.index;
 
 import java.io.IOException;
 import java.net.InetAddress;

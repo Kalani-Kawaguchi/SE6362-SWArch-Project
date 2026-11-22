@@ -6,9 +6,9 @@
     Description: Module to alphabetize all lines in a LineList object
  */
 
-package com.se6362.kwic;
+package com.se6362.index;
 
-import com.se6362.webpage.*;
+import com.se6362.web.*;
 
 public class Alphabetizer implements KwicProcessingStep
 {

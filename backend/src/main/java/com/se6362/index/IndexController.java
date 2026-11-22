@@ -6,7 +6,7 @@
     Description: REST controller mapping POST requests sent from the KWIC Index Builder
  */
 
-package com.se6362.controller;
+package com.se6362.index;
 
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
@@ -28,11 +28,8 @@ import java.util.concurrent.Semaphore;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.se6362.database.DatabaseManager;
-import com.se6362.kwic.BrokenLinkService;
-import com.se6362.kwic.JsonReader;
-import com.se6362.kwic.KwicIndexBuilder;
-import com.se6362.kwic.BrokenLinkService.LinkResult;
-import com.se6362.webpage.*;
+import com.se6362.index.BrokenLinkService.LinkResult;
+import com.se6362.web.*;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -41,13 +38,13 @@ import com.fasterxml.jackson.databind.JsonNode;
 @CrossOrigin(origins = "http://localhost:1234")
 @RestController
 @RequestMapping("/api/kwic")
-public class KwicController
+public class IndexController
 {
     private final DatabaseManager database;
     private final ObjectMapper objectMapper;
     private final Semaphore scanOperation = new Semaphore(1);
 
-    public KwicController(DatabaseManager database)
+    public IndexController(DatabaseManager database)
     {
         this.database = database;
         this.objectMapper = new ObjectMapper();

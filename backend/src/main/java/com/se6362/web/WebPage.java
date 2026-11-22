@@ -1,4 +1,4 @@
-package com.se6362.webpage;
+package com.se6362.web;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;

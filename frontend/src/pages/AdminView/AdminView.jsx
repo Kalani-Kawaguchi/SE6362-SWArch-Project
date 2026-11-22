@@ -1,10 +1,10 @@
 
 import { useState } from "react";
-import SearchInterface from "../shared/SearchInterface.jsx";
-import ModifiableSearchResult from "../ModifiableSearchResult.jsx";
-import AddWebPages from "../AddWebPages.jsx";
-import BrokenLinkCleanup from "../BrokenLinkCleanup.jsx";
-import "../styles.css";
+import SearchInterface from "../../shared/SearchInterface.jsx";
+import ModifiableSearchResult from "./ModifiableSearchResult.jsx";
+import AddWebPages from "../WebpageAdder/AddWebPages.jsx";
+import BrokenLinkCleanup from "./BrokenLinkCleanup.jsx";
+import "../../styles/styles.css";
 
 const API_BASE_URL = (
     process.env.API_BASE_URL || "http://localhost:8080"

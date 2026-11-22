@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import "../styles.css";
+import "../styles/styles.css";
 
 const API_BASE_URL = (
     process.env.API_BASE_URL || "http://localhost:8080"
@@ -104,7 +104,7 @@ export default function SearchInterface({
             setIsSearching(false);
         }
     }
-    
+
     const totalPages = Math.max(1, Math.ceil(results.length / resultsPerPage));
     const page = Math.min(currentPage, totalPages);
     const startIndex = (page - 1) * resultsPerPage;
@@ -246,7 +246,7 @@ export default function SearchInterface({
                         {...(getResultProps?.(result) ?? {})}
                     />
                 ))}
-                        </ul>
+            </ul>
 
             {results.length > 0 && !isSearching && (
                 <nav className="pagination" aria-label="Search results pages">

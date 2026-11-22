@@ -1,11 +1,11 @@
-package com.se6362.kwic;
+package com.se6362.index;
 
 import java.io.InputStream;
 import java.io.IOException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import com.se6362.webpage.*;
+import com.se6362.web.*;
 
 public class InputBuffer implements AutoCloseable
 {

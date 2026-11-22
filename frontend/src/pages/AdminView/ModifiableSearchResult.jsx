@@ -6,8 +6,8 @@
 */
 
 import { useState } from "react";
-import SearchResult from "./SearchResult.jsx";
-import "./styles.css";
+import SearchResult from "../../shared/SearchResult.jsx";
+import "../../styles/styles.css";
 
 export default function ModifiableSearchResult({
     title,

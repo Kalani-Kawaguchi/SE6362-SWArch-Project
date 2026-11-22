@@ -14,6 +14,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.se6362.index.KwicIndexBuilder;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;

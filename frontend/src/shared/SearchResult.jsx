@@ -6,8 +6,8 @@
     Description: Generic react component for displaying a single result from the search engine
  */
 
-import "./styles.css";
-import "./searchResultStyles.css";
+import "../styles/styles.css";
+import "../styles/searchResultStyles.css";
 
 const API_BASE_URL = (
     process.env.API_BASE_URL || "http://localhost:8080"

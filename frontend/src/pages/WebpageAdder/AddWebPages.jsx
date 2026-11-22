@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import JsonFileForm from "./JsonFileForm";
 
-import "./AddWebPages.css";
+import "../../styles/AddWebPages.css";
 
 const API_BASE_URL = (
     process.env.API_BASE_URL || "http://localhost:8080"

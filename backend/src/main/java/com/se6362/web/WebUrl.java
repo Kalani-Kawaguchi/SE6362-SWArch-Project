@@ -1,4 +1,4 @@
-package com.se6362.webpage;
+package com.se6362.web;
 
 import java.net.URI;
 import java.net.URL;
