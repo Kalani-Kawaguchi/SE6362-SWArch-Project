@@ -6,7 +6,7 @@
     Description: Tests complete kwic index processing from input to output (does not test database)
  */
 
-package com.se6362.kwic;
+package com.se6362;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

@@ -6,7 +6,7 @@
     Description: Tests LineList class and all subclasses individually
  */
 
-package com.se6362.kwic;
+package com.se6362;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -21,7 +21,7 @@ import com.se6362.web.PageList;
 import com.se6362.web.WebPage;
 
 @ExtendWith(MockitoExtension.class)
-public class LineListTest
+public class KwicProcessingStepsTest
 {
 
     @Test
