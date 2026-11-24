@@ -10,17 +10,18 @@ const MAX_QUERY_LENGTH = 500;
 const RESULTS_PER_PAGE_OPTIONS = [5, 10, 20, 50, 100];
 
 const CONTAINS_NUMBER = /\p{N}/u;
-const CONTAINS_SYMBOL = /[^\p{L}\p{N}\s]/u;
+const CONTAINS_SYMBOL = /[^\p{L}\p{N}\s!'".,;:\[\]{}()?\/$#-]/u;
+// whitelisted symbols: ! ; " . , ; : [ ] { } ( ) ? / $ # -
 const getFilterableText = (result) => result.title ?? "";
 
 const shouldKeepResult = (result, { filterNumbers, filterSymbols }) => {
     const text = getFilterableText(result);
 
-    if (filterNumbers && CONTAINS_NUMBER.test(text)) {
+    if (!filterNumbers && CONTAINS_NUMBER.test(text)) {
         return false;
     }
 
-    if (filterSymbols && CONTAINS_SYMBOL.test(text)) {
+    if (!filterSymbols && CONTAINS_SYMBOL.test(text)) {
         return false;
     }
 
@@ -43,8 +44,8 @@ export default function SearchInterface({
     const [isCaseSensitive, setIsCaseSensitive] = useState(false);
     const [rankingStrategy, setRankingStrategy] = useState("title");
 
-    const [filterNumbers, setFilterNumbers] = useState(false);
-    const [filterSymbols, setFilterSymbols] = useState(false);
+    const [filterNumbers, setFilterNumbers] = useState(true);
+    const [filterSymbols, setFilterSymbols] = useState(true);
 
     const [resultsPerPage, setResultsPerPage] = useState(10);
     const [currentPage, setCurrentPage] = useState(1);
@@ -209,7 +210,7 @@ export default function SearchInterface({
                             }}
                             disabled={isSearching}
                         />
-                        <span>Filter Numbers</span>
+                        <span>Include Numbers</span>
                     </label>
 
                     <label className="checkbox-option">
@@ -222,7 +223,7 @@ export default function SearchInterface({
                             }}
                             disabled={isSearching}
                         />
-                        <span>Filter Symbols</span>
+                        <span>Include Special Symbols</span>
                     </label>
 
                     <div className="ranking-option">
