@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
-import "../styles.css";
+import "../styles/styles.css";
 
 const API_BASE_URL = (
     process.env.API_BASE_URL || "http://localhost:8080"
@@ -17,6 +17,7 @@ const SEARCH_SYMBOLS = /[^\p{L}\p{N}\s]/u;
 
 const getFilterableText = (result) => result.title ?? "";
 
+
 const shouldKeepResult = (result, { filterNumbers, filterSymbols }) => {
     const text = getFilterableText(result);
 
@@ -30,6 +31,7 @@ const shouldKeepResult = (result, { filterNumbers, filterSymbols }) => {
 
     return true;
 };
+
 
 export default function SearchInterface({
     ResultComponent,
@@ -205,7 +207,7 @@ export default function SearchInterface({
                         />
                         <span>Case-sensitive search</span>
                     </label>
-
+                 {/* 
                     <label className="checkbox-option">
                         <input
                             type="checkbox"
@@ -231,6 +233,7 @@ export default function SearchInterface({
                         />
                         <span>Include Special Symbols</span>
                     </label>
+                */}
 
                     <div className="ranking-option">
                         <label htmlFor="ranking-strategy">
