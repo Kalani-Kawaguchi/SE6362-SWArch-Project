@@ -1,0 +1,63 @@
+/*
+    SE 6362.001
+    Course Project: KWIC Index System
+    Team Members: Jonathan Loper, Kalani Kawaguchi, Zhi Li, Mitchell Vu
+    File Name: KwicSystemTest.java
+    Description: Tests complete kwic index processing from input to output (does not test database)
+ */
+
+package com.se6362;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import com.se6362.index.KwicIndexBuilder;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Path;
+import java.nio.file.Files;
+
+@ExtendWith(MockitoExtension.class)
+public class KwicSystemTest
+{
+    // test the system with testData.jsonl as input
+    @Test
+    void testKwicSystem() throws IOException
+    {
+        KwicIndexBuilder masterControl = new KwicIndexBuilder();
+        try (InputStream inputStream = Files.newInputStream(Path.of("testData.json")))
+        {
+            masterControl.buildIndex(inputStream);
+        }
+        String output = masterControl.getKwicIndex().toString();
+        String predictedOutput = "brown fox jumps over the lazy dog The quick\n" +
+                "designing reliable software systems Software engineering is the process of\n" +
+                "dog The quick brown fox jumps over the lazy\n" +
+                "engine helps users find relevant information quickly A search\n" +
+                "engineering is the process of designing reliable software systems Software\n" +
+                "find relevant information quickly A search engine helps users\n" +
+                "fox jumps over the lazy dog The quick brown\n" +
+                "helps users find relevant information quickly A search engine\n" +
+                "information quickly A search engine helps users find relevant\n" +
+
+                "jumps over the lazy dog The quick brown fox\n" +
+                "lazy dog The quick brown fox jumps over the\n" +
+
+                "process of designing reliable software systems Software engineering is the\n" +
+                "quick brown fox jumps over the lazy dog The\n" +
+                "quickly A search engine helps users find relevant information\n" +
+                "relevant information quickly A search engine helps users find\n" +
+                "reliable software systems Software engineering is the process of designing\n" +
+                "search engine helps users find relevant information quickly A\n" +
+                "Software engineering is the process of designing reliable software systems\n" +
+                "software systems Software engineering is the process of designing reliable\n" +
+                "systems Software engineering is the process of designing reliable software\n" +
+
+                "users find relevant information quickly A search engine helps";
+        assertEquals(predictedOutput, output);
+    }
+}

@@ -317,6 +317,7 @@ export default function SearchInterface({
                 ))}
             </ul>
 
+
             {filteredResults.length > 0 && !isSearching && (
                 <nav className="pagination" aria-label="Search results pages">
                     <button

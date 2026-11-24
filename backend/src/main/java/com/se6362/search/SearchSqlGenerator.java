@@ -17,12 +17,12 @@ public class SearchSqlGenerator implements QueryVisitor
         return keywords;
     }
 
-    public String getSearchSQL(QueryTree tree)
+    public String getSearchSQL(QueryNode root)
     {
-        return getSearchSQL(tree, null);
+        return getSearchSQL(root, null);
     }
 
-    public String getSearchSQL(QueryTree tree, PageRankStrategy sortStrategy)
+    public String getSearchSQL(QueryNode root, PageRankStrategy sortStrategy)
     {
         keywords.clear();
 
@@ -30,7 +30,7 @@ public class SearchSqlGenerator implements QueryVisitor
 
         return "SELECT w.url, w.title, w.description, w.sponsorship_level " +
                 "FROM WEB_DATA w " +
-                "WHERE " + tree.getRoot().accept(this) +
+                "WHERE " + root.accept(this) +
                 orderBy + ";";
     }
 

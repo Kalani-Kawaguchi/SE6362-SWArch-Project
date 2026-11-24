@@ -12,10 +12,10 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.se6362.search.QueryTree;
 import com.se6362.search.PageRankStrategy;
+import com.se6362.search.QueryNode;
 import com.se6362.search.SearchSqlGenerator;
-import com.se6362.webpage.*;
+import com.se6362.web.*;
 
 @Repository
 public class DatabaseManager
@@ -31,7 +31,91 @@ public class DatabaseManager
     }
 
     @Transactional
-    public void insertWebpages(PageList pages)
+    public void addWebpages(PageList webpages, PageList indexEntries)
+    {
+        this.insertWebpages(webpages);
+        this.insertIndexEntries(indexEntries);
+    }
+
+    @Transactional
+    public void deleteWebpages(List<String> urls)
+    {
+        String sql = "DELETE FROM WEB_DATA WHERE url = ?";
+
+        database.batchUpdate(sql, new BatchPreparedStatementSetter()
+        {
+            @Override
+            public void setValues(PreparedStatement ps, int i) throws SQLException
+            {
+                ps.setString(1, urls.get(i));
+            }
+
+            @Override
+            public int getBatchSize()
+            {
+                return urls.size();
+            }
+        });
+    }
+
+    @Transactional
+    public void addSponsorship(WebPage page, int level)
+    {
+        String sql = "UPDATE WEB_DATA SET sponsorship_level = ? WHERE url = ?";
+        database.update(sql, level, page.getUrl());
+    }
+
+    @Transactional
+    public void incrementAccessFrequency(WebPage page)
+    {
+        String sql = "UPDATE WEB_DATA SET access_frequency = access_frequency + 1 WHERE url = ?";
+        database.update(sql, page.getUrl());
+    }
+
+    @Transactional(readOnly = true)
+    public PageList getSearchResults(QueryNode rootNode, PageRankStrategy sortStrategy, boolean isCaseSensitive)
+    {
+        PageList pageList = new PageList();
+
+        SearchSqlGenerator sqlGenerator = new SearchSqlGenerator(isCaseSensitive);
+        String sql = sqlGenerator.getSearchSQL(rootNode, sortStrategy);
+
+        for (WebPage page : database.query(
+                sql,
+                PAGE_MAPPER,
+                sqlGenerator.getKeywords().toArray()))
+        {
+            pageList.append(page);
+        }
+
+        return pageList;
+    }
+
+    public List<String> getAllUrls()
+    {
+        return database.query(
+                "SELECT url FROM WEB_DATA ORDER BY id",
+                (row, number) -> row.getString("url"));
+    }
+
+    private Map<String, Integer> getPageIds()
+    {
+        String sql = "SELECT id, url FROM WEB_DATA";
+
+        return database.query(sql, rs ->
+        {
+            Map<String, Integer> pageIds = new HashMap<>();
+
+            while (rs.next())
+            {
+                pageIds.put(rs.getString("url"), rs.getInt("id"));
+            }
+
+            return pageIds;
+        });
+    }
+
+    private void insertWebpages(PageList pages)
     {
         String sql = "INSERT IGNORE INTO WEB_DATA (title, url, description) VALUES (?, ?, ?);";
         database.batchUpdate(sql, new BatchPreparedStatementSetter()
@@ -53,8 +137,7 @@ public class DatabaseManager
         });
     }
 
-    @Transactional
-    public void insertIndexEntries(PageList pages)
+    private void insertIndexEntries(PageList pages)
     {
         String sql = "INSERT IGNORE INTO KWIC_INDEX (page_id, keyword, shift_amount) VALUES (?, ?, ?)";
         System.out.println("Retrieving page IDs...");
@@ -68,7 +151,7 @@ public class DatabaseManager
             public void setValues(PreparedStatement ps, int i) throws SQLException
             {
                 ps.setInt(1, pageIds.get(pages.getPage(i).getUrl()).intValue());
-                ps.setString(2, pages.getPage(i).getDescriptor().getFilteredWord(0));
+                ps.setString(2, pages.getPage(i).getDescriptor().getWord(0));
                 ps.setInt(3, ((ShiftedDescriptor) pages.getPage(i).getDescriptor()).getShiftAmount());
             }
 
@@ -80,109 +163,4 @@ public class DatabaseManager
         });
     }
 
-    @Transactional
-    public void deleteWebpages(PageList pages)
-    {
-        String sql = "DELETE FROM WEB_DATA WHERE url = ?";
-
-        database.batchUpdate(sql, new BatchPreparedStatementSetter()
-        {
-            @Override
-            public void setValues(PreparedStatement ps, int i) throws SQLException
-            {
-                ps.setString(1, pages.getPage(i).getUrl());
-            }
-
-            @Override
-            public int getBatchSize()
-            {
-                return pages.getPageCount();
-            }
-        });
-    }
-
-    @Transactional
-    public void addSponsorship(WebPage page, int level)
-    {
-        String sql = "UPDATE WEB_DATA SET sponsorship_level = ? WHERE url = ?";
-        database.update(sql, level, page.getUrl());
-    }
-
-    @Transactional
-    public void incrementAccessFrequency(WebPage page)
-    {
-        String sql = "UPDATE WEB_DATA SET access_frequency = access_frequency + 1 WHERE url = ?";
-        database.update(sql, page.getUrl());
-    }
-
-    @Transactional(readOnly = true)
-    public PageList getSearchResults(QueryTree queryTree, PageRankStrategy sortStrategy, boolean isCaseSensitive)
-    {
-        PageList pageList = new PageList();
-
-        SearchSqlGenerator sqlGenerator = new SearchSqlGenerator(isCaseSensitive);
-        String sql = sqlGenerator.getSearchSQL(queryTree, sortStrategy);
-
-        for (WebPage page : database.query(
-                sql,
-                PAGE_MAPPER,
-                sqlGenerator.getKeywords().toArray()))
-        {
-            pageList.append(page);
-        }
-
-        return pageList;
-    }
-
-    private Map<String, Integer> getPageIds()
-    {
-        String sql = "SELECT id, url FROM WEB_DATA";
-
-        return database.query(sql, rs ->
-        {
-            Map<String, Integer> pageIds = new HashMap<>();
-
-            while (rs.next())
-            {
-                pageIds.put(rs.getString("url"), rs.getInt("id"));
-            }
-
-            return pageIds;
-        });
-    }
-
-    public record PageLink(long id, String url) {}
-
-    public List<PageLink> getPageLinks() {
-        return database.query(
-                "SELECT id, url FROM WEB_DATA ORDER BY id",
-                (row, number) -> new PageLink(row.getLong("id"), row.getString("url")));
-    }
-
-    @Transactional 
-    public int deleteBrokenLinks(List<PageLink> confirmedLinks) {
-        int deleted = 0;
-
-        for (PageLink link : confirmedLinks) {
-            List<Long> matchingIds = database.queryForList(
-                    "SELECT id from WEB_DATA WHERE id = ? AND url = ? FOR UPDATE",
-                    Long.class,
-                    link.id(),
-                    link.url());
-            
-            if (matchingIds.isEmpty()) {
-                continue;
-            }
-
-            database.update(
-                    "DELETE FROM KWIC_INDEX WHERE page_id = ?",
-                    link.id());
-            
-            deleted += database.update(
-                    "DELETE FROM WEB_DATA WHERE id = ?",
-                    link.id());
-        }
-
-        return deleted;
-    }
 }

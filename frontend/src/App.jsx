@@ -8,9 +8,9 @@
 
 import { HashRouter, Routes, Route, NavLink, Link } from "react-router-dom";
 import Home from "./pages/Home.jsx";
-import Admin from "./pages/AdminView.jsx";
-import Search from "./pages/UserView.jsx";
-import AddWebPages from "./AddWebPages.jsx";
+import Admin from "./pages/AdminView/AdminView.jsx";
+import Search from "./pages/UserView/UserView.jsx";
+import AddWebPages from "./pages/WebpageAdder/AddWebPages.jsx";
 import { useEffect, useState } from "react";
 import ProjPlan from "./documents/PreliminaryProjectPlan.pdf";
 import ProjDev1 from "./documents/SoftwareArchitectureProject1.pdf";
