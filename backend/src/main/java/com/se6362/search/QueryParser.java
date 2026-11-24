@@ -201,8 +201,6 @@ public class QueryParser
 
     private boolean isKeywordCharacter(char c)
     {
-        return (c >= 'a' && c <= 'z') ||
-                (c >= 'A' && c <= 'Z') ||
-                (c >= '0' && c <= '9');
+        return c != '(' && c != ')' && !Character.isWhitespace(c);
     }
 }

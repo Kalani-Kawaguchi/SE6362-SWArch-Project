@@ -8,7 +8,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.se6362.web.*;
 
-public class JsonReader implements AutoCloseable
+public class JsonReader
 {
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
@@ -97,11 +97,5 @@ public class JsonReader implements AutoCloseable
         {
             throw new IOException("Invalid webpage record. " + exception.getMessage(), exception);
         }
-    }
-
-    @Override
-    public void close()
-    {
-        // Parser lifecycle is managed by the caller.
     }
 }

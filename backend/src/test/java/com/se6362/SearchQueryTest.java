@@ -293,9 +293,9 @@ public class SearchQueryTest
         void testIllegalCharacter()
         {
                 assertThrows(IllegalArgumentException.class,
-                                () -> new QueryParser("apple-banana"));
+                                () -> new QueryParser("apple)banana"));
 
                 assertThrows(IllegalArgumentException.class,
-                                () -> new QueryParser("apple&banana"));
+                                () -> new QueryParser("apple(banana"));
         }
 }

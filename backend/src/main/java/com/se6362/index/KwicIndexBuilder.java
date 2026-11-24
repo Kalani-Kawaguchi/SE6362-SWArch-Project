@@ -36,12 +36,11 @@ public class KwicIndexBuilder
     // Runs the KWIC indexing using incremental processing.
     public void buildIndex(InputStream inputStream) throws IOException
     {
-        filteredSymbols.clear();
         filteredSymbolsConfigured = false;
 
+        // create a parser to read the JSON file
         try (JsonParser parser = new JsonFactory().createParser(inputStream))
         {
-            // Read the root JSON object.
             if (parser.nextToken() != JsonToken.START_OBJECT)
             {
                 throw new IOException("Expected a JSON object.");
@@ -49,58 +48,31 @@ public class KwicIndexBuilder
 
             boolean webpageDataFound = false;
 
+            // A correctly formated JSON file will contain two objects a the root level
+            // One is filteredSymbols, which contains a list of characters that should be
+            // filtered from input.
+            // The other is webpageData, which contains the data that we want to build an
+            // index over
             while (parser.nextToken() != JsonToken.END_OBJECT)
             {
-                String fieldName = parser.currentName();
                 JsonToken token = parser.nextToken();
 
-                if ("filteredSymbols".equals(fieldName))
+                if (parser.currentName().equals("filteredSymbols") && !filteredSymbolsConfigured)
                 {
-                    filteredSymbols.clear();
-                    filteredSymbolsConfigured = true;
-
-                    if (token == JsonToken.START_ARRAY)
-                    {
-                        while (parser.nextToken() != JsonToken.END_ARRAY)
-                        {
-                            if (parser.currentToken() != JsonToken.VALUE_STRING)
-                            {
-                                throw new IOException("Filtered symbols must be strings.");
-                            }
-
-                            String symbol = parser.getText();
-
-                            if (symbol.length() != 1)
-                            {
-                                throw new IOException(
-                                        "Each filtered symbol must contain exactly one character.");
-                            }
-
-                            filteredSymbols.add(symbol.charAt(0));
-                        }
-                    }
-                    else if (token != JsonToken.VALUE_NULL)
-                    {
-                        throw new IOException("filteredSymbols must be a JSON array.");
-                    }
+                    readFilteredSymbols(parser, token);
                 }
-                else if ("webpageData".equals(fieldName))
+                else if (parser.currentName().equals("webpageData"))
                 {
                     if (token != JsonToken.START_ARRAY)
                     {
                         throw new IOException("webpageData must be a JSON array.");
                     }
-
-                    // Use default filtering only if no configuration was provided.
                     if (!filteredSymbolsConfigured)
                     {
                         setDefaultFilteredSymbols();
                     }
-
+                    processWebData(parser);
                     webpageDataFound = true;
-
-                    processInput(parser);
-
                     break;
                 }
                 else
@@ -113,6 +85,40 @@ public class KwicIndexBuilder
             {
                 throw new IOException("Missing webpageData in JSON request.");
             }
+        }
+    }
+
+    private void readFilteredSymbols(JsonParser parser, JsonToken token) throws IOException
+    {
+        filteredSymbols.clear();
+        filteredSymbolsConfigured = true;
+
+        if (token == JsonToken.VALUE_NULL)
+        {
+            return;
+        }
+
+        if (token != JsonToken.START_ARRAY)
+        {
+            throw new IOException("filteredSymbols must be a JSON array.");
+        }
+
+        while (parser.nextToken() != JsonToken.END_ARRAY)
+        {
+            if (parser.currentToken() != JsonToken.VALUE_STRING)
+            {
+                throw new IOException("Filtered symbols must be strings.");
+            }
+
+            String symbol = parser.getText();
+
+            if (symbol.length() != 1)
+            {
+                throw new IOException(
+                        "Each filtered symbol must contain exactly one character.");
+            }
+
+            filteredSymbols.add(symbol.charAt(0));
         }
     }
 
@@ -145,7 +151,7 @@ public class KwicIndexBuilder
     }
 
     // Runs concurrent processing on the webpage JSON array.
-    private void processInput(JsonParser parser) throws IOException
+    private void processWebData(JsonParser parser) throws IOException
     {
         int consumerThreadCount = Runtime.getRuntime().availableProcessors();
 
@@ -172,7 +178,7 @@ public class KwicIndexBuilder
                                 break;
                             }
 
-                            this.processLines(input);
+                            this.processBatch(input);
 
                             System.out.println(
                                     "Worker " + workerId + " processed batch " + count + ".");
@@ -204,7 +210,7 @@ public class KwicIndexBuilder
         }
     }
 
-    private void processLines(PageList inputPages)
+    private void processBatch(PageList inputPages)
     {
         updateInput(inputPages);
 

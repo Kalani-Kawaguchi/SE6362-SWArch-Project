@@ -1,6 +1,5 @@
 package com.se6362.index;
 
-import java.io.InputStream;
 import java.io.IOException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -21,8 +20,9 @@ public class InputBuffer implements AutoCloseable
     {
         readerThread = new Thread(() ->
         {
-            try (JsonReader reader = new JsonReader(parser))
+            try
             {
+                JsonReader reader = new JsonReader(parser);
                 while (reader.hasNext())
                 {
                     buffer.put(reader.readNext());
