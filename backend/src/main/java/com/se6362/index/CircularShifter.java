@@ -26,7 +26,13 @@ public class CircularShifter implements KwicProcessingStep
         PageList outputPages = new PageList();
         for (WebPage page : inputPages)
         {
-            outputPages.append(page.getShifts());
+            PageList shifts = new PageList();
+            for (int i = 0; i < page.getDescriptor().getLength(); i++)
+            {
+                shifts.append(
+                        new WebPage(page.getTitle(), page.getUrl(), new ShiftedDescriptor(page.getDescriptor(), i)));
+            }
+            outputPages.append(shifts);
         }
         return outputPages;
     }

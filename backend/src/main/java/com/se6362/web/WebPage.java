@@ -28,10 +28,10 @@ public class WebPage implements Comparable<WebPage>
         this.sponsorshipLevel = sponsorshipLevel;
     }
 
-    public WebPage(String title, WebUrl url, Descriptor descriptor)
+    public WebPage(String title, String url, Descriptor descriptor)
     {
         this.title = title;
-        this.url = url;
+        this.url = new WebUrl(url);
         this.descriptor = descriptor;
         this.sponsorshipLevel = 0;
     }
@@ -49,16 +49,6 @@ public class WebPage implements Comparable<WebPage>
     public Descriptor getDescriptor()
     {
         return descriptor;
-    }
-
-    public PageList getShifts()
-    {
-        PageList shifts = new PageList();
-        for (int i = 0; i < descriptor.getLength(); i++)
-        {
-            shifts.append(new WebPage(title, url, new ShiftedDescriptor(descriptor, i)));
-        }
-        return shifts;
     }
 
     @Override
