@@ -53,20 +53,25 @@ function AddWebPages({ onSuccess }) {
     }
 
     async function submitWebpages(pages) {
-        const endpoint = `${API_BASE_URL}/kwic/add`;
+        const endpoint = `${API_BASE_URL}/api/kwic/add`;
+
+        const payload = {
+            webpageData: pages
+        };
 
         console.log("Submitting to:", endpoint);
-        console.log("Webpages:", pages);
+        console.log("Webpages:", payload);
 
-        const response = await fetch(`${API_BASE_URL}/api/kwic/add`,
+        const response = await fetch(endpoint,
             {
                 method: "POST",
                 headers:
                 {
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify(pages)
+                body: JSON.stringify(payload)
             });
+
         const result = await response.text();
 
         console.log("Response status:", response.status);

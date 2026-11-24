@@ -21,11 +21,6 @@ public class Descriptor
         return words[index];
     }
 
-    public String getFilteredWord(int index)
-    {
-        return this.getWord(index).replaceAll("[^\\p{L}\\p{N}\\p{javaWhitespace}]", "").trim();
-    }
-
     public String toString()
     {
         StringJoiner stringJoiner = new StringJoiner(" ");
@@ -34,11 +29,6 @@ public class Descriptor
             stringJoiner.add(getWord(i));
         }
         return stringJoiner.toString();
-    }
-
-    public String toFilteredString()
-    {
-        return toString().replaceAll("[^\\p{L}\\p{N}\\p{javaWhitespace}]", "").trim();
     }
 
     public int getLength()

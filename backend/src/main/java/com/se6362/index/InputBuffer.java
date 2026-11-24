@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.io.IOException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import com.fasterxml.jackson.core.JsonParser;
 
 import com.se6362.web.*;
 
@@ -16,11 +17,11 @@ public class InputBuffer implements AutoCloseable
     private final Thread readerThread;
     private volatile IOException readException = null;
 
-    public InputBuffer(InputStream inputStream, int consumerCount) throws IOException
+    public InputBuffer(JsonParser parser, int consumerCount) throws IOException
     {
         readerThread = new Thread(() ->
         {
-            try (JsonReader reader = new JsonReader(inputStream))
+            try (JsonReader reader = new JsonReader(parser))
             {
                 while (reader.hasNext())
                 {
