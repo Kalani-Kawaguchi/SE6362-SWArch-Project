@@ -64,7 +64,7 @@ public class WebPage implements Comparable<WebPage>
     @Override
     public int compareTo(WebPage other)
     {
-        int descriptorComp = descriptor.toFilteredString().compareToIgnoreCase(other.descriptor.toFilteredString());
+        int descriptorComp = descriptor.toString().compareToIgnoreCase(other.descriptor.toString());
         if (descriptorComp != 0)
         {
             return descriptorComp;

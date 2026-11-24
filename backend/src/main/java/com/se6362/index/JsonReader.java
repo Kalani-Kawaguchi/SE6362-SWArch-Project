@@ -1,7 +1,6 @@
 package com.se6362.index;
 
 import java.io.IOException;
-import java.io.InputStream;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
@@ -17,16 +16,15 @@ public class JsonReader implements AutoCloseable
     private JsonNode nextElement;
     private boolean arrayIsFinished = false;
 
-    public JsonReader(InputStream inputStream) throws IOException
+    public JsonReader(JsonParser parser) throws IOException
     {
-        parser = MAPPER.createParser(inputStream);
+        this.parser = parser;
 
-        // Verify that the input starts with a JSON array.
-        if (parser.nextToken() != JsonToken.START_ARRAY)
+        // Verify that the parser is positioned at a JSON array.
+        if (parser.currentToken() != JsonToken.START_ARRAY)
         {
             throw new IOException("JSON input must contain an array.");
         }
-
     }
 
     public boolean hasNext() throws IOException
@@ -102,8 +100,8 @@ public class JsonReader implements AutoCloseable
     }
 
     @Override
-    public void close() throws IOException
+    public void close()
     {
-        parser.close();
+        // Parser lifecycle is managed by the caller.
     }
 }

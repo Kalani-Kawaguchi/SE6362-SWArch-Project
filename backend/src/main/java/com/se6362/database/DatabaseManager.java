@@ -151,7 +151,7 @@ public class DatabaseManager
             public void setValues(PreparedStatement ps, int i) throws SQLException
             {
                 ps.setInt(1, pageIds.get(pages.getPage(i).getUrl()).intValue());
-                ps.setString(2, pages.getPage(i).getDescriptor().getFilteredWord(0));
+                ps.setString(2, pages.getPage(i).getDescriptor().getWord(0));
                 ps.setInt(3, ((ShiftedDescriptor) pages.getPage(i).getDescriptor()).getShiftAmount());
             }
 
