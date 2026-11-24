@@ -11,7 +11,10 @@ const RESULTS_PER_PAGE_OPTIONS = [5, 10, 20, 50, 100];
 
 const CONTAINS_NUMBER = /\p{N}/u;
 const CONTAINS_SYMBOL = /[^\p{L}\p{N}\s!'".,;:\[\]{}()?\/$#-]/u;
-// whitelisted symbols: ! ; " . , ; : [ ] { } ( ) ? / $ # -
+// whitelisted symbols: ! ; " . , ; : [ ] { } ( ) ? / $ # -  anything else will be filtered out
+
+const SEARCH_SYMBOLS = /[^\p{L}\p{N}\s]/u;
+
 const getFilterableText = (result) => result.title ?? "";
 
 const shouldKeepResult = (result, { filterNumbers, filterSymbols }) => {
@@ -57,7 +60,10 @@ export default function SearchInterface({
             return;
         }
 
-        const query = text.trim();
+        const query = text
+        .replace(SEARCH_SYMBOLS, "")  
+        .replace(/\s+/g, " ")         
+        .trim();
 
         if (!query) {
             setError("Enter a search query.");
