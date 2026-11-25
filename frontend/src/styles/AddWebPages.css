@@ -135,13 +135,13 @@
     font-size: 12px;
 }
 
-/* Form actions */
+/* Submit button */
 
 .add-pages-actions {
     display: flex;
     justify-content: flex-end;
     gap: 10px;
-    margin-top: 30px;
+    margin: 0;
 }
 
 .add-pages-actions .primary-button {
@@ -169,6 +169,11 @@
 @media (max-width: 600px) {
     .page-input-row {
         grid-template-columns: 1fr;
+    }
+
+    .filter-options {
+        flex-wrap: wrap;
+        gap: 16px;
     }
 
     .add-pages-actions {
@@ -309,4 +314,40 @@
 .add-pages-modal .add-pages {
     width: 100%;
     margin: 0;
+}
+
+/* Form footer */
+
+.add-pages-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    margin-top: 30px;
+}
+
+/* Filter checkboxes */
+
+.filter-options {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+
+.checkbox-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    color: #49624f;
+    font-size: 13px;
+    font-weight: 500;
+
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.checkbox-option input {
+    accent-color: #067965;
+    cursor: pointer;
 }
