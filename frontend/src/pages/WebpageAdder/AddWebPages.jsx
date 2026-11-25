@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import JsonFileForm from "./JsonFileForm";
 
@@ -7,9 +8,13 @@ const API_BASE_URL = (
     process.env.API_BASE_URL || "http://localhost:8080"
 ).replace(/\/$/, "");
 
-const FILTERED_SYMBOLS = [
-    "!", "?", ".", ",", ";", ":", "\"", "'", "`", "“", "”", "‘", "’", "[", "]", "{", "}", "<", ">", "+", "-", "=", "*", "/", "\\", "%", "^", "~", "|", "@", "#", "$", "&", "_", "–", "—", "…", "•", "©", "®", "™", "°"
+const SPECIAL_CHARS = [
+    "!", "?", ".", ",", ";", ":", "\"", "'", "`", "“", "”",
+    "‘", "’", "[", "]", "{", "}", "<", ">", "+", "-", "=",
+    "*", "/", "\\", "%", "^", "~", "|", "@", "#", "$", "&",
+    "_", "–", "—", "…", "•", "©", "®", "™", "°"
 ];
+
 const NUMBER_CHARS = ["1", "2", "3", "4", "5", "6", "7", "8", "9"];
 
 function AddWebPages({ onSuccess }) {
@@ -22,8 +27,8 @@ function AddWebPages({ onSuccess }) {
     const [success, setSuccess] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const [includeNumbers, setIncludeNumbers] = useState(true);
-    const [includeSymbols, setIncludeSymbols] = useState(true);
+    const [filterNumbers, setFilterNumbers] = useState(true);
+    const [filterSpecial, setFilterSymbols] = useState(true);
 
     function handleManualInput() {
         setFilePages(null);
@@ -61,15 +66,20 @@ function AddWebPages({ onSuccess }) {
     }
 
     function buildPayload(pages) {
-        const payload = { webpageData: pages };
+        const payload = {};
+        // always filter parentheses since they have special meaning in a search query
+        let filteredSymbols = ["(", ")"];
 
-        if (includeSymbols) {
-            payload.filteredSymbols = includeNumbers ? [] : [...NUMBER_CHARS];
+        if (filterSpecial) {
+            filteredSymbols = [...filteredSymbols, ...SPECIAL_CHARS];
         }
-        else if (!includeNumbers) {
-            // Filter both: the default symbols plus digits
-            payload.filteredSymbols = [...FILTERED_SYMBOLS, ...NUMBER_CHARS];
+
+        if (filterNumbers) {
+            filteredSymbols = [...filteredSymbols, ...NUMBER_CHARS];
         }
+
+        payload.filteredSymbols = filteredSymbols;
+        payload.webpageData = pages;
 
         return payload;
     }
@@ -82,15 +92,13 @@ function AddWebPages({ onSuccess }) {
         console.log("Submitting to:", endpoint);
         console.log("Webpages:", payload);
 
-        const response = await fetch(endpoint,
-            {
-                method: "POST",
-                headers:
-                {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(payload)
-            });
+        const response = await fetch(endpoint, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(payload)
+        });
 
         const result = await response.text();
 
@@ -158,7 +166,6 @@ function AddWebPages({ onSuccess }) {
 
     return (
         <>
-
             <div className="panel-heading">
                 <h2 id="add-pages-title">Add Web Pages</h2>
             </div>
@@ -213,31 +220,7 @@ function AddWebPages({ onSuccess }) {
                     onJsonLoaded={handleJsonLoaded}
                 />
 
-                <div className="upload-divider"> </div>
-
-                <label className="checkbox-option">
-                    <input
-                        type="checkbox"
-                        checked={includeNumbers}
-                        onChange={(event) => {
-                            setIncludeNumbers(event.target.checked);
-                        }}
-                        disabled={isSubmitting}
-                    />
-                    <span>Include Numbers</span>
-                </label>
-
-                <label className="checkbox-option">
-                    <input
-                        type="checkbox"
-                        checked={includeSymbols}
-                        onChange={(event) => {
-                            setIncludeSymbols(event.target.checked);
-                        }}
-                        disabled={isSubmitting}
-                    />
-                    <span>Include Symbols</span>
-                </label>
+                <div className="upload-divider"></div>
 
                 {error && (
                     <p className="error" role="alert">
@@ -251,21 +234,52 @@ function AddWebPages({ onSuccess }) {
                     </p>
                 )}
 
-                <div className="add-pages-actions">
-                    <button
-                        type="submit"
-                        className="primary-button"
-                        disabled={isSubmitting}
-                    >
-                        <span>
-                            {isSubmitting ? "Submitting..." : "Submit"}
-                        </span>
-                        <span>→</span>
-                    </button>
+                <div className="add-pages-footer">
+
+                    <div className="filter-options">
+
+                        <label className="checkbox-option">
+                            <input
+                                type="checkbox"
+                                checked={filterNumbers}
+                                onChange={(event) => {
+                                    setFilterNumbers(event.target.checked);
+                                }}
+                                disabled={isSubmitting}
+                            />
+                            <span>Filter Numbers</span>
+                        </label>
+
+                        <label className="checkbox-option">
+                            <input
+                                type="checkbox"
+                                checked={filterSpecial}
+                                onChange={(event) => {
+                                    setFilterSymbols(event.target.checked);
+                                }}
+                                disabled={isSubmitting}
+                            />
+                            <span>Filter Symbols</span>
+                        </label>
+
+                    </div>
+
+                    <div className="add-pages-actions">
+                        <button
+                            type="submit"
+                            className="primary-button"
+                            disabled={isSubmitting}
+                        >
+                            <span>
+                                {isSubmitting ? "Submitting..." : "Submit"}
+                            </span>
+                            <span>→</span>
+                        </button>
+                    </div>
+
                 </div>
 
             </form>
-
         </>
     );
 }
