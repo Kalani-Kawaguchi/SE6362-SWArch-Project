@@ -78,8 +78,8 @@ function AddWebPages({ onSuccess }) {
         const endpoint = `${API_BASE_URL}/api/kwic/add`;
 
         const payload = includeSymbols
-            ? { webpageData: pages }
-            : { filteredSymbols: FILTERED_SYMBOLS, webpageData: pages };
+            ? { filteredSymbols: [], webpageData: pages } //include no filtered symbols
+            : { webpageData: pages }; // triggers setDefaultFilteredSymbols() in KwicIndexBuilder.java
 
         console.log("Submitting to:", endpoint);
         console.log("Webpages:", payload);
