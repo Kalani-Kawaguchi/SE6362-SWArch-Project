@@ -10,21 +10,7 @@ const API_BASE_URL = (
 const FILTERED_SYMBOLS = [
     "!", "?", ".", ",", ";", ":", "\"", "'", "`", "“", "”", "‘", "’", "[", "]", "{", "}", "<", ">", "+", "-", "=", "*", "/", "\\", "%", "^", "~", "|", "@", "#", "$", "&", "_", "–", "—", "…", "•", "©", "®", "™", "°"
 ];
-
-function stripNumbers(text) {
-    return text
-        .replace(/\d+/g, "")
-        .replace(/\s{2,}/g, " ")
-        .trim();
-}
-
-function applyNumberFilter(pages) {
-    return pages.map((page) => ({
-        ...page,
-        title: stripNumbers(page.title),
-        description: stripNumbers(page.description)
-    }));
-}
+const NUMBER_CHARS = ["1", "2", "3", "4", "5", "6", "7", "8", "9"];
 
 function AddWebPages({ onSuccess }) {
     const [title, setTitle] = useState("");
@@ -74,12 +60,24 @@ function AddWebPages({ onSuccess }) {
         }
     }
 
+    function buildPayload(pages) {
+        const payload = { webpageData: pages };
+
+        if (includeSymbols) {
+            payload.filteredSymbols = includeNumbers ? [] : [...NUMBER_CHARS];
+        }
+        else if (!includeNumbers) {
+            // Filter both: the default symbols plus digits
+            payload.filteredSymbols = [...FILTERED_SYMBOLS, ...NUMBER_CHARS];
+        }
+
+        return payload;
+    }
+
     async function submitWebpages(pages) {
         const endpoint = `${API_BASE_URL}/api/kwic/add`;
 
-        const payload = includeSymbols
-            ? { filteredSymbols: [], webpageData: pages } //include no filtered symbols
-            : { webpageData: pages }; // triggers setDefaultFilteredSymbols() in KwicIndexBuilder.java
+        const payload = buildPayload(pages);
 
         console.log("Submitting to:", endpoint);
         console.log("Webpages:", payload);
@@ -115,28 +113,23 @@ function AddWebPages({ onSuccess }) {
         let pages;
 
         if (filePages !== null) {
-            if (!Array.isArray(filePages) || filePages.length === 0) {
+            if (
+                !Array.isArray(filePages) ||
+                filePages.length === 0 ||
+                !filePages.every(validatePage)
+            ) {
                 setError("Invalid webpage JSON data.");
                 return;
             }
 
-            pages = includeNumbers ? filePages : applyNumberFilter(filePages);
-
-            if (!pages.every(validatePage)) {
-                setError("Invalid webpage JSON data.");
-                return;
-            }
+            pages = filePages;
         }
         else {
-            let page = {
+            const page = {
                 title: title.trim(),
                 url: url.trim(),
                 description: description.trim()
             };
-
-            if (!includeNumbers) {
-                page = applyNumberFilter([page])[0];
-            }
 
             if (!validatePage(page)) {
                 setError("Please provide valid webpage information.");
