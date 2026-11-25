@@ -9,11 +9,10 @@ const MAX_QUERY_LENGTH = 500;
 
 const RESULTS_PER_PAGE_OPTIONS = [5, 10, 20, 50, 100];
 
+// these variables are used for an unused frontend filter feature
 const CONTAINS_NUMBER = /\p{N}/u;
 const CONTAINS_SYMBOL = /[^\p{L}\p{N}\s!'".,;:\[\]{}()?\/$#-]/u;
 // whitelisted symbols: ! ; " . , ; : [ ] { } ( ) ? / $ # -  anything else will be filtered out
-
-const SEARCH_SYMBOLS = /[^\p{L}\p{N}\s]/u;
 
 const getFilterableText = (result) => result.title ?? "";
 
@@ -63,7 +62,6 @@ export default function SearchInterface({
         }
 
         const query = text
-        .replace(SEARCH_SYMBOLS, "")  
         .replace(/\s+/g, " ")         
         .trim();
 
