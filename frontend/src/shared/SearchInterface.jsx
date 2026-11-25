@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import "../styles/styles.css";
 
 const API_BASE_URL = (
@@ -8,6 +8,29 @@ const API_BASE_URL = (
 const MAX_QUERY_LENGTH = 500;
 
 const RESULTS_PER_PAGE_OPTIONS = [5, 10, 20, 50, 100];
+
+// these variables are used for an unused frontend filter feature
+const CONTAINS_NUMBER = /\p{N}/u;
+const CONTAINS_SYMBOL = /[^\p{L}\p{N}\s!'".,;:\[\]{}()?\/$#-]/u;
+// whitelisted symbols: ! ; " . , ; : [ ] { } ( ) ? / $ # -  anything else will be filtered out
+
+const getFilterableText = (result) => result.title ?? "";
+
+
+const shouldKeepResult = (result, { filterNumbers, filterSymbols }) => {
+    const text = getFilterableText(result);
+
+    if (!filterNumbers && CONTAINS_NUMBER.test(text)) {
+        return false;
+    }
+
+    if (!filterSymbols && CONTAINS_SYMBOL.test(text)) {
+        return false;
+    }
+
+    return true;
+};
+
 
 export default function SearchInterface({
     ResultComponent,
@@ -25,6 +48,9 @@ export default function SearchInterface({
     const [isCaseSensitive, setIsCaseSensitive] = useState(false);
     const [rankingStrategy, setRankingStrategy] = useState("title");
 
+    const [filterNumbers, setFilterNumbers] = useState(true);
+    const [filterSymbols, setFilterSymbols] = useState(true);
+
     const [resultsPerPage, setResultsPerPage] = useState(10);
     const [currentPage, setCurrentPage] = useState(1);
 
@@ -35,7 +61,9 @@ export default function SearchInterface({
             return;
         }
 
-        const query = text.trim();
+        const query = text
+        .replace(/\s+/g, " ")         
+        .trim();
 
         if (!query) {
             setError("Enter a search query.");
@@ -51,7 +79,6 @@ export default function SearchInterface({
 
         onSearchStarted?.();
 
-
         setError("");
         setHasSearched(false);
         setIsSearching(true);
@@ -62,7 +89,6 @@ export default function SearchInterface({
                 isCaseSensitive: String(isCaseSensitive),
                 rankingStrategy
             });
-
 
             const response = await fetch(
                 `${API_BASE_URL}/api/search?${params.toString()}`
@@ -103,12 +129,20 @@ export default function SearchInterface({
         finally {
             setIsSearching(false);
         }
-    }
+    };
 
-    const totalPages = Math.max(1, Math.ceil(results.length / resultsPerPage));
+    const filteredResults = useMemo(
+        () =>
+            results.filter((result) =>
+                shouldKeepResult(result, { filterNumbers, filterSymbols })
+            ),
+        [results, filterNumbers, filterSymbols]
+    );
+
+    const totalPages = Math.max(1, Math.ceil(filteredResults.length / resultsPerPage));
     const page = Math.min(currentPage, totalPages);
     const startIndex = (page - 1) * resultsPerPage;
-    const pageResults = results.slice(startIndex, startIndex + resultsPerPage);
+    const pageResults = filteredResults.slice(startIndex, startIndex + resultsPerPage);
 
     const goToPage = (newPage) => {
         setCurrentPage(newPage);
@@ -171,6 +205,33 @@ export default function SearchInterface({
                         />
                         <span>Case-sensitive search</span>
                     </label>
+                 {/* 
+                    <label className="checkbox-option">
+                        <input
+                            type="checkbox"
+                            checked={filterNumbers}
+                            onChange={(event) => {
+                                setFilterNumbers(event.target.checked);
+                                setCurrentPage(1);
+                            }}
+                            disabled={isSearching}
+                        />
+                        <span>Include Numbers</span>
+                    </label>
+
+                    <label className="checkbox-option">
+                        <input
+                            type="checkbox"
+                            checked={filterSymbols}
+                            onChange={(event) => {
+                                setFilterSymbols(event.target.checked);
+                                setCurrentPage(1);
+                            }}
+                            disabled={isSearching}
+                        />
+                        <span>Include Special Symbols</span>
+                    </label>
+                */}
 
                     <div className="ranking-option">
                         <label htmlFor="ranking-strategy">
@@ -236,6 +297,15 @@ export default function SearchInterface({
                 </p>
             )}
 
+            {hasSearched &&
+                !isSearching &&
+                results.length > 0 &&
+                filteredResults.length === 0 && (
+                    <p role="status">
+                        All results were hidden by your filters.
+                    </p>
+                )}
+
             <ul className="search-results-list">
                 {pageResults.map((result) => (
                     <ResultComponent
@@ -248,7 +318,8 @@ export default function SearchInterface({
                 ))}
             </ul>
 
-            {results.length > 0 && !isSearching && (
+
+            {filteredResults.length > 0 && !isSearching && (
                 <nav className="pagination" aria-label="Search results pages">
                     <button
                         type="button"

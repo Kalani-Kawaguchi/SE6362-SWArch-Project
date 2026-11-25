@@ -7,6 +7,11 @@ const API_BASE_URL = (
     process.env.API_BASE_URL || "http://localhost:8080"
 ).replace(/\/$/, "");
 
+const FILTERED_SYMBOLS = [
+    "!", "?", ".", ",", ";", ":", "\"", "'", "`", "“", "”", "‘", "’", "[", "]", "{", "}", "<", ">", "+", "-", "=", "*", "/", "\\", "%", "^", "~", "|", "@", "#", "$", "&", "_", "–", "—", "…", "•", "©", "®", "™", "°"
+];
+const NUMBER_CHARS = ["1", "2", "3", "4", "5", "6", "7", "8", "9"];
+
 function AddWebPages({ onSuccess }) {
     const [title, setTitle] = useState("");
     const [url, setUrl] = useState("");
@@ -16,6 +21,9 @@ function AddWebPages({ onSuccess }) {
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const [includeNumbers, setIncludeNumbers] = useState(true);
+    const [includeSymbols, setIncludeSymbols] = useState(true);
 
     function handleManualInput() {
         setFilePages(null);
@@ -52,12 +60,24 @@ function AddWebPages({ onSuccess }) {
         }
     }
 
+    function buildPayload(pages) {
+        const payload = { webpageData: pages };
+
+        if (includeSymbols) {
+            payload.filteredSymbols = includeNumbers ? [] : [...NUMBER_CHARS];
+        }
+        else if (!includeNumbers) {
+            // Filter both: the default symbols plus digits
+            payload.filteredSymbols = [...FILTERED_SYMBOLS, ...NUMBER_CHARS];
+        }
+
+        return payload;
+    }
+
     async function submitWebpages(pages) {
         const endpoint = `${API_BASE_URL}/api/kwic/add`;
 
-        const payload = {
-            webpageData: pages
-        };
+        const payload = buildPayload(pages);
 
         console.log("Submitting to:", endpoint);
         console.log("Webpages:", payload);
@@ -192,6 +212,32 @@ function AddWebPages({ onSuccess }) {
                 <JsonFileForm
                     onJsonLoaded={handleJsonLoaded}
                 />
+
+                <div className="upload-divider"> </div>
+
+                <label className="checkbox-option">
+                    <input
+                        type="checkbox"
+                        checked={includeNumbers}
+                        onChange={(event) => {
+                            setIncludeNumbers(event.target.checked);
+                        }}
+                        disabled={isSubmitting}
+                    />
+                    <span>Include Numbers</span>
+                </label>
+
+                <label className="checkbox-option">
+                    <input
+                        type="checkbox"
+                        checked={includeSymbols}
+                        onChange={(event) => {
+                            setIncludeSymbols(event.target.checked);
+                        }}
+                        disabled={isSubmitting}
+                    />
+                    <span>Include Symbols</span>
+                </label>
 
                 {error && (
                     <p className="error" role="alert">
