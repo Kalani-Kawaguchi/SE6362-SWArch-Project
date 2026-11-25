@@ -10,6 +10,11 @@ package com.se6362.search;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,6 +42,8 @@ public class SearchController
 {
     private final DatabaseManager database;
     private final ObjectMapper objectMapper;
+    private static final int SUGGESTION_LIMIT = 8;
+    private static final Set<String> OPERATORS = Set.of("AND", "OR", "NOT");
 
     public SearchController(DatabaseManager database)
     {
@@ -74,6 +81,113 @@ public class SearchController
                 isCaseSensitive);
 
         return objectMapper.writeValueAsString(results.toJsonArray());
+    }
+
+    @GetMapping("/suggestions")
+    public List<String> getSuggestions(@RequestParam String term, @RequestParam(defaultValue = "false") boolean isCaseSensitive)
+    {
+        if (term.length() > 50)
+        {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Suggestion terms must be at most 50 characters.");
+        }
+
+        if (!isSuggestionWord(term))
+        {
+            return List.of();
+        }
+
+        String typed = normalizeSuggestion(term, isCaseSensitive);
+
+        List<String> suggestions = new ArrayList<>(
+                database.getKeywordsStartingWith(term, isCaseSensitive)
+                        .stream()
+                        .filter(this::isSuggestionWord)
+                        .filter(word -> normalizeSuggestion(word, isCaseSensitive)
+                                .startsWith(typed))
+                        .distinct()
+                        .sorted()
+                        .limit(SUGGESTION_LIMIT)
+                        .toList());
+        
+        if (suggestions.size() == SUGGESTION_LIMIT)
+        {
+            return suggestions;
+        }
+
+        int allowedErrors = term.length() >= 5 ? 2 : 1;
+
+        List<String> corrections = database
+                .getTypoCandidates(term.length(), allowedErrors)
+                .stream()
+                .filter(this::isSuggestionWord)
+                .filter(word -> !suggestions.contains(word))
+                .distinct()
+                .map(word -> Map.entry(
+                        word,
+                        typoDistance(
+                                typed,
+                                normalizeSuggestion(word, isCaseSensitive))))
+                .filter(candidate -> candidate.getValue() <= allowedErrors)
+                .sorted(Comparator
+                        .<Map.Entry<String, Integer>>comparingInt(Map.Entry::getValue)
+                        .thenComparing(Map.Entry::getKey))
+                .limit(SUGGESTION_LIMIT - suggestions.size())
+                .map(Map.Entry::getKey)
+                .toList();
+
+        suggestions.addAll(corrections);
+        return suggestions;
+    }
+
+    private boolean isSuggestionWord(String word)
+    {
+        return word != null
+                && word.length() >= 2
+                && word.length() <= 50
+                && !OPERATORS.contains(word)
+                && word.chars().noneMatch(character ->
+                        Character.isWhitespace(character)
+                                || character == '('
+                                || character == ')');
+    }
+
+    private String normalizeSuggestion(String word, boolean caseSensitive)
+    {
+        return caseSensitive ? word : word.toLowerCase(Locale.ROOT);
+    }
+
+    private int typoDistance(String first, String second)
+    {
+        int[][] costs = new int[first.length() + 1][second.length() + 1];
+
+        for (int i = 0; i <= first.length(); i++)
+        {
+            costs[i][0] = i;
+        }
+
+        for (int j = 0; j <= second.length(); j++)
+        {
+            costs[0][j] = j;
+        }
+
+        for (int i = 1; i <= first.length(); i++)
+        {
+            for (int j = 1; j <= second.length(); j++)
+            {
+                int replacement = first.charAt(i - 1) == second.charAt(j - 1) ? 0 : 1;
+
+                costs[i][j] = Math.min(
+                        Math.min(costs[i - 1][j] + 1, costs[i][j - 1] + 1),
+                        costs[i - 1][j - 1] + replacement);
+                
+                if (i > 1 && j > 1 && first.charAt(i - 1) == second.charAt(j - 2) && first.charAt(i - 2) == second.charAt(j - 1))
+                {
+                    costs[i][j] = Math.min(costs[i][j], costs[i - 2][j - 2] + 1);
+                }
+            }
+        }
+
+        return costs[first.length()][second.length()];
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)

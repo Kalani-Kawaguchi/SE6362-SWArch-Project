@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef, useId } from "react";
 import "../styles/styles.css";
 
 const API_BASE_URL = (
@@ -31,6 +31,21 @@ const shouldKeepResult = (result, { filterNumbers, filterSymbols }) => {
     return true;
 };
 
+function getSuggestionRange(text, caret) {
+    let start = caret;
+    let end = caret;
+
+    while (start > 0 && !/[\s()]/.test(text[start - 1])) {
+        start--;
+    }
+
+    while (end < text.length && !/[\s()]/.test(text[end])) {
+        end++;
+    }
+
+    return { start, end, term: text.slice(start, end) };
+}
+
 
 export default function SearchInterface({
     ResultComponent,
@@ -53,6 +68,146 @@ export default function SearchInterface({
 
     const [resultsPerPage, setResultsPerPage] = useState(10);
     const [currentPage, setCurrentPage] = useState(1);
+
+    const searchInputRef = useRef(null);
+    const suggestionListId = useId();
+
+    const [caret, setCaret] = useState(0);
+    const [suggestionsOpen, setSuggestionsOpen] = useState(false);
+    const [activeSuggestion, setActiveSuggestion] = useState(-1); 
+    const [suggestionResponse, setSuggestionResponse] = useState({
+        term: "",
+        caseSensitive: false,
+        words: []
+    });
+
+    const suggestionRange = getSuggestionRange(text, caret);
+    const suggestionTerm = suggestionRange.term;
+
+    useEffect(() => {
+    setActiveSuggestion(-1);
+    setSuggestionResponse({
+        term: "",
+        caseSensitive: false,
+        words: []
+    });
+
+    if (
+        !suggestionsOpen ||
+        isSearching ||
+        suggestionTerm.length < 2 ||
+        suggestionTerm.length > 50 ||
+        ["AND", "OR", "NOT"].includes(suggestionTerm)
+    ) {
+        return;
+    }
+
+    const controller = new AbortController();
+
+    const timer = setTimeout(async () => {
+        try {
+            const params = new URLSearchParams({
+                term: suggestionTerm,
+                isCaseSensitive: String(isCaseSensitive)
+            });
+
+            const response = await fetch(
+                `${API_BASE_URL}/api/search/suggestions?${params}`,
+                { signal: controller.signal }
+            );
+
+            if (!response.ok) {
+                return;
+            }
+
+            const words = await response.json();
+
+            if (
+                !controller.signal.aborted &&
+                Array.isArray(words) &&
+                words.every((word) => typeof word === "string")
+            ) {
+                setSuggestionResponse({
+                    term: suggestionTerm,
+                    caseSensitive: isCaseSensitive,
+                    words
+                });
+            }
+        } catch {
+            // Normal searching remains available if suggestions fail.
+        }
+    }, 200);
+
+        return () => {
+            clearTimeout(timer);
+            controller.abort();
+        };
+    }, [suggestionTerm, isCaseSensitive, suggestionsOpen, isSearching]);
+
+    const suggestions =
+        suggestionResponse.term === suggestionTerm &&
+        suggestionResponse.caseSensitive === isCaseSensitive
+            ? suggestionResponse.words.filter((word) =>
+                text.length -
+                    (suggestionRange.end - suggestionRange.start) +
+                    word.length <= MAX_QUERY_LENGTH)
+            : [];
+
+    const showSuggestions =
+        suggestionsOpen && !isSearching && suggestions.length > 0;
+
+    const chooseSuggestion = (word) => {
+        const { start, end } = suggestionRange;
+        const nextCaret = start + word.length;
+
+        setText(text.slice(0, start) + word + text.slice(end));
+        setCaret(nextCaret);
+        setError("");
+        setSuggestionsOpen(false);
+        setActiveSuggestion(-1);
+
+        requestAnimationFrame(() => {
+            searchInputRef.current?.setSelectionRange(nextCaret, nextCaret);
+        });
+    };
+
+    const handleSuggestionKeys = (event) => {
+        if (event.nativeEvent.isComposing) {
+            return;
+        }
+
+        if (event.key === "Escape") {
+            if (suggestionsOpen) {
+                event.preventDefault();
+            }
+
+            setSuggestionsOpen(false);
+            return;
+        }
+
+        if (!showSuggestions) {
+            return;
+        }
+
+        if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+            event.preventDefault();
+
+            setActiveSuggestion((previous) => {
+                if (event.key === "ArrowDown") {
+                    return (previous + 1) % suggestions.length;
+                }
+
+                return previous <= 0 ? suggestions.length - 1 : previous - 1;
+            });
+        } else if (
+            event.key === "Enter" &&
+            activeSuggestion >= 0 &&
+            activeSuggestion < suggestions.length
+        ) {
+            event.preventDefault();
+            chooseSuggestion(suggestions[activeSuggestion]);
+        }
+    };
 
     const getSearchResults = async (event) => {
         event?.preventDefault();
@@ -77,6 +232,7 @@ export default function SearchInterface({
             return;
         }
 
+        setSuggestionsOpen(false);
         onSearchStarted?.();
 
         setError("");
@@ -170,7 +326,7 @@ export default function SearchInterface({
                         Search the web
                     </label>
 
-                    <input
+                    {/* <input
                         id="search-input"
                         className="search-input"
                         type="search"
@@ -182,7 +338,80 @@ export default function SearchInterface({
                         placeholder="Enter your search query..."
                         maxLength={MAX_QUERY_LENGTH}
                         disabled={isSearching}
-                    />
+                    /> */}
+
+                    <div className="search-autocomplete">
+                        <input
+                            ref={searchInputRef}
+                            id="search-input"
+                            className="search-input"
+                            type="search"
+                            role="combobox"
+                            aria-autocomplete="list"
+                            aria-expanded={showSuggestions}
+                            aria-controls={suggestionListId}
+                            aria-activedescendant={
+                                showSuggestions &&
+                                activeSuggestion >= 0 &&
+                                activeSuggestion < suggestions.length
+                                    ? `${suggestionListId}-${activeSuggestion}`
+                                    : undefined
+                            }
+                            autoComplete="off"
+                            spellCheck={false}
+                            value={text}
+                            placeholder="Enter your search query..."
+                            maxLength={MAX_QUERY_LENGTH}
+                            disabled={isSearching}
+                            onFocus={(event) => {
+                                setCaret(event.target.selectionStart ?? text.length);
+                                setSuggestionsOpen(true);
+                            }}
+                            onBlur={() => setSuggestionsOpen(false)}
+                            onSelect={(event) => {
+                                setCaret(event.target.selectionStart ?? text.length);
+                                setActiveSuggestion(-1);
+
+                                if (
+                                    event.target.selectionStart !==
+                                    event.target.selectionEnd
+                                ) {
+                                    setSuggestionsOpen(false);
+                                }
+                            }}
+                            onChange={(event) => {
+                                setText(event.target.value);
+                                setCaret(
+                                    event.target.selectionStart ?? event.target.value.length
+                                );
+                                setError("");
+                                setActiveSuggestion(-1);
+                                setSuggestionsOpen(true);
+                            }}
+                            onKeyDown={handleSuggestionKeys}
+                        />
+
+                        <ul
+                            id={suggestionListId}
+                            className="search-suggestions"
+                            role="listbox"
+                            aria-label="Search suggestions"
+                            hidden={!showSuggestions}
+                        >
+                            {suggestions.map((word, index) => (
+                                <li
+                                    id={`${suggestionListId}-${index}`}
+                                    key={word}
+                                    role="option"
+                                    aria-selected={index === activeSuggestion}
+                                    onMouseDown={(event) => event.preventDefault()}
+                                    onClick={() => chooseSuggestion(word)}
+                                >
+                                    {word}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
 
                     <button
                         className="search-button"

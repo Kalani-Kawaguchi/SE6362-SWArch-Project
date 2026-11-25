@@ -1097,3 +1097,44 @@ footer {
   padding-bottom: 100px;
 
 }
+
+.search-autocomplete {
+    position: relative;
+    flex: 1;
+    min-width: 0;
+}
+
+.search-autocomplete .search-input {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.search-suggestions {
+    position: absolute;
+    z-index: 20;
+    top: 100%;
+    left: 0;
+    right: 0;
+    margin: 4px 0 0;
+    padding: 4px 0;
+    list-style: none;
+    background: #fff;
+    color: #29433b;
+    border: 1px solid #9dbbad;
+    border-radius: 6px;
+}
+
+.search-suggestions[hidden] {
+    display: none;
+}
+
+.search-suggestions li {
+    padding: 10px 14px;
+    cursor: pointer;
+    overflow-wrap: anywhere;
+}
+
+.search-suggestions li:hover,
+.search-suggestions li[aria-selected="true"] {
+    background: #e8efe9;
+}

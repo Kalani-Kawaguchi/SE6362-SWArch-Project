@@ -115,6 +115,37 @@ public class DatabaseManager
         });
     }
 
+    @Transactional(readOnly = true)
+    public List<String> getKeywordsStartingWith(String prefix, boolean caseSensitive)
+    {
+        String pattern = prefix
+                .replace("!", "!!")
+                .replace("%", "!%")
+                .replace("_", "!_") + "%";
+
+        String comparison = caseSensitive
+                ? "BINARY keyword LIKE BINARY ? ESCAPE '!'"
+                : "LOWER(keyword) LIKE LOWER(?) ESCAPE '!'";
+
+        return database.query(
+                "SELECT DISTINCT BINARY keyword AS keyword "
+                        + "FROM KWIC_INDEX WHERE " + comparison,
+                (row, number) -> row.getString("keyword"),
+                pattern);
+    }
+
+    @Transactional(readOnly = true)
+    public List<String> getTypoCandidates(int length, int allowedErrors)
+    {
+        return database.query(
+                "SELECT DISTINCT BINARY keyword AS keyword "
+                        + "FROM KWIC_INDEX "
+                        + "WHERE CHAR_LENGTH(keyword) BETWEEN ? and ?",
+                (row, number) -> row.getString("keyword"),
+                Math.max(2, length - allowedErrors),
+                length + allowedErrors);
+    }
+
     private void insertWebpages(PageList pages)
     {
         String sql = "INSERT IGNORE INTO WEB_DATA (title, url, description) VALUES (?, ?, ?);";
