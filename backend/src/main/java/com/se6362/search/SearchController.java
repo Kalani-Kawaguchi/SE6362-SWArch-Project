@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 
 import com.se6362.database.DatabaseManager;
 import com.se6362.index.JsonReader;
@@ -52,43 +53,64 @@ public class SearchController
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public String getSearchResults(
+    public ResponseEntity<?> getSearchResults(
             @RequestParam String query,
             @RequestParam(defaultValue = "false") boolean isCaseSensitive,
             @RequestParam(defaultValue = "title") String rankingStrategy)
-            throws JsonProcessingException
     {
-        PageRankStrategy pageRankStrategy;
-
-        if (rankingStrategy.equals("title"))
+        try
         {
-            pageRankStrategy = new RankByTitle();
+            PageRankStrategy pageRankStrategy;
+
+            if (rankingStrategy.equals("title"))
+            {
+                pageRankStrategy = new RankByTitle();
+            }
+            else if (rankingStrategy.equals("access_frequency"))
+            {
+                pageRankStrategy = new RankByAccessFrequency();
+            }
+            else
+            {
+                throw new IllegalArgumentException(
+                        "The given page rank strategy is unavailable");
+            }
+
+            QueryParser queryParser = new QueryParser(query);
+
+            PageList results = database.getSearchResults(
+                    queryParser.getParseTreeRoot(),
+                    pageRankStrategy,
+                    isCaseSensitive);
+
+            String json = objectMapper.writeValueAsString(results.toJsonArray());
+
+            return ResponseEntity.ok(json);
         }
-        else if (rankingStrategy.equals("access_frequency"))
+        catch (IllegalArgumentException e)
         {
-            pageRankStrategy = new RankByAccessFrequency();
+            return ResponseEntity
+                    .badRequest()
+                    .body(Map.of("error", e.getMessage()));
         }
-        else
+        catch (Exception e)
         {
-            throw new IllegalArgumentException("The given page rank strategy is unavailable");
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of(
+                            "error",
+                            "An error occurred while processing the search query."));
         }
-
-        QueryParser queryParser = new QueryParser(query);
-
-        PageList results = database.getSearchResults(
-                queryParser.getParseTreeRoot(),
-                pageRankStrategy,
-                isCaseSensitive);
-
-        return objectMapper.writeValueAsString(results.toJsonArray());
     }
 
     @GetMapping("/suggestions")
-    public List<String> getSuggestions(@RequestParam String term, @RequestParam(defaultValue = "false") boolean isCaseSensitive)
+    public List<String> getSuggestions(@RequestParam String term,
+            @RequestParam(defaultValue = "false") boolean isCaseSensitive)
     {
         if (term.length() > 50)
         {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Suggestion terms must be at most 50 characters.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Suggestion terms must be at most 50 characters.");
         }
 
         if (!isSuggestionWord(term))
@@ -108,7 +130,7 @@ public class SearchController
                         .sorted()
                         .limit(SUGGESTION_LIMIT)
                         .toList());
-        
+
         if (suggestions.size() == SUGGESTION_LIMIT)
         {
             return suggestions;
@@ -128,8 +150,7 @@ public class SearchController
                                 typed,
                                 normalizeSuggestion(word, isCaseSensitive))))
                 .filter(candidate -> candidate.getValue() <= allowedErrors)
-                .sorted(Comparator
-                        .<Map.Entry<String, Integer>>comparingInt(Map.Entry::getValue)
+                .sorted(Comparator.<Map.Entry<String, Integer>>comparingInt(Map.Entry::getValue)
                         .thenComparing(Map.Entry::getKey))
                 .limit(SUGGESTION_LIMIT - suggestions.size())
                 .map(Map.Entry::getKey)
@@ -145,10 +166,9 @@ public class SearchController
                 && word.length() >= 2
                 && word.length() <= 50
                 && !OPERATORS.contains(word)
-                && word.chars().noneMatch(character ->
-                        Character.isWhitespace(character)
-                                || character == '('
-                                || character == ')');
+                && word.chars().noneMatch(character -> Character.isWhitespace(character)
+                        || character == '('
+                        || character == ')');
     }
 
     private String normalizeSuggestion(String word, boolean caseSensitive)
@@ -179,8 +199,9 @@ public class SearchController
                 costs[i][j] = Math.min(
                         Math.min(costs[i - 1][j] + 1, costs[i][j - 1] + 1),
                         costs[i - 1][j - 1] + replacement);
-                
-                if (i > 1 && j > 1 && first.charAt(i - 1) == second.charAt(j - 2) && first.charAt(i - 2) == second.charAt(j - 1))
+
+                if (i > 1 && j > 1 && first.charAt(i - 1) == second.charAt(j - 2)
+                        && first.charAt(i - 2) == second.charAt(j - 1))
                 {
                     costs[i][j] = Math.min(costs[i][j], costs[i - 2][j - 2] + 1);
                 }

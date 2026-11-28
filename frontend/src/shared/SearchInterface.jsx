@@ -9,27 +9,7 @@ const MAX_QUERY_LENGTH = 500;
 
 const RESULTS_PER_PAGE_OPTIONS = [5, 10, 20, 50, 100];
 
-// these variables are used for an unused frontend filter feature
-const CONTAINS_NUMBER = /\p{N}/u;
-const CONTAINS_SYMBOL = /[^\p{L}\p{N}\s!'".,;:\[\]{}()?\/$#-]/u;
-// whitelisted symbols: ! ; " . , ; : [ ] { } ( ) ? / $ # -  anything else will be filtered out
 
-const getFilterableText = (result) => result.title ?? "";
-
-
-const shouldKeepResult = (result, { filterNumbers, filterSymbols }) => {
-    const text = getFilterableText(result);
-
-    if (!filterNumbers && CONTAINS_NUMBER.test(text)) {
-        return false;
-    }
-
-    if (!filterSymbols && CONTAINS_SYMBOL.test(text)) {
-        return false;
-    }
-
-    return true;
-};
 
 function getSuggestionRange(text, caret) {
     let start = caret;
@@ -63,9 +43,6 @@ export default function SearchInterface({
     const [isCaseSensitive, setIsCaseSensitive] = useState(false);
     const [rankingStrategy, setRankingStrategy] = useState("title");
 
-    const [filterNumbers, setFilterNumbers] = useState(true);
-    const [filterSymbols, setFilterSymbols] = useState(true);
-
     const [resultsPerPage, setResultsPerPage] = useState(10);
     const [currentPage, setCurrentPage] = useState(1);
 
@@ -74,7 +51,7 @@ export default function SearchInterface({
 
     const [caret, setCaret] = useState(0);
     const [suggestionsOpen, setSuggestionsOpen] = useState(false);
-    const [activeSuggestion, setActiveSuggestion] = useState(-1); 
+    const [activeSuggestion, setActiveSuggestion] = useState(-1);
     const [suggestionResponse, setSuggestionResponse] = useState({
         term: "",
         caseSensitive: false,
@@ -85,58 +62,58 @@ export default function SearchInterface({
     const suggestionTerm = suggestionRange.term;
 
     useEffect(() => {
-    setActiveSuggestion(-1);
-    setSuggestionResponse({
-        term: "",
-        caseSensitive: false,
-        words: []
-    });
+        setActiveSuggestion(-1);
+        setSuggestionResponse({
+            term: "",
+            caseSensitive: false,
+            words: []
+        });
 
-    if (
-        !suggestionsOpen ||
-        isSearching ||
-        suggestionTerm.length < 2 ||
-        suggestionTerm.length > 50 ||
-        ["AND", "OR", "NOT"].includes(suggestionTerm)
-    ) {
-        return;
-    }
-
-    const controller = new AbortController();
-
-    const timer = setTimeout(async () => {
-        try {
-            const params = new URLSearchParams({
-                term: suggestionTerm,
-                isCaseSensitive: String(isCaseSensitive)
-            });
-
-            const response = await fetch(
-                `${API_BASE_URL}/api/search/suggestions?${params}`,
-                { signal: controller.signal }
-            );
-
-            if (!response.ok) {
-                return;
-            }
-
-            const words = await response.json();
-
-            if (
-                !controller.signal.aborted &&
-                Array.isArray(words) &&
-                words.every((word) => typeof word === "string")
-            ) {
-                setSuggestionResponse({
-                    term: suggestionTerm,
-                    caseSensitive: isCaseSensitive,
-                    words
-                });
-            }
-        } catch {
-            // Normal searching remains available if suggestions fail.
+        if (
+            !suggestionsOpen ||
+            isSearching ||
+            suggestionTerm.length < 2 ||
+            suggestionTerm.length > 50 ||
+            ["AND", "OR", "NOT"].includes(suggestionTerm)
+        ) {
+            return;
         }
-    }, 200);
+
+        const controller = new AbortController();
+
+        const timer = setTimeout(async () => {
+            try {
+                const params = new URLSearchParams({
+                    term: suggestionTerm,
+                    isCaseSensitive: String(isCaseSensitive)
+                });
+
+                const response = await fetch(
+                    `${API_BASE_URL}/api/search/suggestions?${params}`,
+                    { signal: controller.signal }
+                );
+
+                if (!response.ok) {
+                    return;
+                }
+
+                const words = await response.json();
+
+                if (
+                    !controller.signal.aborted &&
+                    Array.isArray(words) &&
+                    words.every((word) => typeof word === "string")
+                ) {
+                    setSuggestionResponse({
+                        term: suggestionTerm,
+                        caseSensitive: isCaseSensitive,
+                        words
+                    });
+                }
+            } catch {
+                // Normal searching remains available if suggestions fail.
+            }
+        }, 200);
 
         return () => {
             clearTimeout(timer);
@@ -146,11 +123,11 @@ export default function SearchInterface({
 
     const suggestions =
         suggestionResponse.term === suggestionTerm &&
-        suggestionResponse.caseSensitive === isCaseSensitive
+            suggestionResponse.caseSensitive === isCaseSensitive
             ? suggestionResponse.words.filter((word) =>
                 text.length -
-                    (suggestionRange.end - suggestionRange.start) +
-                    word.length <= MAX_QUERY_LENGTH)
+                (suggestionRange.end - suggestionRange.start) +
+                word.length <= MAX_QUERY_LENGTH)
             : [];
 
     const showSuggestions =
@@ -217,8 +194,8 @@ export default function SearchInterface({
         }
 
         const query = text
-        .replace(/\s+/g, " ")         
-        .trim();
+            .replace(/\s+/g, " ")
+            .trim();
 
         if (!query) {
             setError("Enter a search query.");
@@ -251,8 +228,10 @@ export default function SearchInterface({
             );
 
             if (!response.ok) {
+                const errorData = await response.json();
+
                 throw new Error(
-                    `Backend returned HTTP ${response.status}`
+                    errorData.error || "An unexpected error occurred."
                 );
             }
 
@@ -278,8 +257,9 @@ export default function SearchInterface({
             console.error("Unable to search:", err);
 
             setError(
-                "Couldn't retrieve search results. Check the backend connection and try again."
+                err.message || "Couldn't retrieve search results."
             );
+
             setResults([]);
         }
         finally {
@@ -287,18 +267,10 @@ export default function SearchInterface({
         }
     };
 
-    const filteredResults = useMemo(
-        () =>
-            results.filter((result) =>
-                shouldKeepResult(result, { filterNumbers, filterSymbols })
-            ),
-        [results, filterNumbers, filterSymbols]
-    );
-
-    const totalPages = Math.max(1, Math.ceil(filteredResults.length / resultsPerPage));
+    const totalPages = Math.max(1, Math.ceil(results.length / resultsPerPage));
     const page = Math.min(currentPage, totalPages);
     const startIndex = (page - 1) * resultsPerPage;
-    const pageResults = filteredResults.slice(startIndex, startIndex + resultsPerPage);
+    const pageResults = results.slice(startIndex, startIndex + resultsPerPage);
 
     const goToPage = (newPage) => {
         setCurrentPage(newPage);
@@ -318,6 +290,64 @@ export default function SearchInterface({
                 role="search"
                 onSubmit={getSearchResults}
             >
+                <div className="search-options">
+                    <label className="checkbox-option">
+                        <input
+                            type="checkbox"
+                            checked={isCaseSensitive}
+                            onChange={(event) =>
+                                setIsCaseSensitive(event.target.checked)
+                            }
+                            disabled={isSearching}
+                        />
+                        <span>Case-sensitive search</span>
+                    </label>
+
+
+                    <div className="ranking-option">
+                        <label htmlFor="ranking-strategy">
+                            Ranking
+                        </label>
+
+                        <select
+                            id="ranking-strategy"
+                            value={rankingStrategy}
+                            onChange={(event) =>
+                                setRankingStrategy(event.target.value)
+                            }
+                            disabled={isSearching}
+                        >
+                            <option value="title">
+                                Title
+                            </option>
+
+                            <option value="access_frequency">
+                                Access Frequency
+                            </option>
+                        </select>
+                    </div>
+
+                    <div className="ranking-option">
+                        <label htmlFor="results-per-page">
+                            Results per page
+                        </label>
+
+                        <select
+                            id="results-per-page"
+                            value={resultsPerPage}
+                            onChange={(event) => {
+                                setResultsPerPage(Number(event.target.value));
+                                setCurrentPage(1);
+                            }}
+                        >
+                            {RESULTS_PER_PAGE_OPTIONS.map((option) => (
+                                <option key={option} value={option}>
+                                    {option}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                </div>
                 <div className="search-form">
                     <label
                         className="sr-only"
@@ -352,8 +382,8 @@ export default function SearchInterface({
                             aria-controls={suggestionListId}
                             aria-activedescendant={
                                 showSuggestions &&
-                                activeSuggestion >= 0 &&
-                                activeSuggestion < suggestions.length
+                                    activeSuggestion >= 0 &&
+                                    activeSuggestion < suggestions.length
                                     ? `${suggestionListId}-${activeSuggestion}`
                                     : undefined
                             }
@@ -422,90 +452,7 @@ export default function SearchInterface({
                     </button>
                 </div>
 
-                <div className="search-options">
-                    <label className="checkbox-option">
-                        <input
-                            type="checkbox"
-                            checked={isCaseSensitive}
-                            onChange={(event) =>
-                                setIsCaseSensitive(event.target.checked)
-                            }
-                            disabled={isSearching}
-                        />
-                        <span>Case-sensitive search</span>
-                    </label>
-                 {/* 
-                    <label className="checkbox-option">
-                        <input
-                            type="checkbox"
-                            checked={filterNumbers}
-                            onChange={(event) => {
-                                setFilterNumbers(event.target.checked);
-                                setCurrentPage(1);
-                            }}
-                            disabled={isSearching}
-                        />
-                        <span>Include Numbers</span>
-                    </label>
 
-                    <label className="checkbox-option">
-                        <input
-                            type="checkbox"
-                            checked={filterSymbols}
-                            onChange={(event) => {
-                                setFilterSymbols(event.target.checked);
-                                setCurrentPage(1);
-                            }}
-                            disabled={isSearching}
-                        />
-                        <span>Include Special Symbols</span>
-                    </label>
-                */}
-
-                    <div className="ranking-option">
-                        <label htmlFor="ranking-strategy">
-                            Ranking
-                        </label>
-
-                        <select
-                            id="ranking-strategy"
-                            value={rankingStrategy}
-                            onChange={(event) =>
-                                setRankingStrategy(event.target.value)
-                            }
-                            disabled={isSearching}
-                        >
-                            <option value="title">
-                                Title
-                            </option>
-
-                            <option value="access_frequency">
-                                Access Frequency
-                            </option>
-                        </select>
-                    </div>
-
-                    <div className="ranking-option">
-                        <label htmlFor="results-per-page">
-                            Results per page
-                        </label>
-
-                        <select
-                            id="results-per-page"
-                            value={resultsPerPage}
-                            onChange={(event) => {
-                                setResultsPerPage(Number(event.target.value));
-                                setCurrentPage(1);
-                            }}
-                        >
-                            {RESULTS_PER_PAGE_OPTIONS.map((option) => (
-                                <option key={option} value={option}>
-                                    {option}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-                </div>
             </form>
 
             {error && (
@@ -526,15 +473,6 @@ export default function SearchInterface({
                 </p>
             )}
 
-            {hasSearched &&
-                !isSearching &&
-                results.length > 0 &&
-                filteredResults.length === 0 && (
-                    <p role="status">
-                        All results were hidden by your filters.
-                    </p>
-                )}
-
             <ul className="search-results-list">
                 {pageResults.map((result) => (
                     <ResultComponent
@@ -548,7 +486,7 @@ export default function SearchInterface({
             </ul>
 
 
-            {filteredResults.length > 0 && !isSearching && (
+            {results.length > 0 && !isSearching && (
                 <nav className="pagination" aria-label="Search results pages">
                     <button
                         type="button"
